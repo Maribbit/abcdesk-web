@@ -164,10 +164,10 @@ describe("render lifecycle", () => {
     const shadowRoot = instance.container.shadowRoot;
 
     expect(
-      shadowRoot?.querySelector(".chatmusic-quality-panel")?.textContent,
+      shadowRoot?.querySelector(".abcdesk-quality-panel")?.textContent,
     ).toContain("Unknown character ignored");
     expect(
-      shadowRoot?.querySelector(".chatmusic-quality-panel")?.textContent,
+      shadowRoot?.querySelector(".abcdesk-quality-panel")?.textContent,
     ).toContain("Line 4, column 5");
   });
 

@@ -1,4 +1,4 @@
-/* ChatMusic - styles injected inside the shadow root. */
+/* ABC Desk - styles injected inside the shadow root. */
 
 :host {
   all: initial;
@@ -6,34 +6,34 @@
   contain: content;
   margin: 8px 0;
   color-scheme: light dark;
-  --chatmusic-container-bg: #fefefe;
-  --chatmusic-text: #222;
-  --chatmusic-muted-text: #888;
-  --chatmusic-score-bg: #fff;
-  --chatmusic-score-text: #111;
-  --chatmusic-playback-highlight: #1f6feb;
-  --chatmusic-keyboard-bg: #f1f3f5;
-  --chatmusic-key-white-bg: #ffffff;
-  --chatmusic-key-white-text: #6b7280;
-  --chatmusic-key-black-bg: #2f343d;
-  --chatmusic-key-black-text: #d1d5db;
-  --chatmusic-audio-border: #eee;
-  --chatmusic-audio-bg: #f6f7f8;
-  --chatmusic-audio-control: #374151;
-  --chatmusic-audio-control-hover: #111827;
-  --chatmusic-audio-control-pushed-bg: #e4e8ee;
-  --chatmusic-audio-control-pushed-border: #aeb8c5;
-  --chatmusic-audio-track-bg: #eef1f4;
-  --chatmusic-audio-track-border: #ccd2da;
-  --chatmusic-audio-thumb: #4b5563;
-  --chatmusic-audio-input-bg: #fff;
-  --chatmusic-audio-input-text: #222;
-  --chatmusic-audio-input-border: #c9d0da;
-  --chatmusic-warning-bg: #fff8e6;
-  --chatmusic-warning-border: #f3cf74;
-  --chatmusic-error-text: #999;
-  --chatmusic-panel-bg: #f9fafb;
-  --chatmusic-panel-border: #d7dde5;
+  --abcdesk-container-bg: #fefefe;
+  --abcdesk-text: #222;
+  --abcdesk-muted-text: #888;
+  --abcdesk-score-bg: #fff;
+  --abcdesk-score-text: #111;
+  --abcdesk-playback-highlight: #1f6feb;
+  --abcdesk-keyboard-bg: #f1f3f5;
+  --abcdesk-key-white-bg: #ffffff;
+  --abcdesk-key-white-text: #6b7280;
+  --abcdesk-key-black-bg: #2f343d;
+  --abcdesk-key-black-text: #d1d5db;
+  --abcdesk-audio-border: #eee;
+  --abcdesk-audio-bg: #f6f7f8;
+  --abcdesk-audio-control: #374151;
+  --abcdesk-audio-control-hover: #111827;
+  --abcdesk-audio-control-pushed-bg: #e4e8ee;
+  --abcdesk-audio-control-pushed-border: #aeb8c5;
+  --abcdesk-audio-track-bg: #eef1f4;
+  --abcdesk-audio-track-border: #ccd2da;
+  --abcdesk-audio-thumb: #4b5563;
+  --abcdesk-audio-input-bg: #fff;
+  --abcdesk-audio-input-text: #222;
+  --abcdesk-audio-input-border: #c9d0da;
+  --abcdesk-warning-bg: #fff8e6;
+  --abcdesk-warning-border: #f3cf74;
+  --abcdesk-error-text: #999;
+  --abcdesk-panel-bg: #f9fafb;
+  --abcdesk-panel-border: #d7dde5;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -41,55 +41,55 @@
   width: 100vw;
   height: 100vh;
   margin: 0;
-  background: var(--chatmusic-container-bg);
+  background: var(--abcdesk-container-bg);
 }
 
 /* Browser-level fullscreen (CSS-based, keeps browser chrome visible) */
-:host([data-chatmusic-browser-fullscreen]) {
+:host([data-abcdesk-browser-fullscreen]) {
   position: fixed;
   inset: 0;
   z-index: 999999;
   width: 100vw;
   height: 100vh;
   margin: 0;
-  background: var(--chatmusic-container-bg);
+  background: var(--abcdesk-container-bg);
 }
 
-:host([data-chatmusic-layout="studio"]) {
+:host([data-abcdesk-layout="studio"]) {
   display: block;
   height: 100%;
   margin: 0;
 }
 
-:host([data-chatmusic-theme="dark"]) {
-  --chatmusic-container-bg: #202124;
-  --chatmusic-text: #eceff3;
-  --chatmusic-muted-text: #b4bac1;
-  --chatmusic-score-bg: #17191c;
-  --chatmusic-score-text: #d9dee5;
-  --chatmusic-playback-highlight: #7dd3fc;
-  --chatmusic-keyboard-bg: #262a31;
-  --chatmusic-key-white-bg: #d9dee5;
-  --chatmusic-key-white-text: #4b5563;
-  --chatmusic-key-black-bg: #0f1115;
-  --chatmusic-key-black-text: #cbd5e1;
-  --chatmusic-audio-border: #34373d;
-  --chatmusic-audio-bg: #2b2f36;
-  --chatmusic-audio-control: #d9dee5;
-  --chatmusic-audio-control-hover: #f5f7fa;
-  --chatmusic-audio-control-pushed-bg: #3b414a;
-  --chatmusic-audio-control-pushed-border: #69717d;
-  --chatmusic-audio-track-bg: #23272e;
-  --chatmusic-audio-track-border: #5a626d;
-  --chatmusic-audio-thumb: #c3cad3;
-  --chatmusic-audio-input-bg: #17191c;
-  --chatmusic-audio-input-text: #e2e7ee;
-  --chatmusic-audio-input-border: #4c5562;
-  --chatmusic-warning-bg: #3a2f17;
-  --chatmusic-warning-border: #8b6f2c;
-  --chatmusic-error-text: #a5abb3;
-  --chatmusic-panel-bg: #202329;
-  --chatmusic-panel-border: #34373d;
+:host([data-abcdesk-theme="dark"]) {
+  --abcdesk-container-bg: #202124;
+  --abcdesk-text: #eceff3;
+  --abcdesk-muted-text: #b4bac1;
+  --abcdesk-score-bg: #17191c;
+  --abcdesk-score-text: #d9dee5;
+  --abcdesk-playback-highlight: #7dd3fc;
+  --abcdesk-keyboard-bg: #262a31;
+  --abcdesk-key-white-bg: #d9dee5;
+  --abcdesk-key-white-text: #4b5563;
+  --abcdesk-key-black-bg: #0f1115;
+  --abcdesk-key-black-text: #cbd5e1;
+  --abcdesk-audio-border: #34373d;
+  --abcdesk-audio-bg: #2b2f36;
+  --abcdesk-audio-control: #d9dee5;
+  --abcdesk-audio-control-hover: #f5f7fa;
+  --abcdesk-audio-control-pushed-bg: #3b414a;
+  --abcdesk-audio-control-pushed-border: #69717d;
+  --abcdesk-audio-track-bg: #23272e;
+  --abcdesk-audio-track-border: #5a626d;
+  --abcdesk-audio-thumb: #c3cad3;
+  --abcdesk-audio-input-bg: #17191c;
+  --abcdesk-audio-input-text: #e2e7ee;
+  --abcdesk-audio-input-border: #4c5562;
+  --abcdesk-warning-bg: #3a2f17;
+  --abcdesk-warning-border: #8b6f2c;
+  --abcdesk-error-text: #a5abb3;
+  --abcdesk-panel-bg: #202329;
+  --abcdesk-panel-border: #34373d;
 }
 
 :host,
@@ -97,15 +97,15 @@
   box-sizing: border-box;
 }
 
-.chatmusic-container {
+.abcdesk-container {
   all: initial;
   box-sizing: border-box;
   display: block;
   position: relative;
   padding: 8px 16px 16px;
   border-radius: 6px;
-  background: var(--chatmusic-container-bg);
-  color: var(--chatmusic-text);
+  background: var(--abcdesk-container-bg);
+  color: var(--abcdesk-text);
   font-family: inherit;
   line-height: 1.4;
 }

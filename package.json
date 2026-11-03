@@ -1,7 +1,7 @@
 {
-  "name": "chatmusic",
+  "name": "abcdesk-web",
   "version": "0.4.0",
-  "description": "Web ABC notation editor with live rendering, playback and diagnostics",
+  "description": "ABC Desk Web: a browser workbench for ABC notation with live rendering, playback and diagnostics",
   "type": "module",
   "scripts": {
     "dev": "vite",

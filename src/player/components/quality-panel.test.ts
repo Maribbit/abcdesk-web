@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
-import { ChatMusicQualityElement, QUALITY_COPY_EVENT } from "./quality-panel";
+import { ABCDeskQualityElement, QUALITY_COPY_EVENT } from "./quality-panel";
 
 describe("quality panel", () => {
   it("renders parser diagnostics and hides itself when clear", async () => {
     const element = document.createElement(
-      "chatmusic-quality",
-    ) as ChatMusicQualityElement;
+      "abcdesk-quality",
+    ) as ABCDeskQualityElement;
     document.body.append(element);
 
     element.setDiagnostics([
@@ -22,7 +22,7 @@ describe("quality panel", () => {
 
     expect(element.hidden).toBe(false);
     const summaryText = element
-      .querySelector(".chatmusic-quality-summary")
+      .querySelector(".abcdesk-quality-summary")
       ?.textContent?.replace(/\s+/g, " ")
       .trim();
     expect(summaryText).toContain("1 ABC parser issue found.");
@@ -38,15 +38,15 @@ describe("quality panel", () => {
 
   it("emits copy requests from its feedback button", async () => {
     const element = document.createElement(
-      "chatmusic-quality",
-    ) as ChatMusicQualityElement;
+      "abcdesk-quality",
+    ) as ABCDeskQualityElement;
     const onCopy = vi.fn();
     document.body.append(element);
     element.addEventListener(QUALITY_COPY_EVENT, onCopy);
 
     element.setDiagnostics([
       {
-        source: "chatmusic",
+        source: "abcdesk",
         severity: "warning",
         title: "Missing key",
         message: "A K: field is required.",
@@ -55,7 +55,7 @@ describe("quality panel", () => {
     await element.updateComplete;
 
     element
-      .querySelector(".chatmusic-quality-copy-button")
+      .querySelector(".abcdesk-quality-copy-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
 
     expect(onCopy).toHaveBeenCalledTimes(1);

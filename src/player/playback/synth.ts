@@ -25,7 +25,7 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
 
   if (!abcjs.synth.supportsAudio()) {
     audioEl.innerHTML =
-      '<p class="chatmusic-no-audio">Audio playback not supported in this browser.</p>';
+      '<p class="abcdesk-no-audio">Audio playback not supported in this browser.</p>';
     return;
   }
 
@@ -48,9 +48,9 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
     setupDurationControl(instance);
     setupTempoControl(instance);
   } catch (err) {
-    console.error("[ChatMusic] Synth init error:", err);
+    console.error("[ABC Desk] Synth init error:", err);
     audioEl.innerHTML =
-      '<p class="chatmusic-no-audio">Failed to initialize audio playback.</p>';
+      '<p class="abcdesk-no-audio">Failed to initialize audio playback.</p>';
   }
 }
 

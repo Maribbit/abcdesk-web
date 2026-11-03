@@ -1,5 +1,5 @@
-:host(:fullscreen) .chatmusic-container,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-container {
+:host(:fullscreen) .abcdesk-container,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -8,7 +8,7 @@
   padding: 8px 20px 20px;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-container {
+:host([data-abcdesk-layout="studio"]) .abcdesk-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -17,33 +17,33 @@
   padding: 0;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-header {
+:host([data-abcdesk-layout="studio"]) .abcdesk-header {
   min-height: 36px;
   margin: 0;
   padding: 0 10px;
-  border-bottom: 1px solid var(--chatmusic-panel-border);
-  background: var(--chatmusic-panel-bg);
+  border-bottom: 1px solid var(--abcdesk-panel-border);
+  background: var(--abcdesk-panel-bg);
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-score {
+:host([data-abcdesk-layout="studio"]) .abcdesk-score {
   padding: 12px;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-audio {
+:host([data-abcdesk-layout="studio"]) .abcdesk-audio {
   padding: 12px;
   margin: 0;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-keyboard {
-  border-top: 1px solid var(--chatmusic-audio-border);
+:host([data-abcdesk-layout="studio"]) .abcdesk-keyboard {
+  border-top: 1px solid var(--abcdesk-audio-border);
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-quality-panel {
+:host([data-abcdesk-layout="studio"]) .abcdesk-quality-panel {
   display: none;
 }
 
-:host(:fullscreen) .chatmusic-score,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-score {
+:host(:fullscreen) .abcdesk-score,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-score {
   flex: 1 1 auto !important;
   max-height: none !important;
   min-height: 0 !important;
@@ -54,7 +54,7 @@
   align-self: stretch;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-score {
+:host([data-abcdesk-layout="studio"]) .abcdesk-score {
   flex: 1 1 0 !important;
   max-height: none !important;
   min-height: 0 !important;
@@ -65,38 +65,38 @@
   align-self: stretch;
 }
 
-:host(:fullscreen) .chatmusic-header,
-:host(:fullscreen) .chatmusic-keyboard,
-:host(:fullscreen) .chatmusic-audio,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-header,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-keyboard,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-audio {
+:host(:fullscreen) .abcdesk-header,
+:host(:fullscreen) .abcdesk-keyboard,
+:host(:fullscreen) .abcdesk-audio,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-header,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-keyboard,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-audio {
   flex: 0 0 auto;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-header,
-:host([data-chatmusic-layout="studio"]) .chatmusic-keyboard,
-:host([data-chatmusic-layout="studio"]) .chatmusic-audio {
+:host([data-abcdesk-layout="studio"]) .abcdesk-header,
+:host([data-abcdesk-layout="studio"]) .abcdesk-keyboard,
+:host([data-abcdesk-layout="studio"]) .abcdesk-audio {
   flex: 0 0 auto;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-code-toggle-button,
-:host([data-chatmusic-layout="studio"]) .chatmusic-studio-button {
+:host([data-abcdesk-layout="studio"]) .abcdesk-code-toggle-button,
+:host([data-abcdesk-layout="studio"]) .abcdesk-studio-button {
   display: none;
 }
 
-:host(:fullscreen) .chatmusic-keyboard,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-keyboard {
-  min-height: calc(var(--chatmusic-white-key-height) + 12px);
+:host(:fullscreen) .abcdesk-keyboard,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-keyboard {
+  min-height: calc(var(--abcdesk-white-key-height) + 12px);
   margin-top: auto;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-keyboard {
+:host([data-abcdesk-layout="studio"]) .abcdesk-keyboard {
   margin-top: auto;
 }
 
-:host(:fullscreen) .chatmusic-score svg,
-:host([data-chatmusic-browser-fullscreen]) .chatmusic-score svg {
+:host(:fullscreen) .abcdesk-score svg,
+:host([data-abcdesk-browser-fullscreen]) .abcdesk-score svg {
   width: 100% !important;
   max-width: none !important;
   height: auto !important;
@@ -104,7 +104,7 @@
   display: block !important;
 }
 
-:host([data-chatmusic-layout="studio"]) .chatmusic-score svg {
+:host([data-abcdesk-layout="studio"]) .abcdesk-score svg {
   width: 100% !important;
   max-width: none !important;
   height: auto !important;

@@ -16,7 +16,7 @@ describe("svg export helpers", () => {
 
   it("falls back when the title is missing", () => {
     expect(getSvgDownloadFilename("X:1\nK:C\nCDEF")).toBe(
-      "chatmusic-score.svg"
+      "abcdesk-score.svg"
     );
   });
 

@@ -1,11 +1,11 @@
 import { LitElement, html, type TemplateResult } from "lit";
 import type { AbcDiagnostic } from "../../shared/abc-quality/diagnostics";
 
-export const QUALITY_COPY_EVENT = "chatmusic-quality-copy";
+export const QUALITY_COPY_EVENT = "abcdesk-quality-copy";
 
-const QUALITY_TAG_NAME = "chatmusic-quality";
+const QUALITY_TAG_NAME = "abcdesk-quality";
 
-export class ChatMusicQualityElement extends LitElement {
+export class ABCDeskQualityElement extends LitElement {
   static properties = {
     diagnostics: { state: true },
   };
@@ -30,20 +30,20 @@ export class ChatMusicQualityElement extends LitElement {
     if (this.diagnostics.length === 0) return null;
 
     return html`
-      <div class="chatmusic-quality-header">
-        <strong class="chatmusic-quality-summary">
+      <div class="abcdesk-quality-header">
+        <strong class="abcdesk-quality-summary">
           ${this.diagnostics.length} ABC parser
           issue${this.diagnostics.length === 1 ? "" : "s"} found.
         </strong>
         <button
-          class="chatmusic-quality-copy-button"
+          class="abcdesk-quality-copy-button"
           type="button"
           @click=${this.copyFeedback}
         >
           Copy feedback
         </button>
       </div>
-      <ul class="chatmusic-quality-list">
+      <ul class="abcdesk-quality-list">
         ${this.diagnostics.map((diagnostic) =>
           this.renderDiagnostic(diagnostic),
         )}
@@ -55,13 +55,13 @@ export class ChatMusicQualityElement extends LitElement {
     const location = formatDiagnosticLocation(diagnostic);
 
     return html`
-      <li class="chatmusic-quality-item">
-        <span class="chatmusic-quality-title">
+      <li class="abcdesk-quality-item">
+        <span class="abcdesk-quality-title">
           ${diagnostic.severity.toUpperCase()}: ${diagnostic.title}
         </span>
         <span>${diagnostic.message}</span>
         ${location
-          ? html`<span class="chatmusic-quality-location">${location}</span>`
+          ? html`<span class="abcdesk-quality-location">${location}</span>`
           : null}
       </li>
     `;
@@ -79,5 +79,5 @@ function formatDiagnosticLocation(diagnostic: AbcDiagnostic): string | null {
 }
 
 if (!customElements.get(QUALITY_TAG_NAME)) {
-  customElements.define(QUALITY_TAG_NAME, ChatMusicQualityElement);
+  customElements.define(QUALITY_TAG_NAME, ABCDeskQualityElement);
 }

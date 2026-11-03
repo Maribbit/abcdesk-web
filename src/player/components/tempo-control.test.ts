@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  ChatMusicTempoElement,
+  ABCDeskTempoElement,
   createTempoControl,
 } from "./tempo-control";
 
 describe("tempo control", () => {
   it("syncs playback warp changes into the abcjs tempo input", async () => {
     const element = document.createElement(
-      "chatmusic-tempo",
-    ) as ChatMusicTempoElement;
+      "abcdesk-tempo",
+    ) as ABCDeskTempoElement;
     const nativeTempoInput = document.createElement("input");
     const changes: Array<number | null> = [];
     const onNativeChange = vi.fn();
@@ -26,11 +26,11 @@ describe("tempo control", () => {
     await element.updateComplete;
 
     expect(element.hidden).toBe(false);
-    expect(element.querySelector(".chatmusic-tempo-bpm-value")?.textContent)
+    expect(element.querySelector(".abcdesk-tempo-bpm-value")?.textContent)
       .toBe("120");
 
     const input = element.querySelector(
-      ".chatmusic-tempo-input",
+      ".abcdesk-tempo-input",
     ) as HTMLInputElement;
     input.value = "50";
     input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -39,14 +39,14 @@ describe("tempo control", () => {
     expect(nativeTempoInput.value).toBe("50");
     expect(onNativeChange).toHaveBeenCalledTimes(1);
     expect(changes).toEqual([100, 50]);
-    expect(element.querySelector(".chatmusic-tempo-bpm-value")?.textContent)
+    expect(element.querySelector(".abcdesk-tempo-bpm-value")?.textContent)
       .toBe("60");
   });
 
   it("keeps invalid warp values local while marking duration unavailable", async () => {
     const element = document.createElement(
-      "chatmusic-tempo",
-    ) as ChatMusicTempoElement;
+      "abcdesk-tempo",
+    ) as ABCDeskTempoElement;
     const nativeTempoInput = document.createElement("input");
     const changes: Array<number | null> = [];
 
@@ -60,7 +60,7 @@ describe("tempo control", () => {
     await element.updateComplete;
 
     const input = element.querySelector(
-      ".chatmusic-tempo-input",
+      ".abcdesk-tempo-input",
     ) as HTMLInputElement;
     input.value = "0";
     input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -68,7 +68,7 @@ describe("tempo control", () => {
 
     expect(nativeTempoInput.value).toBe("100");
     expect(changes).toEqual([100, null]);
-    expect(element.querySelector(".chatmusic-tempo-bpm-value")?.textContent)
+    expect(element.querySelector(".abcdesk-tempo-bpm-value")?.textContent)
       .toBe("--");
   });
 });

@@ -1,9 +1,9 @@
 import { html, render, svg, type TemplateResult } from "lit";
 import type { ThemeMode } from "../../shared/settings";
 import { CODE_TOGGLE_EVENT } from "../components/code-toggle";
-import type { ChatMusicBrowserFullscreenToggleElement } from "../components/browser-fullscreen-toggle";
+import type { ABCDeskBrowserFullscreenToggleElement } from "../components/browser-fullscreen-toggle";
 import "../components/browser-fullscreen-toggle";
-import type { ChatMusicFullscreenToggleElement } from "../components/fullscreen-toggle";
+import type { ABCDeskFullscreenToggleElement } from "../components/fullscreen-toggle";
 import "../components/fullscreen-toggle";
 import "../components/keyboard-toggle";
 import { QUALITY_COPY_EVENT } from "../components/quality-panel";
@@ -37,7 +37,7 @@ export function createRenderView(
   handlers: RenderViewHandlers = {},
 ): RenderViewElements {
   const host = document.createElement("div");
-  host.className = "chatmusic-host";
+  host.className = "abcdesk-host";
   applyRenderViewTheme(host, preElement, themeMode);
 
   const shadowRoot = host.attachShadow({ mode: "open" });
@@ -45,17 +45,17 @@ export function createRenderView(
   style.textContent = shadowStyles;
 
   const container = document.createElement("div");
-  container.className = "chatmusic-container";
+  container.className = "abcdesk-container";
   render(renderContainerTemplate(), container);
 
   const fullscreenToggle = container.querySelector(
-    "chatmusic-fullscreen-toggle",
-  ) as ChatMusicFullscreenToggleElement;
+    "abcdesk-fullscreen-toggle",
+  ) as ABCDeskFullscreenToggleElement;
   fullscreenToggle.setFullscreenTarget(host);
 
   const browserFullscreenToggle = container.querySelector(
-    "chatmusic-browser-fullscreen-toggle",
-  ) as ChatMusicBrowserFullscreenToggleElement;
+    "abcdesk-browser-fullscreen-toggle",
+  ) as ABCDeskBrowserFullscreenToggleElement;
   browserFullscreenToggle.setHostElement(host);
 
   const cleanupActions = setupRenderViewActions(container, handlers);
@@ -66,18 +66,18 @@ export function createRenderView(
 
   return {
     container: host,
-    scoreElement: container.querySelector(".chatmusic-score") as HTMLElement,
+    scoreElement: container.querySelector(".abcdesk-score") as HTMLElement,
     keyboardElement: container.querySelector(
-      ".chatmusic-keyboard",
+      ".abcdesk-keyboard",
     ) as HTMLElement,
     keyboardToggleElement: container.querySelector(
-      "chatmusic-keyboard-toggle",
+      "abcdesk-keyboard-toggle",
     ) as HTMLElement,
-    audioElement: container.querySelector(".chatmusic-audio") as HTMLElement,
-    qualityElement: container.querySelector("chatmusic-quality") as HTMLElement,
-    tempoElement: container.querySelector("chatmusic-tempo") as HTMLElement,
+    audioElement: container.querySelector(".abcdesk-audio") as HTMLElement,
+    qualityElement: container.querySelector("abcdesk-quality") as HTMLElement,
+    tempoElement: container.querySelector("abcdesk-tempo") as HTMLElement,
     codeToggleElement: container.querySelector(
-      "chatmusic-code-toggle",
+      "abcdesk-code-toggle",
     ) as HTMLElement,
     browserFullscreenToggleElement: browserFullscreenToggle,
     cleanup,
@@ -91,19 +91,19 @@ export function applyRenderViewTheme(
 ): void {
   const resolvedTheme = resolveTheme(preElement, themeMode);
 
-  host.dataset.chatmusicTheme = resolvedTheme;
-  host.dataset.chatmusicThemeMode = themeMode;
+  host.dataset.abcdeskTheme = resolvedTheme;
+  host.dataset.abcdeskThemeMode = themeMode;
   host.style.colorScheme = resolvedTheme;
 }
 
 function renderContainerTemplate(): TemplateResult {
   return html`
-    <div class="chatmusic-header">
-      <span class="chatmusic-label">ChatMusic</span>
-      <div class="chatmusic-header-actions">
-        <chatmusic-tempo hidden></chatmusic-tempo>
+    <div class="abcdesk-header">
+      <span class="abcdesk-label">ABC Desk</span>
+      <div class="abcdesk-header-actions">
+        <abcdesk-tempo hidden></abcdesk-tempo>
         <button
-          class="chatmusic-export-button"
+          class="abcdesk-export-button"
           type="button"
           title="Download score image"
           aria-label="Download score image"
@@ -111,7 +111,7 @@ function renderContainerTemplate(): TemplateResult {
           ${renderCameraIcon()}
         </button>
         <button
-          class="chatmusic-midi-export-button"
+          class="abcdesk-midi-export-button"
           type="button"
           title="Download MIDI"
           aria-label="Download MIDI"
@@ -119,27 +119,27 @@ function renderContainerTemplate(): TemplateResult {
           ${renderMusicIcon()}
         </button>
         <button
-          class="chatmusic-studio-button"
+          class="abcdesk-studio-button"
           type="button"
           title="Open in Studio"
           aria-label="Open in Studio"
         >
           ${renderExternalLinkIcon()}
         </button>
-        <chatmusic-fullscreen-toggle></chatmusic-fullscreen-toggle>
-        <chatmusic-browser-fullscreen-toggle></chatmusic-browser-fullscreen-toggle>
-        <chatmusic-keyboard-toggle></chatmusic-keyboard-toggle>
-        <chatmusic-code-toggle></chatmusic-code-toggle>
+        <abcdesk-fullscreen-toggle></abcdesk-fullscreen-toggle>
+        <abcdesk-browser-fullscreen-toggle></abcdesk-browser-fullscreen-toggle>
+        <abcdesk-keyboard-toggle></abcdesk-keyboard-toggle>
+        <abcdesk-code-toggle></abcdesk-code-toggle>
       </div>
     </div>
-    <chatmusic-quality
-      class="chatmusic-quality-panel"
+    <abcdesk-quality
+      class="abcdesk-quality-panel"
       aria-live="polite"
       hidden
-    ></chatmusic-quality>
-    <div class="chatmusic-score"></div>
-    <chatmusic-keyboard class="chatmusic-keyboard"></chatmusic-keyboard>
-    <div class="chatmusic-audio"></div>
+    ></abcdesk-quality>
+    <div class="abcdesk-score"></div>
+    <abcdesk-keyboard class="abcdesk-keyboard"></abcdesk-keyboard>
+    <div class="abcdesk-audio"></div>
   `;
 }
 
@@ -191,25 +191,25 @@ function setupRenderViewActions(
 ): () => void {
   const cleanupCallbacks = [
     setupElementAction(
-      container.querySelector("chatmusic-quality"),
+      container.querySelector("abcdesk-quality"),
       QUALITY_COPY_EVENT,
       handlers.onCopyQualityFeedback,
     ),
     setupButtonAction(
-      container.querySelector(".chatmusic-export-button"),
+      container.querySelector(".abcdesk-export-button"),
       handlers.onExportScore,
     ),
     setupButtonAction(
-      container.querySelector(".chatmusic-midi-export-button"),
+      container.querySelector(".abcdesk-midi-export-button"),
       handlers.onExportMidi,
     ),
     setupButtonAction(
-      container.querySelector(".chatmusic-studio-button"),
+      container.querySelector(".abcdesk-studio-button"),
       handlers.onOpenStudio,
       true,
     ),
     setupElementAction(
-      container.querySelector("chatmusic-code-toggle"),
+      container.querySelector("abcdesk-code-toggle"),
       CODE_TOGGLE_EVENT,
       handlers.onToggleCode,
     ),

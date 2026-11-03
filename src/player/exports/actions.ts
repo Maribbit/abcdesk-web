@@ -19,6 +19,6 @@ export function exportMidi(instance: RenderInstance): void {
   try {
     downloadMidi(tune, getMidiDownloadFilename(instance.abcText));
   } catch (error) {
-    console.warn("[ChatMusic] MIDI export failed:", error);
+    console.warn("[ABC Desk] MIDI export failed:", error);
   }
 }

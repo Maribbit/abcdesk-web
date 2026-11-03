@@ -1,4 +1,4 @@
-.chatmusic-header {
+.abcdesk-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -8,78 +8,78 @@
   font-family: inherit;
 }
 
-.chatmusic-label {
+.abcdesk-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: var(--chatmusic-muted-text);
+  color: var(--abcdesk-muted-text);
   user-select: none;
   font-weight: 500;
   line-height: 1.2;
 }
 
-.chatmusic-header-actions {
+.abcdesk-header-actions {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
 
-chatmusic-tempo {
+abcdesk-tempo {
   display: inline-flex;
   align-items: center;
 }
 
-chatmusic-tempo[hidden] {
+abcdesk-tempo[hidden] {
   display: none;
 }
 
-chatmusic-code-toggle {
+abcdesk-code-toggle {
   display: inline-flex;
   align-items: center;
 }
 
-chatmusic-fullscreen-toggle {
+abcdesk-fullscreen-toggle {
   display: inline-flex;
   align-items: center;
 }
 
-chatmusic-fullscreen-toggle[hidden] {
+abcdesk-fullscreen-toggle[hidden] {
   display: none;
 }
 
-chatmusic-browser-fullscreen-toggle {
+abcdesk-browser-fullscreen-toggle {
   display: inline-flex;
   align-items: center;
 }
 
-chatmusic-browser-fullscreen-toggle[hidden] {
+abcdesk-browser-fullscreen-toggle[hidden] {
   display: none;
 }
 
-chatmusic-keyboard-toggle {
+abcdesk-keyboard-toggle {
   display: inline-flex;
   align-items: center;
 }
 
-.chatmusic-tempo-menu {
+.abcdesk-tempo-menu {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.chatmusic-tempo-menu[hidden] {
+.abcdesk-tempo-menu[hidden] {
   display: none;
 }
 
-.chatmusic-tempo-button,
-.chatmusic-keyboard-toggle-button,
-.chatmusic-export-button,
-.chatmusic-midi-export-button,
-.chatmusic-studio-button,
-.chatmusic-code-toggle-button,
-.chatmusic-fullscreen-button,
-.chatmusic-browser-fullscreen-button {
+.abcdesk-tempo-button,
+.abcdesk-keyboard-toggle-button,
+.abcdesk-export-button,
+.abcdesk-midi-export-button,
+.abcdesk-studio-button,
+.abcdesk-code-toggle-button,
+.abcdesk-fullscreen-button,
+.abcdesk-browser-fullscreen-button {
   all: unset;
   box-sizing: border-box;
   display: inline-flex;
@@ -89,7 +89,7 @@ chatmusic-keyboard-toggle {
   width: 28px;
   height: 28px;
   border-radius: 4px;
-  color: var(--chatmusic-muted-text);
+  color: var(--abcdesk-muted-text);
   cursor: pointer;
   font-family: inherit;
   font-size: 16px;
@@ -98,45 +98,45 @@ chatmusic-keyboard-toggle {
   transition: background-color 150ms ease, color 150ms ease;
 }
 
-.chatmusic-tempo-button::-webkit-details-marker {
+.abcdesk-tempo-button::-webkit-details-marker {
   display: none;
 }
 
-.chatmusic-keyboard-toggle-button[hidden] {
+.abcdesk-keyboard-toggle-button[hidden] {
   display: none;
 }
 
-:host(:fullscreen) .chatmusic-code-toggle-button {
+:host(:fullscreen) .abcdesk-code-toggle-button {
   display: none;
 }
 
-.chatmusic-tempo-button:hover,
-.chatmusic-tempo-menu[open] .chatmusic-tempo-button,
-.chatmusic-keyboard-toggle-button:hover,
-.chatmusic-keyboard-toggle-button[aria-pressed="true"],
-.chatmusic-export-button:hover,
-.chatmusic-midi-export-button:hover,
-.chatmusic-studio-button:hover,
-.chatmusic-code-toggle-button:hover,
-.chatmusic-code-toggle-button[aria-pressed="true"],
-.chatmusic-fullscreen-button:hover,
-.chatmusic-fullscreen-button[aria-pressed="true"] {
-  background: var(--chatmusic-audio-bg);
-  color: var(--chatmusic-text);
+.abcdesk-tempo-button:hover,
+.abcdesk-tempo-menu[open] .abcdesk-tempo-button,
+.abcdesk-keyboard-toggle-button:hover,
+.abcdesk-keyboard-toggle-button[aria-pressed="true"],
+.abcdesk-export-button:hover,
+.abcdesk-midi-export-button:hover,
+.abcdesk-studio-button:hover,
+.abcdesk-code-toggle-button:hover,
+.abcdesk-code-toggle-button[aria-pressed="true"],
+.abcdesk-fullscreen-button:hover,
+.abcdesk-fullscreen-button[aria-pressed="true"] {
+  background: var(--abcdesk-audio-bg);
+  color: var(--abcdesk-text);
 }
 
-.chatmusic-tempo-button:focus-visible,
-.chatmusic-keyboard-toggle-button:focus-visible,
-.chatmusic-export-button:focus-visible,
-.chatmusic-midi-export-button:focus-visible,
-.chatmusic-studio-button:focus-visible,
-.chatmusic-code-toggle-button:focus-visible,
-.chatmusic-fullscreen-button:focus-visible {
-  outline: 2px solid var(--chatmusic-audio-thumb);
+.abcdesk-tempo-button:focus-visible,
+.abcdesk-keyboard-toggle-button:focus-visible,
+.abcdesk-export-button:focus-visible,
+.abcdesk-midi-export-button:focus-visible,
+.abcdesk-studio-button:focus-visible,
+.abcdesk-code-toggle-button:focus-visible,
+.abcdesk-fullscreen-button:focus-visible {
+  outline: 2px solid var(--abcdesk-audio-thumb);
   outline-offset: 2px;
 }
 
-.chatmusic-tempo-panel {
+.abcdesk-tempo-panel {
   position: absolute;
   top: 50%;
   right: calc(100% + 8px);
@@ -147,51 +147,51 @@ chatmusic-keyboard-toggle {
   gap: 8px;
   padding: 8px;
   border-radius: 6px;
-  background: var(--chatmusic-audio-bg);
-  border: 1px solid var(--chatmusic-audio-border);
+  background: var(--abcdesk-audio-bg);
+  border: 1px solid var(--abcdesk-audio-border);
   box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
   white-space: nowrap;
 }
 
-.chatmusic-tempo-readout {
+.abcdesk-tempo-readout {
   display: flex;
   align-items: baseline;
   gap: 4px;
-  color: var(--chatmusic-text);
+  color: var(--abcdesk-text);
   font-family: inherit;
   font-size: 11px;
   line-height: 1;
 }
 
-.chatmusic-tempo-bpm-value {
+.abcdesk-tempo-bpm-value {
   font-size: inherit;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
 }
 
-.chatmusic-tempo-unit {
-  color: var(--chatmusic-muted-text);
+.abcdesk-tempo-unit {
+  color: var(--abcdesk-muted-text);
   font-size: inherit;
   font-weight: 600;
 }
 
-.chatmusic-tempo-field {
+.abcdesk-tempo-field {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  color: var(--chatmusic-audio-control);
+  color: var(--abcdesk-audio-control);
   font-family: inherit;
   font-size: 11px;
   white-space: nowrap;
 }
 
-.chatmusic-tempo-input {
+.abcdesk-tempo-input {
   width: 48px;
   padding: 3px 4px;
-  background: var(--chatmusic-audio-input-bg);
-  color: var(--chatmusic-audio-input-text);
-  border: 1px solid var(--chatmusic-audio-input-border);
+  background: var(--abcdesk-audio-input-bg);
+  color: var(--abcdesk-audio-input-text);
+  border: 1px solid var(--abcdesk-audio-input-border);
   border-radius: 3px;
   font: inherit;
 }

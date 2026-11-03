@@ -14,7 +14,7 @@ describe("filename helpers", () => {
 
   it("falls back to a stable score filename", () => {
     expect(getAbcDownloadFilename("X:1\nK:C\nCDEF", ".mid")).toBe(
-      "chatmusic-score.mid"
+      "abcdesk-score.mid"
     );
   });
 });

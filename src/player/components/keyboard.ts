@@ -1,5 +1,5 @@
 import { LitElement, html, type TemplateResult } from "lit";
-import type { ChatMusicKeyboardToggleElement } from "./keyboard-toggle";
+import type { ABCDeskKeyboardToggleElement } from "./keyboard-toggle";
 import { KEYBOARD_TOGGLE_EVENT } from "./keyboard-toggle";
 
 export interface MidiPitch {
@@ -27,8 +27,8 @@ const MAX_WHITE_KEY_HEIGHT = 96;
 const WHITE_KEY_HEIGHT_RATIO = 3;
 const KEYBOARD_HORIZONTAL_PADDING = 16;
 const AUDITION_HIGHLIGHT_MS = 220;
-const KEYBOARD_TAG_NAME = "chatmusic-keyboard";
-const KEYBOARD_PITCH_EVENT = "chatmusic-pitch-trigger";
+const KEYBOARD_TAG_NAME = "abcdesk-keyboard";
+const KEYBOARD_PITCH_EVENT = "abcdesk-pitch-trigger";
 
 interface KeyboardPitchEventDetail {
   pitch: number;
@@ -40,8 +40,8 @@ export function createKeyboardController(
   initialVisibility: boolean,
   onPitchTrigger?: KeyboardPitchHandler,
 ): KeyboardController {
-  const keyboard = keyboardElement as ChatMusicKeyboardElement;
-  const toggle = toggleElement as ChatMusicKeyboardToggleElement;
+  const keyboard = keyboardElement as ABCDeskKeyboardElement;
+  const toggle = toggleElement as ABCDeskKeyboardToggleElement;
   let isVisible = initialVisibility;
 
   const setVisible = (nextVisibility: boolean) => {
@@ -78,7 +78,7 @@ export function createKeyboardController(
   };
 }
 
-export class ChatMusicKeyboardElement extends LitElement {
+export class ABCDeskKeyboardElement extends LitElement {
   static properties = {
     tunePitches: { attribute: false },
     activePitches: { attribute: false },
@@ -157,18 +157,18 @@ export class ChatMusicKeyboardElement extends LitElement {
     );
     const blackKeyHeight = whiteKeyHeight * 0.62;
 
-    this.style.setProperty("--chatmusic-white-key-width", `${whiteKeyWidth}px`);
+    this.style.setProperty("--abcdesk-white-key-width", `${whiteKeyWidth}px`);
     this.style.setProperty(
-      "--chatmusic-white-key-height",
+      "--abcdesk-white-key-height",
       `${whiteKeyHeight}px`,
     );
-    this.style.setProperty("--chatmusic-black-key-width", `${blackKeyWidth}px`);
+    this.style.setProperty("--abcdesk-black-key-width", `${blackKeyWidth}px`);
     this.style.setProperty(
-      "--chatmusic-black-key-height",
+      "--abcdesk-black-key-height",
       `${blackKeyHeight}px`,
     );
     this.style.setProperty(
-      "--chatmusic-black-key-offset",
+      "--abcdesk-black-key-offset",
       `${-blackKeyWidth / 2}px`,
     );
   }
@@ -303,24 +303,24 @@ function getPianoKeyClassName(
   auditionPitches: Set<number>,
 ): string {
   const classNames = [
-    "chatmusic-piano-key",
+    "abcdesk-piano-key",
     isBlackPianoKey(pitch)
-      ? "chatmusic-piano-key-black"
-      : "chatmusic-piano-key-white",
+      ? "abcdesk-piano-key-black"
+      : "abcdesk-piano-key-white",
   ];
 
-  if (tunePitches.has(pitch)) classNames.push("chatmusic-key-in-tune");
-  if (pitch === MIDDLE_C_PITCH) classNames.push("chatmusic-key-middle-c");
-  if (activePitches.has(pitch)) classNames.push("chatmusic-key-active");
+  if (tunePitches.has(pitch)) classNames.push("abcdesk-key-in-tune");
+  if (pitch === MIDDLE_C_PITCH) classNames.push("abcdesk-key-middle-c");
+  if (activePitches.has(pitch)) classNames.push("abcdesk-key-active");
   if (auditionPitches.has(pitch)) {
-    classNames.push("chatmusic-key-auditioning");
+    classNames.push("abcdesk-key-auditioning");
   }
 
   return classNames.join(" ");
 }
 
 if (!customElements.get(KEYBOARD_TAG_NAME)) {
-  customElements.define(KEYBOARD_TAG_NAME, ChatMusicKeyboardElement);
+  customElements.define(KEYBOARD_TAG_NAME, ABCDeskKeyboardElement);
 }
 
 function isBlackPianoKey(pitch: number): boolean {

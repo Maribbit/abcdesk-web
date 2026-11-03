@@ -1,10 +1,10 @@
 import { LitElement, html, svg, type TemplateResult } from "lit";
 
-export const KEYBOARD_TOGGLE_EVENT = "chatmusic-keyboard-toggle";
+export const KEYBOARD_TOGGLE_EVENT = "abcdesk-keyboard-toggle";
 
-const KEYBOARD_TOGGLE_TAG_NAME = "chatmusic-keyboard-toggle";
+const KEYBOARD_TOGGLE_TAG_NAME = "abcdesk-keyboard-toggle";
 
-export class ChatMusicKeyboardToggleElement extends LitElement {
+export class ABCDeskKeyboardToggleElement extends LitElement {
   static properties = {
     isVisible: { state: true },
   };
@@ -24,7 +24,7 @@ export class ChatMusicKeyboardToggleElement extends LitElement {
 
     return html`
       <button
-        class="chatmusic-keyboard-toggle-button"
+        class="abcdesk-keyboard-toggle-button"
         type="button"
         title=${label}
         aria-label=${label}
@@ -63,5 +63,5 @@ function renderKeyboardIcon(): TemplateResult {
 }
 
 if (!customElements.get(KEYBOARD_TOGGLE_TAG_NAME)) {
-  customElements.define(KEYBOARD_TOGGLE_TAG_NAME, ChatMusicKeyboardToggleElement);
+  customElements.define(KEYBOARD_TOGGLE_TAG_NAME, ABCDeskKeyboardToggleElement);
 }

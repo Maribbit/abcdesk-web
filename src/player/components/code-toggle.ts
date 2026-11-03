@@ -1,10 +1,10 @@
 import { LitElement, html, svg, type TemplateResult } from "lit";
 
-export const CODE_TOGGLE_EVENT = "chatmusic-code-toggle";
+export const CODE_TOGGLE_EVENT = "abcdesk-code-toggle";
 
-const CODE_TOGGLE_TAG_NAME = "chatmusic-code-toggle";
+const CODE_TOGGLE_TAG_NAME = "abcdesk-code-toggle";
 
-export class ChatMusicCodeToggleElement extends LitElement {
+export class ABCDeskCodeToggleElement extends LitElement {
   static properties = {
     isCollapsed: { state: true },
   };
@@ -24,7 +24,7 @@ export class ChatMusicCodeToggleElement extends LitElement {
 
     return html`
       <button
-        class="chatmusic-code-toggle-button"
+        class="abcdesk-code-toggle-button"
         type="button"
         title=${label}
         aria-label=${label}
@@ -61,5 +61,5 @@ function renderCodeIcon(): TemplateResult {
 }
 
 if (!customElements.get(CODE_TOGGLE_TAG_NAME)) {
-  customElements.define(CODE_TOGGLE_TAG_NAME, ChatMusicCodeToggleElement);
+  customElements.define(CODE_TOGGLE_TAG_NAME, ABCDeskCodeToggleElement);
 }

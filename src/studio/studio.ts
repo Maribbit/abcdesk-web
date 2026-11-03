@@ -34,11 +34,11 @@ import {
 } from "./presentation";
 import { createStudioRenderController } from "./rendering";
 
-const STUDIO_SOURCE_STORAGE_KEY = "chatmusicStudioAbcText";
+const STUDIO_SOURCE_STORAGE_KEY = "abcdeskStudioAbcText";
 const RENDER_DEBOUNCE_MS = 350;
 
 const EXAMPLE_ABC = `X: 1
-T: ChatMusic Studio Example
+T: ABC Desk Web Example
 M: 4/4
 L: 1/4
 Q: 1/4=108

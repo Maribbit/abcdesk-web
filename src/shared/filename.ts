@@ -1,4 +1,4 @@
-const DEFAULT_SCORE_FILENAME_STEM = "chatmusic-score";
+const DEFAULT_SCORE_FILENAME_STEM = "abcdesk-score";
 
 export function getAbcTitle(abcText: string): string | null {
   return /^T:\s*(.+)$/m.exec(abcText)?.[1]?.trim() || null;

@@ -1,9 +1,9 @@
 import type abcjs from "abcjs";
 import type { ThemeMode } from "../shared/settings";
-import type { ChatMusicCodeToggleElement } from "./components/code-toggle";
+import type { ABCDeskCodeToggleElement } from "./components/code-toggle";
 import type { DurationControl } from "./components/duration-control";
 import type { KeyboardController, MidiPitch } from "./components/keyboard";
-import type { ChatMusicQualityElement } from "./components/quality-panel";
+import type { ABCDeskQualityElement } from "./components/quality-panel";
 import type { TempoControl } from "./components/tempo-control";
 
 export interface RenderInstance {
@@ -11,10 +11,10 @@ export interface RenderInstance {
   scoreElement: HTMLElement;
   keyboard: KeyboardController;
   audioElement: HTMLElement;
-  qualityElement: ChatMusicQualityElement;
+  qualityElement: ABCDeskQualityElement;
   tempoControl: TempoControl;
   durationControl: DurationControl;
-  codeToggleElement: ChatMusicCodeToggleElement;
+  codeToggleElement: ABCDeskCodeToggleElement;
   preElement: Element;
   preElementOriginalDisplay: string | null;
   isCodeCollapsed: boolean;

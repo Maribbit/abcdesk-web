@@ -1,7 +1,7 @@
 import type { LayoutMode } from "../shared/settings";
 
-const STUDIO_DESKTOP_SPLIT_STORAGE_KEY = "chatmusicStudioDesktopSplit";
-const STUDIO_MOBILE_SPLIT_STORAGE_KEY = "chatmusicStudioMobileSplit";
+const STUDIO_DESKTOP_SPLIT_STORAGE_KEY = "abcdeskStudioDesktopSplit";
+const STUDIO_MOBILE_SPLIT_STORAGE_KEY = "abcdeskStudioMobileSplit";
 const MIN_DESKTOP_EDITOR_WIDTH = 280;
 const MIN_DESKTOP_PREVIEW_WIDTH = 320;
 const MIN_MOBILE_EDITOR_HEIGHT = 160;

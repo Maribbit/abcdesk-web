@@ -75,12 +75,12 @@ export function createStudioRenderController({
           },
         },
       );
-      currentInstance.container.dataset.chatmusicLayout = "studio";
+      currentInstance.container.dataset.abcdeskLayout = "studio";
       renderMount.classList.add("has-render");
       renderStatus.textContent = "Rendered";
       runAutoCheck();
     } catch (error) {
-      console.error("[ChatMusic Studio] Render failed:", error);
+      console.error("[ABC Desk Web] Render failed:", error);
       renderStatus.textContent = "Render failed";
     }
   };

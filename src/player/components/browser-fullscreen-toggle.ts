@@ -1,12 +1,12 @@
 import { LitElement, html, svg, type TemplateResult } from "lit";
 
 export const BROWSER_FULLSCREEN_TOGGLE_EVENT =
-  "chatmusic-browser-fullscreen-toggle";
+  "abcdesk-browser-fullscreen-toggle";
 
 const BROWSER_FULLSCREEN_TOGGLE_TAG_NAME =
-  "chatmusic-browser-fullscreen-toggle";
+  "abcdesk-browser-fullscreen-toggle";
 
-export class ChatMusicBrowserFullscreenToggleElement extends LitElement {
+export class ABCDeskBrowserFullscreenToggleElement extends LitElement {
   static properties = {
     isBrowserFullscreen: { state: true },
   };
@@ -39,7 +39,7 @@ export class ChatMusicBrowserFullscreenToggleElement extends LitElement {
   setHostElement(host: HTMLElement): void {
     this.hostElement = host;
     this.isBrowserFullscreen =
-      host.dataset.chatmusicBrowserFullscreen === "true";
+      host.dataset.abcdeskBrowserFullscreen === "true";
   }
 
   protected render(): TemplateResult {
@@ -49,7 +49,7 @@ export class ChatMusicBrowserFullscreenToggleElement extends LitElement {
 
     return html`
       <button
-        class="chatmusic-browser-fullscreen-button"
+        class="abcdesk-browser-fullscreen-button"
         type="button"
         title=${label}
         aria-label=${label}
@@ -74,7 +74,7 @@ export class ChatMusicBrowserFullscreenToggleElement extends LitElement {
   private enterBrowserFullscreen(): void {
     if (!this.hostElement) return;
     this.isBrowserFullscreen = true;
-    this.hostElement.dataset.chatmusicBrowserFullscreen = "true";
+    this.hostElement.dataset.abcdeskBrowserFullscreen = "true";
     this.dispatchEvent(
       new CustomEvent(BROWSER_FULLSCREEN_TOGGLE_EVENT, {
         detail: { isBrowserFullscreen: true },
@@ -85,7 +85,7 @@ export class ChatMusicBrowserFullscreenToggleElement extends LitElement {
   private exitBrowserFullscreen(): void {
     if (!this.hostElement) return;
     this.isBrowserFullscreen = false;
-    delete this.hostElement.dataset.chatmusicBrowserFullscreen;
+    delete this.hostElement.dataset.abcdeskBrowserFullscreen;
     this.dispatchEvent(
       new CustomEvent(BROWSER_FULLSCREEN_TOGGLE_EVENT, {
         detail: { isBrowserFullscreen: false },
@@ -145,6 +145,6 @@ function renderMinimizeIcon(): TemplateResult {
 if (!customElements.get(BROWSER_FULLSCREEN_TOGGLE_TAG_NAME)) {
   customElements.define(
     BROWSER_FULLSCREEN_TOGGLE_TAG_NAME,
-    ChatMusicBrowserFullscreenToggleElement,
+    ABCDeskBrowserFullscreenToggleElement,
   );
 }

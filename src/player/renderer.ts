@@ -3,14 +3,14 @@
  * Creates sheet music SVG and playback controls below detected code blocks.
  */
 import abcjsAudioStyles from "abcjs/abcjs-audio.css?inline";
-import chatmusicAudioStyles from "./view/styles/audio.css?inline";
-import chatmusicHeaderStyles from "./view/styles/header.css?inline";
-import chatmusicHostStyles from "./view/styles/host.css?inline";
-import chatmusicKeyboardStyles from "./view/styles/keyboard.css?inline";
-import chatmusicLayoutStyles from "./view/styles/layout.css?inline";
-import chatmusicQualityStyles from "./view/styles/quality.css?inline";
-import chatmusicScoreStyles from "./view/styles/score.css?inline";
-import type { ChatMusicCodeToggleElement } from "./components/code-toggle";
+import abcdeskAudioStyles from "./view/styles/audio.css?inline";
+import abcdeskHeaderStyles from "./view/styles/header.css?inline";
+import abcdeskHostStyles from "./view/styles/host.css?inline";
+import abcdeskKeyboardStyles from "./view/styles/keyboard.css?inline";
+import abcdeskLayoutStyles from "./view/styles/layout.css?inline";
+import abcdeskQualityStyles from "./view/styles/quality.css?inline";
+import abcdeskScoreStyles from "./view/styles/score.css?inline";
+import type { ABCDeskCodeToggleElement } from "./components/code-toggle";
 import {
   DEFAULT_CODE_BLOCK_VISIBILITY,
   DEFAULT_KEYBOARD_VISIBILITY,
@@ -21,7 +21,7 @@ import {
 } from "../shared/settings";
 import { getExtensionRuntime } from "../shared/extension-runtime";
 import { createOpenStudioMessage } from "../shared/messages";
-import type { ChatMusicQualityElement } from "./components/quality-panel";
+import type { ABCDeskQualityElement } from "./components/quality-panel";
 import { createDurationControl } from "./components/duration-control";
 import { createKeyboardController } from "./components/keyboard";
 import { exportMidi, exportScore } from "./exports/actions";
@@ -62,13 +62,13 @@ import {
 const instances = new Map<Element, RenderInstance>();
 const shadowStyles = [
   abcjsAudioStyles,
-  chatmusicHostStyles,
-  chatmusicHeaderStyles,
-  chatmusicQualityStyles,
-  chatmusicScoreStyles,
-  chatmusicKeyboardStyles,
-  chatmusicAudioStyles,
-  chatmusicLayoutStyles,
+  abcdeskHostStyles,
+  abcdeskHeaderStyles,
+  abcdeskQualityStyles,
+  abcdeskScoreStyles,
+  abcdeskKeyboardStyles,
+  abcdeskAudioStyles,
+  abcdeskLayoutStyles,
 ].join("\n");
 
 async function seekToAbcElement(
@@ -172,10 +172,10 @@ export function renderAbc(
     scoreElement: elements.scoreElement,
     keyboard,
     audioElement: elements.audioElement,
-    qualityElement: elements.qualityElement as ChatMusicQualityElement,
+    qualityElement: elements.qualityElement as ABCDeskQualityElement,
     tempoControl,
     durationControl,
-    codeToggleElement: elements.codeToggleElement as ChatMusicCodeToggleElement,
+    codeToggleElement: elements.codeToggleElement as ABCDeskCodeToggleElement,
     preElement,
     preElementOriginalDisplay: null,
     isCodeCollapsed: false,
@@ -217,7 +217,7 @@ export function renderAbc(
 
 function playKeyboardPitch(pitch: number): void {
   playLocalPianoPitch(pitch).catch((err: unknown) => {
-    console.warn("[ChatMusic] Keyboard pitch playback failed:", err);
+    console.warn("[ABC Desk] Keyboard pitch playback failed:", err);
   });
 }
 
@@ -360,7 +360,7 @@ export function removeOrphanRenders(): void {
     [...instances.values()].map((instance) => instance.container),
   );
 
-  for (const container of document.querySelectorAll(".chatmusic-host")) {
+  for (const container of document.querySelectorAll(".abcdesk-host")) {
     if (
       !(container instanceof HTMLElement) ||
       activeContainers.has(container)
@@ -403,7 +403,7 @@ function disposeRender(
 }
 
 /**
- * Check if a <pre> element already has a ChatMusic render.
+ * Check if a <pre> element already has a ABC Desk render.
  */
 export function hasRender(preElement: Element): boolean {
   return instances.has(preElement);

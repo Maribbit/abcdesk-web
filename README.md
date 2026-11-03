@@ -1,6 +1,8 @@
-# ChatMusic Studio
+# ABC Desk Web
 
 A browser-based ABC notation editor. Write ABC on the left, get an engraved score with playback, note highlighting and parser diagnostics on the right.
+
+It is the web counterpart of **ABC Desk**, the VS Code workbench built on the same idea: one ABC workspace, so a score can be written in the editor and previewed on any device.
 
 The project started as a Chrome extension that rendered ABC found in AI chat pages. That target was dropped in favour of a single, self-contained web app; the last extension state is kept at tag `extension-v0.4.0`.
 

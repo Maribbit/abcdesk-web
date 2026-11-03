@@ -44,7 +44,7 @@ export async function copyStudioSourceToClipboard(
     await navigator.clipboard.writeText(sourceText);
     sourceStats.textContent = "Copied";
   } catch (error) {
-    console.error("[ChatMusic Studio] Copy failed:", error);
+    console.error("[ABC Desk Web] Copy failed:", error);
     sourceStats.textContent = "Copy failed";
   }
 
@@ -71,7 +71,7 @@ export async function importStudioAbcFile({
     renderCurrentInput();
     if (qualityPanel.hidden) renderStatus.textContent = "Opened ABC";
   } catch (error) {
-    console.error("[ChatMusic Studio] ABC import failed:", error);
+    console.error("[ABC Desk Web] ABC import failed:", error);
     renderStatus.textContent = getAbcImportErrorMessage(error);
   } finally {
     importAbcButton.disabled = false;

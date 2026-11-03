@@ -1,8 +1,8 @@
 import { LitElement, html, svg, type TemplateResult } from "lit";
 
-const FULLSCREEN_TOGGLE_TAG_NAME = "chatmusic-fullscreen-toggle";
+const FULLSCREEN_TOGGLE_TAG_NAME = "abcdesk-fullscreen-toggle";
 
-export class ChatMusicFullscreenToggleElement extends LitElement {
+export class ABCDeskFullscreenToggleElement extends LitElement {
   static properties = {
     canFullscreen: { state: true },
     isFullscreen: { state: true },
@@ -38,7 +38,7 @@ export class ChatMusicFullscreenToggleElement extends LitElement {
 
     return html`
       <button
-        class="chatmusic-fullscreen-button"
+        class="abcdesk-fullscreen-button"
         type="button"
         title=${label}
         aria-label=${label}
@@ -74,7 +74,7 @@ export class ChatMusicFullscreenToggleElement extends LitElement {
         await this.fullscreenTarget.requestFullscreen();
       }
     } catch (err) {
-      console.warn("[ChatMusic] Fullscreen toggle failed:", err);
+      console.warn("[ABC Desk] Fullscreen toggle failed:", err);
     }
   };
 }
@@ -102,6 +102,6 @@ function renderFullscreenIcon(): TemplateResult {
 if (!customElements.get(FULLSCREEN_TOGGLE_TAG_NAME)) {
   customElements.define(
     FULLSCREEN_TOGGLE_TAG_NAME,
-    ChatMusicFullscreenToggleElement,
+    ABCDeskFullscreenToggleElement,
   );
 }

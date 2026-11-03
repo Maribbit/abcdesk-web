@@ -1,15 +1,15 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { ChatMusicBrowserFullscreenToggleElement } from "./browser-fullscreen-toggle";
+import type { ABCDeskBrowserFullscreenToggleElement } from "./browser-fullscreen-toggle";
 import "./browser-fullscreen-toggle";
 
 afterEach(() => {
   vi.restoreAllMocks();
   // Clean up any data attribute left on host elements
   document
-    .querySelectorAll("[data-chatmusic-browser-fullscreen]")
+    .querySelectorAll("[data-abcdesk-browser-fullscreen]")
     .forEach((el) => {
       if (el instanceof HTMLElement) {
-        delete el.dataset.chatmusicBrowserFullscreen;
+        delete el.dataset.abcdeskBrowserFullscreen;
       }
     });
 });
@@ -17,15 +17,15 @@ afterEach(() => {
 describe("browser fullscreen toggle", () => {
   it("starts with isBrowserFullscreen false", async () => {
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(element);
     await element.updateComplete;
 
     expect(element.isBrowserFullscreen).toBe(false);
     expect(
       element
-        .querySelector(".chatmusic-browser-fullscreen-button")
+        .querySelector(".abcdesk-browser-fullscreen-button")
         ?.getAttribute("aria-label"),
     ).toBe("Enter browser fullscreen");
   });
@@ -33,22 +33,22 @@ describe("browser fullscreen toggle", () => {
   it("enters browser fullscreen on click and sets data attribute", async () => {
     const host = document.createElement("div");
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
 
     element
-      .querySelector(".chatmusic-browser-fullscreen-button")
+      .querySelector(".abcdesk-browser-fullscreen-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await element.updateComplete;
 
     expect(element.isBrowserFullscreen).toBe(true);
-    expect(host.dataset.chatmusicBrowserFullscreen).toBe("true");
+    expect(host.dataset.abcdeskBrowserFullscreen).toBe("true");
     expect(
       element
-        .querySelector(".chatmusic-browser-fullscreen-button")
+        .querySelector(".abcdesk-browser-fullscreen-button")
         ?.getAttribute("aria-label"),
     ).toBe("Exit browser fullscreen");
   });
@@ -56,30 +56,30 @@ describe("browser fullscreen toggle", () => {
   it("exits browser fullscreen on second click and removes data attribute", async () => {
     const host = document.createElement("div");
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
 
     // Enter
     element
-      .querySelector(".chatmusic-browser-fullscreen-button")
+      .querySelector(".abcdesk-browser-fullscreen-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await element.updateComplete;
-    expect(host.dataset.chatmusicBrowserFullscreen).toBe("true");
+    expect(host.dataset.abcdeskBrowserFullscreen).toBe("true");
 
     // Exit
     element
-      .querySelector(".chatmusic-browser-fullscreen-button")
+      .querySelector(".abcdesk-browser-fullscreen-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await element.updateComplete;
 
     expect(element.isBrowserFullscreen).toBe(false);
-    expect(host.dataset.chatmusicBrowserFullscreen).toBeUndefined();
+    expect(host.dataset.abcdeskBrowserFullscreen).toBeUndefined();
     expect(
       element
-        .querySelector(".chatmusic-browser-fullscreen-button")
+        .querySelector(".abcdesk-browser-fullscreen-button")
         ?.getAttribute("aria-label"),
     ).toBe("Enter browser fullscreen");
   });
@@ -87,15 +87,15 @@ describe("browser fullscreen toggle", () => {
   it("exits browser fullscreen on Escape keydown", async () => {
     const host = document.createElement("div");
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
 
     // Enter
     element
-      .querySelector(".chatmusic-browser-fullscreen-button")
+      .querySelector(".abcdesk-browser-fullscreen-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await element.updateComplete;
     expect(element.isBrowserFullscreen).toBe(true);
@@ -105,14 +105,14 @@ describe("browser fullscreen toggle", () => {
     await element.updateComplete;
 
     expect(element.isBrowserFullscreen).toBe(false);
-    expect(host.dataset.chatmusicBrowserFullscreen).toBeUndefined();
+    expect(host.dataset.abcdeskBrowserFullscreen).toBeUndefined();
   });
 
   it("does not exit on Escape when not in browser fullscreen", async () => {
     const host = document.createElement("div");
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
@@ -126,10 +126,10 @@ describe("browser fullscreen toggle", () => {
 
   it("reads initial state from host data attribute", async () => {
     const host = document.createElement("div");
-    host.dataset.chatmusicBrowserFullscreen = "true";
+    host.dataset.abcdeskBrowserFullscreen = "true";
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
@@ -137,7 +137,7 @@ describe("browser fullscreen toggle", () => {
     expect(element.isBrowserFullscreen).toBe(true);
     expect(
       element
-        .querySelector(".chatmusic-browser-fullscreen-button")
+        .querySelector(".abcdesk-browser-fullscreen-button")
         ?.getAttribute("aria-label"),
     ).toBe("Exit browser fullscreen");
   });
@@ -145,18 +145,18 @@ describe("browser fullscreen toggle", () => {
   it("dispatches a custom event on toggle", async () => {
     const host = document.createElement("div");
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
 
     const eventSpy = vi.fn();
-    element.addEventListener("chatmusic-browser-fullscreen-toggle", eventSpy);
+    element.addEventListener("abcdesk-browser-fullscreen-toggle", eventSpy);
 
     // Enter
     element
-      .querySelector(".chatmusic-browser-fullscreen-button")
+      .querySelector(".abcdesk-browser-fullscreen-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await element.updateComplete;
 
@@ -169,7 +169,7 @@ describe("browser fullscreen toggle", () => {
 
     // Exit
     element
-      .querySelector(".chatmusic-browser-fullscreen-button")
+      .querySelector(".abcdesk-browser-fullscreen-button")
       ?.dispatchEvent(new MouseEvent("click", { bubbles: true }));
     await element.updateComplete;
 
@@ -184,14 +184,14 @@ describe("browser fullscreen toggle", () => {
   it("toggles aria-pressed attribute", async () => {
     const host = document.createElement("div");
     const element = document.createElement(
-      "chatmusic-browser-fullscreen-toggle",
-    ) as ChatMusicBrowserFullscreenToggleElement;
+      "abcdesk-browser-fullscreen-toggle",
+    ) as ABCDeskBrowserFullscreenToggleElement;
     document.body.append(host, element);
     element.setHostElement(host);
     await element.updateComplete;
 
     const button = element.querySelector(
-      ".chatmusic-browser-fullscreen-button",
+      ".abcdesk-browser-fullscreen-button",
     );
 
     expect(button?.getAttribute("aria-pressed")).toBe("false");

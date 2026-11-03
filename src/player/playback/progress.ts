@@ -23,7 +23,7 @@ export function setupProgressDrag(
     if (event.button !== 0) return;
 
     isDragging = true;
-    progressBar.classList.add("chatmusic-progress-dragging");
+    progressBar.classList.add("abcdesk-progress-dragging");
     if (typeof event.pointerId === "number") {
       progressBar.setPointerCapture?.(event.pointerId);
     }
@@ -44,7 +44,7 @@ export function setupProgressDrag(
     event.preventDefault();
     seekFromClientX(event.clientX);
     isDragging = false;
-    progressBar.classList.remove("chatmusic-progress-dragging");
+    progressBar.classList.remove("abcdesk-progress-dragging");
     if (typeof event.pointerId === "number") {
       progressBar.releasePointerCapture?.(event.pointerId);
     }
@@ -54,7 +54,7 @@ export function setupProgressDrag(
     if (!isDragging) return;
 
     isDragging = false;
-    progressBar.classList.remove("chatmusic-progress-dragging");
+    progressBar.classList.remove("abcdesk-progress-dragging");
     if (typeof event.pointerId === "number") {
       progressBar.releasePointerCapture?.(event.pointerId);
     }
@@ -96,7 +96,7 @@ export function setupProgressDrag(
     progressBar.removeEventListener("pointercancel", handlePointerCancel);
     progressBar.removeEventListener("click", handleClick, true);
     playButton?.removeEventListener("click", handlePlayClick, true);
-    progressBar.classList.remove("chatmusic-progress-dragging");
+    progressBar.classList.remove("abcdesk-progress-dragging");
   };
 }
 

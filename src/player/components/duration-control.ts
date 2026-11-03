@@ -11,10 +11,10 @@ export interface DurationControl {
   setWarp(warpPercent: number | null): void;
 }
 
-const DURATION_TAG_NAME = "chatmusic-duration";
+const DURATION_TAG_NAME = "abcdesk-duration";
 
 export function createDurationControl(): DurationControl {
-  let element: ChatMusicDurationElement | null = null;
+  let element: ABCDeskDurationElement | null = null;
   let baseDurationSeconds: number | null = null;
   let currentWarpPercent: number | null = 100;
 
@@ -27,8 +27,8 @@ export function createDurationControl(): DurationControl {
       element?.remove();
       element = document.createElement(
         DURATION_TAG_NAME,
-      ) as ChatMusicDurationElement;
-      element.className = "chatmusic-total-duration";
+      ) as ABCDeskDurationElement;
+      element.className = "abcdesk-total-duration";
       element.setAttribute("aria-label", "Total duration");
 
       const clockElement = audioElement.querySelector(".abcjs-midi-clock");
@@ -57,7 +57,7 @@ export function createDurationControl(): DurationControl {
   };
 }
 
-export class ChatMusicDurationElement extends LitElement {
+export class ABCDeskDurationElement extends LitElement {
   static properties = {
     baseDurationSeconds: { state: true },
     currentWarpPercent: { state: true },
@@ -94,5 +94,5 @@ export class ChatMusicDurationElement extends LitElement {
 }
 
 if (!customElements.get(DURATION_TAG_NAME)) {
-  customElements.define(DURATION_TAG_NAME, ChatMusicDurationElement);
+  customElements.define(DURATION_TAG_NAME, ABCDeskDurationElement);
 }

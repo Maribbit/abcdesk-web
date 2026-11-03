@@ -8,7 +8,7 @@ export function validateAbcSource(source: string): AbcQualityReport {
     return createReport(0, [
       {
         severity: "error",
-        source: "chatmusic",
+        source: "abcdesk",
         title: "Empty ABC source",
         message: "Add or import ABC notation before checking it.",
       },

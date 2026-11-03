@@ -1,94 +1,94 @@
-.chatmusic-audio {
+.abcdesk-audio {
   margin-top: 12px;
   padding-top: 12px;
   color: inherit;
   font-family: inherit;
 }
 
-.chatmusic-audio button,
-.chatmusic-audio input,
-.chatmusic-audio select {
+.abcdesk-audio button,
+.abcdesk-audio input,
+.abcdesk-audio select {
   font: inherit;
 }
 
-.chatmusic-audio .abcjs-inline-audio {
+.abcdesk-audio .abcjs-inline-audio {
   min-height: 28px;
   height: auto;
-  background-color: var(--chatmusic-audio-bg);
-  border: 1px solid var(--chatmusic-audio-border);
+  background-color: var(--abcdesk-audio-bg);
+  border: 1px solid var(--abcdesk-audio-border);
   border-radius: 4px;
-  color: var(--chatmusic-audio-control);
+  color: var(--abcdesk-audio-control);
 }
 
-.chatmusic-audio .abcjs-btn g,
-.chatmusic-audio .abcjs-loading-svg circle {
-  fill: var(--chatmusic-audio-control);
-  stroke: var(--chatmusic-audio-control);
+.abcdesk-audio .abcjs-btn g,
+.abcdesk-audio .abcjs-loading-svg circle {
+  fill: var(--abcdesk-audio-control);
+  stroke: var(--abcdesk-audio-control);
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-btn:hover g {
-  fill: var(--chatmusic-audio-control-hover);
-  stroke: var(--chatmusic-audio-control-hover);
+.abcdesk-audio .abcjs-inline-audio .abcjs-btn:hover g {
+  fill: var(--abcdesk-audio-control-hover);
+  stroke: var(--abcdesk-audio-control-hover);
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-selection.abcjs-pushed,
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed,
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-reset.abcjs-pushed {
-  background-color: var(--chatmusic-audio-control-pushed-bg);
-  border-color: var(--chatmusic-audio-control-pushed-border);
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-selection.abcjs-pushed,
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed,
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-reset.abcjs-pushed {
+  background-color: var(--abcdesk-audio-control-pushed-bg);
+  border-color: var(--abcdesk-audio-control-pushed-border);
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-progress-background {
-  background-color: var(--chatmusic-audio-track-bg);
-  border-color: var(--chatmusic-audio-track-border);
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-background {
+  background-color: var(--abcdesk-audio-track-bg);
+  border-color: var(--abcdesk-audio-track-border);
   cursor: pointer;
   touch-action: none;
 }
 
-.chatmusic-audio
+.abcdesk-audio
   .abcjs-inline-audio
-  .abcjs-midi-progress-background.chatmusic-progress-dragging {
+  .abcjs-midi-progress-background.abcdesk-progress-dragging {
   cursor: grabbing;
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-progress-indicator {
-  background-color: var(--chatmusic-audio-thumb);
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-indicator {
+  background-color: var(--abcdesk-audio-thumb);
   pointer-events: none;
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-clock,
-.chatmusic-audio .abcjs-inline-audio .chatmusic-total-duration,
-.chatmusic-audio .abcjs-inline-audio .abcjs-tempo-wrapper {
-  color: var(--chatmusic-audio-control);
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-clock,
+.abcdesk-audio .abcjs-inline-audio .abcdesk-total-duration,
+.abcdesk-audio .abcjs-inline-audio .abcjs-tempo-wrapper {
+  color: var(--abcdesk-audio-control);
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-clock,
-.chatmusic-audio .abcjs-inline-audio .chatmusic-total-duration {
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-clock,
+.abcdesk-audio .abcjs-inline-audio .abcdesk-total-duration {
   font-family: inherit;
   font-size: 11px;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.chatmusic-audio .abcjs-inline-audio .chatmusic-total-duration {
+.abcdesk-audio .abcjs-inline-audio .abcdesk-total-duration {
   margin: 1px 6px 0 0;
-  color: var(--chatmusic-muted-text);
+  color: var(--abcdesk-muted-text);
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-tempo-wrapper {
+.abcdesk-audio .abcjs-inline-audio .abcjs-tempo-wrapper {
   display: none;
 }
 
-.chatmusic-audio .abcjs-inline-audio .abcjs-midi-tempo {
-  background: var(--chatmusic-audio-input-bg);
-  color: var(--chatmusic-audio-input-text);
-  border: 1px solid var(--chatmusic-audio-input-border);
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-tempo {
+  background: var(--abcdesk-audio-input-bg);
+  color: var(--abcdesk-audio-input-text);
+  border: 1px solid var(--abcdesk-audio-input-border);
 }
 
-.chatmusic-no-audio {
+.abcdesk-no-audio {
   display: block;
   font-size: 12px;
-  color: var(--chatmusic-error-text);
+  color: var(--abcdesk-error-text);
   margin: 0;
   line-height: 1.4;
 }

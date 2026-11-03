@@ -2,7 +2,7 @@ export type AbcDiagnosticSeverity = "error" | "warning" | "suggestion";
 
 export interface AbcDiagnostic {
   severity: AbcDiagnosticSeverity;
-  source: "abcjs" | "chatmusic";
+  source: "abcjs" | "abcdesk";
   title: string;
   message: string;
   line?: number;

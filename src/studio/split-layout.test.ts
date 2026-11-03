@@ -59,8 +59,8 @@ describe("Studio split layout", () => {
 
   it("restores persisted desktop and mobile split sizes", () => {
     const { splitLayout, studioShell } = createLayout();
-    window.localStorage.setItem("chatmusicStudioDesktopSplit", "420px");
-    window.localStorage.setItem("chatmusicStudioMobileSplit", "260px");
+    window.localStorage.setItem("abcdeskStudioDesktopSplit", "420px");
+    window.localStorage.setItem("abcdeskStudioMobileSplit", "260px");
 
     splitLayout.restoreSizes();
 
@@ -102,7 +102,7 @@ describe("Studio split layout", () => {
     expect(studioShell.style.getPropertyValue("--studio-editor-size")).toBe(
       "680px",
     );
-    expect(window.localStorage.getItem("chatmusicStudioDesktopSplit")).toBe(
+    expect(window.localStorage.getItem("abcdeskStudioDesktopSplit")).toBe(
       "680px",
     );
   });

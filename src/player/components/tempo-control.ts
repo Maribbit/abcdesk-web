@@ -25,14 +25,14 @@ export interface TempoWarpChangeDetail {
   warpPercent: number | null;
 }
 
-const TEMPO_TAG_NAME = "chatmusic-tempo";
-const TEMPO_WARP_CHANGE_EVENT = "chatmusic-tempo-warp-change";
+const TEMPO_TAG_NAME = "abcdesk-tempo";
+const TEMPO_WARP_CHANGE_EVENT = "abcdesk-tempo-warp-change";
 
 export function createTempoControl(
   tempoElement: HTMLElement,
   onWarpChange: (warpPercent: number | null) => void = () => {},
 ): TempoControl {
-  const element = tempoElement as ChatMusicTempoElement;
+  const element = tempoElement as ABCDeskTempoElement;
   const handleWarpChange = (event: Event) => {
     const { warpPercent } = (event as CustomEvent<TempoWarpChangeDetail>)
       .detail;
@@ -48,7 +48,7 @@ export function createTempoControl(
   };
 }
 
-export class ChatMusicTempoElement extends LitElement {
+export class ABCDeskTempoElement extends LitElement {
   static properties = {
     bpmText: { state: true },
     inputValue: { state: true },
@@ -108,22 +108,22 @@ export class ChatMusicTempoElement extends LitElement {
     const label = this.getTempoLabel();
 
     return html`
-      <details class="chatmusic-tempo-menu">
+      <details class="abcdesk-tempo-menu">
         <summary
-          class="chatmusic-tempo-button"
+          class="abcdesk-tempo-button"
           title=${label}
           aria-label=${label}
         >
           ${renderTempoIcon()}
         </summary>
-        <div class="chatmusic-tempo-panel">
-          <div class="chatmusic-tempo-readout" aria-live="polite">
-            <span class="chatmusic-tempo-bpm-value">${this.bpmText}</span>
-            <span class="chatmusic-tempo-unit">BPM</span>
+        <div class="abcdesk-tempo-panel">
+          <div class="abcdesk-tempo-readout" aria-live="polite">
+            <span class="abcdesk-tempo-bpm-value">${this.bpmText}</span>
+            <span class="abcdesk-tempo-unit">BPM</span>
           </div>
-          <label class="chatmusic-tempo-field">
+          <label class="abcdesk-tempo-field">
             <input
-              class="chatmusic-tempo-input"
+              class="abcdesk-tempo-input"
               type="number"
               min=${this.min}
               max=${this.max}
@@ -212,5 +212,5 @@ function renderTempoIcon(): TemplateResult {
 }
 
 if (!customElements.get(TEMPO_TAG_NAME)) {
-  customElements.define(TEMPO_TAG_NAME, ChatMusicTempoElement);
+  customElements.define(TEMPO_TAG_NAME, ABCDeskTempoElement);
 }

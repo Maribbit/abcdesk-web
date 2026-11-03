@@ -9,7 +9,7 @@ export function copyQualityFeedback(instance: RenderInstance): void {
   const feedback = formatAbcQualityReportForAi(report);
 
   navigator.clipboard.writeText(feedback).catch((error: unknown) => {
-    console.warn("[ChatMusic] Copy ABC feedback failed:", error);
+    console.warn("[ABC Desk] Copy ABC feedback failed:", error);
   });
 }
 

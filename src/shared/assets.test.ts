@@ -25,17 +25,17 @@ describe("asset URL helpers", () => {
     expect(
       getAssetUrl("icons/icon48.png", {
         runtime: null,
-        baseUrl: "/chatmusic/",
+        baseUrl: "/abcdesk/",
       })
-    ).toBe("/chatmusic/icons/icon48.png");
+    ).toBe("/abcdesk/icons/icon48.png");
   });
 
   it("joins common Vite base URL shapes", () => {
     expect(joinAssetBaseUrl("/", "icons/icon48.png")).toBe(
       "/icons/icon48.png"
     );
-    expect(joinAssetBaseUrl("/chatmusic", "icons/icon48.png")).toBe(
-      "/chatmusic/icons/icon48.png"
+    expect(joinAssetBaseUrl("/abcdesk", "icons/icon48.png")).toBe(
+      "/abcdesk/icons/icon48.png"
     );
     expect(joinAssetBaseUrl("./", "icons/icon48.png")).toBe(
       "./icons/icon48.png"

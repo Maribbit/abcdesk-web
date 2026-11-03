@@ -11,7 +11,7 @@ export function highlightTimingEvent(
 
   const elements = flattenTimingElements(event.elements);
   for (const element of elements) {
-    element.classList.add("chatmusic-note-playing");
+    element.classList.add("abcdesk-note-playing");
   }
 
   instance.activePlaybackElements = elements;
@@ -26,7 +26,7 @@ export function clearPlaybackHighlight(
   clearSourceHighlight = true,
 ): void {
   for (const element of instance.activePlaybackElements) {
-    element.classList.remove("chatmusic-note-playing");
+    element.classList.remove("abcdesk-note-playing");
   }
   instance.keyboard.clearActiveKeys();
   instance.activePlaybackElements = [];
