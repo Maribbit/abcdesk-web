@@ -1,51 +1,53 @@
 # 独立工作台 (Studio Specs)
 
-本规格定义了 ChatMusic Studio Web APP 的全貌。这是一块独立于浏览器扩展外的、带有完备交互能力的富文本编辑生态。
+Studio 是产品本体：一个无后端、纯客户端的 ABC 草稿本与乐谱游乐场。
 
-## 1. 核心概念与定位
+## 1. 定位
 
-* **零依赖独立空间的本质**：Studio 的定位是“草稿本”和“乐谱游乐场”。它不能耦合诸如 `chrome.storage` 等只有浏览器插件环境才存在的专属 API。它是一个纯客户端运行、无需后端数据库，可以在 `localhost` 或 Github Pages 单独全量存活的应用程序。
-* **Player 的超级容器**：通过直接引入独立的 Player Widget 模块作为它的“播放内核”(Preview Pane)，向外部证实了项目架构的单向解耦边界足够清爽。
+- 不依赖任何宿主或浏览器特权 API，可以部署为纯静态站点。
+- 播放器是它的预览内核，两者保持单向解耦：Studio 依赖 Player，Player 不知道 Studio 存在。
 
-## 2. 状态映射与持久化
+## 2. 状态生命周期
 
-因为是无后端的客户端应用，状态的“生命周期”是所有架构考量的重中之重。
+无后端时，状态如何存活是首要设计问题。
 
-### 2.1 URL Hash 持久化路由
-这是工作台实现跨设备分享和草稿恢复的核心链路：
-* **数据编码**：当前所有 Monaco 或 TextArea 中存在的内容 (代码状态)、用户调整好后的配置（BPM 重写），通过 LZW 类似无损压制算法混合为 Base64，实时映射到浏览器的 `window.location.hash`。
-* **数据反编**：当新用户点击分享的 Hash 链接进入时，系统在初始化阶段剥离并解密出 `Source Text` 并灌入渲染槽（Renderer）。
+### 2.1 URL hash 分享
+
+- 源码写入 `#abc=` + 编码后的文本，作为跨设备分享与草稿恢复的链路。
+- 初始化时解析 hash 取得源码，随后用 `replaceState` 清掉 hash，避免刷新时覆盖用户后续编辑。
+- 当前编码是 `encodeURIComponent`；压缩编码属于后续增强，契约（前缀 + 单向编解码）不变。
 
 ### 2.2 本地私有状态
-* **规则**：编辑器自动换行配置、主题深浅色配置 (Theme)、工作台的左右或上下分屏配置 (Layout Splitting)，被存入浏览器的 `localStorage` 中。这些内容属于用户私有 UX 偏好，不能随 Hash 进行共享。
 
-## 3. 业务生态链路
+- 换行开关、主题模式、分栏模式、关键词诊断开关与最近一次源码存在 `localStorage`。
+- 这些是用户私有偏好，不随 hash 分享。
+- 所有存储访问集中在 `settings-store.ts` 适配层，工作台不对存储方式做假设。
 
-* **左屏：源码动作 (Source Actions)**
-  * Monaco 或原生输入区。
-  * 文件级的载入(Import `.abc` / `.txt`)
-  * 文件级的下载保存(Export)
-  * 剪贴板的复制粘帖捕获(Clipboard API)。
-* **右屏：Player 代理**
-  * 将用户的左侧内容每隔 `350ms` (输入防抖期) 传送给右测 Player 子应用重新呈现结果、生成音频进度并在报错面板下发诊断说明。
-* **响应式降维**
-  * 在移动端环境，强制把分屏 (Split) 的左右结构，降级为上下结构堆叠栈，由媒体查询主导 (`CSS Media Query`)。
+## 3. 交互链路
 
-## 代码与测试映射 (Code & Verification Map)
+- **左屏：源码动作**：导入 `.abc` / `.txt`、导出当前源码、复制、加载示例、清空，以及字符统计。
+- **右屏：预览代理**：输入后按 350ms 防抖重新渲染，并刷新诊断面板与状态文案。
+- **分栏**：可拖拽、可键盘调整，尺寸与方向持久化；窄屏自动降级为上下堆叠。
 
-* **源码锚点**
-  * `src/studio/`: Studio 应用主逻辑、分栏、源码操作、展示状态、质量报告和渲染控制目录。
-  * `src/shared/studio-url.ts`: Studio hash 分享与扩展内 Studio URL 生成逻辑。
-  * `src/shared/abc-file.ts`: ABC / 文本文件导入导出辅助逻辑。
-  * `src/shared/filename.ts`: 从 ABC 标题生成安全文件名的共享逻辑。
-* **测试锚点**
-  * `src/studio/settings-store.test.ts`: 验证 Studio 设置在 localStorage 与扩展 storage 中的加载、回退和保存。
-  * `src/studio/rendering.test.ts`: 验证空输入清理、ABC 修剪渲染和播放高亮偏移。
-  * `src/studio/quality-report.test.ts`: 验证诊断面板呈现、清理隐藏和质量状态文本映射。
-  * `src/studio/presentation.test.ts`: 验证编辑器换行、高亮镜像、主题解析和布局 class 应用。
-  * `src/studio/source-actions.test.ts`: 验证源码统计、空源码动作禁用和导入错误规范化。
-  * `src/studio/source-highlight.test.ts`: 验证源码高亮范围合并、标记片段生成和播放器高亮偏移。
-  * `src/studio/split-layout.test.ts`: 验证桌面/移动分栏尺寸恢复、方向切换和键盘调整边界。
-  * `src/shared/studio-url.test.ts`: 验证 Studio hash 往返、非 Studio hash 拒绝和扩展 Studio URL 生成。
-  * `src/shared/abc-file.test.ts`: 验证 ABC / 文本文件接收、源码导入、扩展名拒绝和导出文件名。
-  * `src/shared/filename.test.ts`: 验证 ABC 标题读取、危险文件名字符清洗和缺省文件名。
+## 4. 约束
+
+- 空源码不进入渲染流程，直接回到就绪态。
+- 渲染失败必须显式反馈，不能只留空白预览。
+- 移动端不保留横向双栏，避免拖拽与滚动冲突。
+
+## 代码与测试映射
+
+- **源码锚点**
+  - `src/studio/`: 工作台入口、分栏、源码动作、展示状态、诊断面板与渲染控制。
+  - `src/shared/studio-url.ts`: hash 编解码。
+  - `src/shared/abc-file.ts` 与 `src/shared/filename.ts`: 文件导入导出与安全文件名。
+- **测试锚点**
+  - `src/studio/settings-store.test.ts`: 设置加载、回退与保存。
+  - `src/studio/rendering.test.ts`: 空输入清理、源码修剪渲染与高亮偏移。
+  - `src/studio/quality-report.test.ts`: 诊断面板呈现、清空隐藏与状态文案映射。
+  - `src/studio/presentation.test.ts`: 换行、高亮镜像、主题解析与布局类名。
+  - `src/studio/source-actions.test.ts`: 字符统计、空源码禁用与导入错误规范化。
+  - `src/studio/source-highlight.test.ts`: 高亮范围合并、片段生成与播放偏移。
+  - `src/studio/split-layout.test.ts`: 尺寸恢复、方向切换与键盘调整边界。
+  - `src/shared/studio-url.test.ts`: hash 往返与非 Studio hash 拒绝。
+  - `src/shared/abc-file.test.ts` 与 `src/shared/filename.test.ts`: 源码导入、扩展名拒绝与文件名清洗。

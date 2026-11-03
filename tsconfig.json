@@ -10,8 +10,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "types": ["chrome"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

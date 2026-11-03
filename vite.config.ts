@@ -1,16 +1,13 @@
 import { defineConfig } from "vite";
-import { crx } from "@crxjs/vite-plugin";
-import manifest from "./manifest.json";
 
+// Studio is the only build target. Set SITE_BASE when deploying under a subpath.
 export default defineConfig({
-  plugins: [crx({ manifest })],
+  root: "src/studio",
+  publicDir: "../../public",
+  base: process.env.SITE_BASE ?? "/",
   build: {
-    outDir: "dist",
-    rolldownOptions: {
-      input: {
-        studio: "src/studio/index.html",
-      },
-    },
+    outDir: "../../dist",
+    emptyOutDir: true,
     sourcemap: process.env.NODE_ENV === "development",
   },
 });

@@ -1,25 +1,4 @@
-import { getAssetUrl } from "./assets";
-import type { ExtensionRuntime } from "./extension-runtime";
-
-export const STUDIO_PAGE_PATH = "src/studio/index.html";
 export const STUDIO_ABC_HASH_PREFIX = "abc=";
-
-interface StudioUrlOptions {
-  baseUrl?: string;
-  runtime?: ExtensionRuntime | null;
-}
-
-export function createStudioUrl(
-  abcText: string,
-  options: StudioUrlOptions = {}
-): string {
-  const studioUrl = new URL(
-    getAssetUrl(STUDIO_PAGE_PATH, options),
-    globalThis.location?.href
-  );
-  studioUrl.hash = encodeStudioAbcHash(abcText);
-  return studioUrl.toString();
-}
 
 export function encodeStudioAbcHash(abcText: string): string {
   return `${STUDIO_ABC_HASH_PREFIX}${encodeURIComponent(abcText)}`;

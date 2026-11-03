@@ -1,31 +1,25 @@
 {
   "name": "chatmusic",
   "version": "0.4.0",
-  "description": "Chrome extension to render ABC notation as sheet music in AI chat apps",
+  "description": "Web ABC notation editor with live rendering, playback and diagnostics",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:extension": "vite",
-    "dev:web": "vite --config vite.web.config.ts",
-    "build": "npm run build:extension",
-    "build:extension": "vite build",
-    "build:web": "vite build --config vite.web.config.ts",
+    "build": "vite build",
     "preview": "vite preview",
-    "preview:web": "vite preview --config vite.web.config.ts",
     "audit": "npm audit --audit-level=high",
-    "version:check": "node scripts/check-version.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "release:package": "npm run build:extension && rm -f chatmusic-v$npm_package_version.zip && cd dist && zip -qr ../chatmusic-v$npm_package_version.zip .",
-    "check": "npm run audit && npm run version:check && npm run lint && npm run typecheck && npm run test && npm run build:extension && npm run build:web"
+    "check": "npm run audit && npm run lint && npm run typecheck && npm run test && npm run build"
   },
   "keywords": [
-    "chrome-extension",
+    "abc-notation",
     "abcjs",
-    "music-notation"
+    "sheet-music",
+    "music-editor"
   ],
   "author": "",
   "license": "MIT",
@@ -34,19 +28,14 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "^2.4.0",
     "@eslint/js": "^10.0.1",
-    "@types/chrome": "^0.1.42",
     "eslint": "^10.3.0",
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.5",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.3",
     "vite": "^8.0.12",
     "vitest": "^4.1.6"
-  },
-  "overrides": {
-    "rollup": "^2.80.0"
   }
 }

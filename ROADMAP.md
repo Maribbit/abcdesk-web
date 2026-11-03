@@ -1,34 +1,30 @@
-# ChatMusic 路线图 (Roadmap)
+# 路线图 (Roadmap)
 
-ChatMusic 是 ABC-first 的 Chrome Extension + Studio：在网页代码块中检测 ABC，使用可复用 Player 渲染、播放、导出，并提供独立 Studio 做 ABC 编辑、诊断和排版。
+ChatMusic Studio 是一个纯前端的 ABC 写谱工作台：左侧源码，右侧带播放、高亮和诊断的排版结果。
 
 ## 当前状态
 
-- **检测**：支持通用 `<pre>/<code>` ABC 检测，以及 Gemini、DeepSeek 等站点特化检测器。
-- **Player**：渲染、播放、进度、高亮、键盘、主题、全屏、源码折叠、SVG/MIDI 导出已集中到 `src/player/`。
-- **Studio**：支持 ABC 打开/保存、实时预览、质量诊断、分栏布局、URL hash 传递和扩展/Web 双构建。
-- **转换边界**：不维护内建 MusicXML/MXL 转换器，只保留外部转换链接。ChatMusic 负责外部转换后 ABC 的检查、渲染、播放和导出。
-- **质量保障**：Vitest 覆盖 detector、player、Studio 和 shared adapter；领域索引维护在 `docs/specs/`。
+- **工作台**：分栏/堆叠布局、源码持久化、hash 导入、ABC 打开与保存、质量诊断、深浅色主题。
+- **播放器**：本地 soundfont 播放、进度拖拽、节拍覆盖、播放与源码双向联动、88 键视图、SVG/MIDI 导出，作为 Shadow DOM 组件独立于工作台。
+- **质量保障**：Vitest 覆盖 player、studio 和 shared 三层的核心契约；领域索引维护在 `docs/specs/`。
 
 ## 优先级
 
-1. **P0: UI 与图标打磨**
-   优化 Studio 和内联 Player 的控件视觉、响应式断点、焦点态和浅/深色对比度。
-2. **P1: Studio PWA**
-   让 Web Studio 可安装、可离线打开，并缓存应用壳与本地 soundfont 资源。
-3. **P1: 外部转换工作流**
-   继续打磨 Studio 中的 MusicXML/ABC 外部链接入口和使用说明，不重新引入内建转换器。
-4. **P2: i18n**
-   将界面文案、扩展描述和 AI 修复提示抽到轻量多语言映射，优先支持 zh-CN / en-US。
-5. **P2: 专业输出与播放控制**
-   评估 PDF 导出、音量、节拍器、声部选择和更多音色；保持免费商用音源与包体积约束。
-6. **P3: ABC Normalize / Repair**
-   在现有 abcjs warning 反馈上增加保守的格式化、诊断和高置信修复，避免猜测音乐意图。
-7. **P3: 乐谱输入实验**
-   探索 Web MIDI step-time 输入、屏幕键盘输入和简单音高识别，先做小型可逆原型。
+1. **P0: 视觉重做**
+   将站点配色与材质替换为博客的体系（冷灰底色、朱红强调、半透明纸张 + 发丝边），重写 `src/studio/styles/` 与 `src/player/view/styles/` 两套 token；乐谱面保持不透明以保证可读性。
+2. **P0: 编辑器内核**
+   用 CodeMirror 6 替换 `textarea` + 高亮镜像，换取 ABC 语法高亮、行号、按键行为和更省心的中文输入。
+3. **P1: 分享与离线**
+   hash 分享链路做压缩编码并提供“复制分享链接”；补齐 PWA 清单与 Service Worker，缓存应用壳和 soundfont。
+4. **P1: i18n**
+   界面文案抽成轻量映射，优先 zh-CN / en-US。
+5. **P2: 输出与播放控制**
+   评估 PDF 导出、音量、节拍器与声部选择；保持免费商用音源与包体积约束。
+6. **P2: 诊断增强**
+   在 abcjs warning 之上做保守的格式化与高置信修复，不猜测音乐意图；不引入内建 MusicXML 转换器。
 
 ## 维护规则
 
-- 不引入内建 MusicXML/MXL 转换器，除非先完成设计和许可评审。
 - 新功能先确认所属领域：`docs/specs/` -> 源码目录 -> 测试锚点。
-- 发布前保持 `npm run check`、`CHANGELOG.md`、商店说明和隐私文档同步。
+- 提交前保持 `npm run check`、`CHANGELOG.md` 与 README 一致。
+- 不为单一平台引入新的构建分叉；工作台是唯一的发布目标。

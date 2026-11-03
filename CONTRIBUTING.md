@@ -1,78 +1,29 @@
 # Contributing
 
-Thanks for helping improve ChatMusic. Keep changes small, focused, and easy to review.
+Keep changes small and reviewable.
 
-## Development Workflow
+## Workflow
 
-1. Install dependencies with `npm install`.
-2. Create a branch for one logical change.
-3. Make the smallest code or documentation change that solves the problem.
-4. Add or update tests when behavior changes.
-5. Run `npm run check` before committing.
-6. Commit with a clear conventional message.
+1. `npm install`.
+2. Pick the domain spec in [docs/specs/README.md](docs/specs/README.md) before touching code.
+3. Make the smallest change that solves the problem, and add or update tests next to the code.
+4. Run `npm run check` before committing.
+5. Commit with a conventional prefix: `feat:`, `fix:`, `test:`, `docs:`, `chore:`, `ci:`, `refactor:`.
 
-## Commit Messages
+## Code style
 
-Use short conventional prefixes:
-
-- `feat:` for user-visible features.
-- `fix:` for bug fixes.
-- `test:` for test coverage changes.
-- `docs:` for documentation-only changes.
-- `chore:` for tooling, dependency, or maintenance changes.
-- `ci:` for CI workflow changes.
-- `refactor:` for behavior-preserving code changes.
-
-Examples:
-
-```text
-feat: add soundfont source selector
-fix: avoid duplicate renders during streaming updates
-test: cover abc detector edge cases
-```
-
-## Required Checks
-
-Run the full check before opening a pull request:
-
-```sh
-npm run check
-```
-
-This runs dependency audit, version consistency checks, ESLint, TypeScript, unit tests, and production build.
-The production build step covers both the Chrome extension and standalone Studio web targets.
-
-## Versioning and Changelog
-
-- Keep `version` in [package.json](package.json) and [manifest.json](manifest.json) synchronized.
-- Use numeric `X.Y.Z` versions for Chrome extension releases. Chrome does not accept npm prerelease strings in `manifest.json`; use release notes or store metadata for prerelease context instead.
-- Update [CHANGELOG.md](CHANGELOG.md) for user-visible changes, release process changes, permission changes, and compatibility notes.
-- Keep unreleased work under the `Unreleased` heading until preparing a Chrome Web Store release.
-- Run `npm run version:check` after changing either version file.
-
-## Code Style
-
-- Use TypeScript in strict mode.
-- Use ESLint only. Do not add Prettier unless the project explicitly decides to adopt it later.
-- Prefer small functions around the existing `detectors`, `player`, content script, popup, and service worker boundaries.
-- Keep extension/web cross-target code behind the adapters documented in [docs/dual-build.md](docs/dual-build.md).
-- Do not commit `dist/`, `dist-web/`, `node_modules`, Chrome signing keys, or packaged extension archives.
+- TypeScript in strict mode, no `any` unless the boundary genuinely needs it.
+- ESLint only. Do not add Prettier unless the project decides to adopt it.
+- Keep the boundaries intact: `src/studio/` owns editor wiring, `src/player/` owns rendering and playback, `src/shared/` stays free of DOM state.
+- Style the player through CSS variables and its Shadow DOM stylesheets, never by rewriting colors in TypeScript.
+- Do not commit `dist/`, `node_modules/` or packaged archives.
 
 ## Tests
 
-- Unit tests use Vitest.
-- DOM-dependent tests use jsdom.
-- Put narrow tests next to the code they cover, using `*.test.ts`.
-- Start with detector and state-transition tests before adding browser-level end-to-end tests.
+- Vitest, with jsdom for DOM-dependent modules.
+- Put narrow tests next to the module as `*.test.ts`.
+- When behavior changes, also update the `Code & Verification Map` in the matching spec.
 
-## Extension Permissions
+## Changelog
 
-Keep extension permissions minimal. Any change to `manifest.json` permissions or host permissions should explain why the extension needs that access.
-
-## Pull Requests
-
-Before requesting review, include:
-
-- What changed.
-- How it was tested.
-- Any permission, privacy, or release impact.
+Update [CHANGELOG.md](CHANGELOG.md) for user-visible changes and keep unreleased work under `Unreleased`.

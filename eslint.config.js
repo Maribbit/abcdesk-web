@@ -4,20 +4,17 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist/", "dist-web/", "node_modules/", "coverage/", "abc2xml.py", "xml2abc.js"],
+    ignores: ["dist/", "node_modules/", "coverage/"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["src/**/*.ts", "vite.config.ts", "vite.web.config.ts"],
+    files: ["src/**/*.ts", "**/*.config.ts"],
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: "module",
       globals: {
         ...globals.browser,
-        ...globals.serviceworker,
-        ...globals.webextensions,
-        chrome: "readonly",
       },
     },
     rules: {
@@ -33,7 +30,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["scripts/**/*.mjs"],
+    files: ["**/*.config.ts", "scripts/**/*.mjs"],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: "module",

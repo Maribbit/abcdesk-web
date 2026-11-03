@@ -2,23 +2,26 @@
 
 All notable changes to ChatMusic are documented in this file.
 
-This project follows a lightweight [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) style. Extension releases use the same numeric version in `package.json` and `manifest.json`.
+This project follows a lightweight [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) style.
 
 ## [Unreleased]
+
+### Changed
+
+- The Chrome extension target has been removed. ChatMusic is now a web-only ABC editor: the content script, ABC detectors, popup, background worker and MV3 manifest are gone, and the last extension state is preserved at tag `extension-v0.4.0`.
+- The build now produces a single static site in `dist/`. `npm run dev`, `npm run build` and `npm run check` all target the Studio app, and `SITE_BASE` replaces `CHATMUSIC_WEB_BASE` for subpath deployments.
+- Refined Studio responsive layout: compact header breakpoint at 1000px (tighter gap/padding) and the Layout Mode control hides at 860px, where auto mode forces the stacked layout.
+- Unified icon sizes across the Studio About dialog (18×18 → 15×15) and gave the tempo icon an unfilled circle stroke, matching the project-wide Lucide/Feather icon language.
 
 ### Added
 
 - Added browser fullscreen toggle as a complement to system fullscreen, expanding the player to fill the browser viewport without hiding browser chrome.
 - Added Escape key support to exit browser fullscreen mode.
 
-### Fixed
+### Removed
 
-- Fixed note-click source highlight that skipped the last note before a bar line. When seeking to a clicked note's timing position, abcjs could fire the next event instead of the clicked one. The highlight is now fired directly after seeking so the correct note is always highlighted.
-
-### Changed
-
-- Refined Studio responsive layout: added a compact header breakpoint at 1000px (tighter gap/padding) and hid the Layout Mode control at 860px, where stacked layout is forced in auto mode.
-- Unified icon sizes across Studio About dialog (18×18 → 15×15) and fixed the tempo icon to use an unfilled circle stroke, matching the project-wide Lucide/Feather icon language.
+- Removed Chrome Web Store release tooling: extension packaging script, version sync check, store listing, release checklist and manual QA checklist.
+- Removed the remaining extension-era docs (dual build, AI assistance guide, conversion notes, quality tooling plan) in favour of a four-domain spec set.
 
 ### Fixed
 
