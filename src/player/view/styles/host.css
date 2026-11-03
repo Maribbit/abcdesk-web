@@ -55,7 +55,7 @@
   background: var(--abcdesk-container-bg);
 }
 
-:host([data-abcdesk-layout="studio"]) {
+:host([data-abcdesk-layout="workspace"]) {
   display: block;
   height: 100%;
   margin: 0;

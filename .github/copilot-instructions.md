@@ -2,10 +2,10 @@
 
 ## Architecture
 
-- `src/studio/` owns the editor shell: DOM wiring, split layout, settings persistence, source actions and diagnostics rendering.
-- `src/player/` owns reusable rendering, playback, controls and the Shadow DOM view. It must not know about Studio.
+- `src/workspace/` owns the editor shell: DOM wiring, split layout, settings persistence, source actions and diagnostics rendering.
+- `src/player/` owns reusable rendering, playback, controls and the Shadow DOM view. It must not know about Workspace.
 - `src/shared/` owns ABC file, quality, export, filename and asset helpers. Keep it free of DOM state.
-- The studio is the only build target. A host-bridge seam stays isolated in `src/shared/extension-runtime.ts` (storage/messaging detection); never call host APIs from `src/player/` or `src/studio/`.
+- The workspace is the only build target. A host-bridge seam stays isolated in `src/shared/extension-runtime.ts` (storage/messaging detection); never call host APIs from `src/player/` or `src/workspace/`.
 
 ## Code Style
 

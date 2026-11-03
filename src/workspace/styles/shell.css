@@ -1,12 +1,12 @@
-.studio-shell {
+.workspace-shell {
   display: grid;
-  grid-template-columns: minmax(280px, var(--studio-editor-size)) 6px minmax(320px, 1fr);
+  grid-template-columns: minmax(280px, var(--workspace-editor-size)) 6px minmax(320px, 1fr);
   grid-template-rows: auto minmax(0, 1fr);
   width: 100%;
   height: 100%;
 }
 
-.studio-layout {
+.workspace-layout {
   display: contents;
 }
 
@@ -17,7 +17,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--studio-surface);
+  background: var(--workspace-surface);
 }
 
 .editor-pane {
@@ -26,17 +26,17 @@
   grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
-.studio-resizer {
+.workspace-resizer {
   grid-column: 2;
   grid-row: 2;
   position: relative;
   z-index: 2;
-  background: var(--studio-border);
+  background: var(--workspace-border);
   cursor: col-resize;
   touch-action: none;
 }
 
-.studio-resizer::after {
+.workspace-resizer::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -44,14 +44,14 @@
   width: 2px;
   height: 36px;
   border-radius: 999px;
-  background: var(--studio-border-strong);
+  background: var(--workspace-border-strong);
   transform: translate(-50%, -50%);
 }
 
-.studio-resizer:hover,
-.studio-resizer:focus-visible,
-.studio-shell.is-resizing .studio-resizer {
-  background: var(--studio-border-strong);
+.workspace-resizer:hover,
+.workspace-resizer:focus-visible,
+.workspace-shell.is-resizing .workspace-resizer {
+  background: var(--workspace-border-strong);
   outline: none;
 }
 

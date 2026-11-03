@@ -1,23 +1,23 @@
-export interface OpenStudioMessage {
-  type: "OPEN_STUDIO";
+export interface OpenWorkspaceMessage {
+  type: "OPEN_WORKSPACE";
   abcText: string;
 }
 
-export function createOpenStudioMessage(abcText: string): OpenStudioMessage {
+export function createOpenWorkspaceMessage(abcText: string): OpenWorkspaceMessage {
   return {
-    type: "OPEN_STUDIO",
+    type: "OPEN_WORKSPACE",
     abcText,
   };
 }
 
-export function isOpenStudioMessage(
+export function isOpenWorkspaceMessage(
   message: unknown
-): message is OpenStudioMessage {
+): message is OpenWorkspaceMessage {
   return (
     typeof message === "object" &&
     message !== null &&
     "type" in message &&
-    message.type === "OPEN_STUDIO" &&
+    message.type === "OPEN_WORKSPACE" &&
     "abcText" in message &&
     typeof message.abcText === "string"
   );

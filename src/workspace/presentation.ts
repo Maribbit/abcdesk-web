@@ -7,7 +7,7 @@ import {
   type ThemeMode,
 } from "../shared/settings";
 
-export function applyStudioEditorWrap(
+export function applyWorkspaceEditorWrap(
   editorFrame: HTMLElement,
   input: HTMLTextAreaElement,
   editorWrap: EditorWrap,
@@ -21,7 +21,7 @@ export function applyStudioEditorWrap(
   return normalizedEditorWrap;
 }
 
-export function getSelectedStudioThemeMode(
+export function getSelectedWorkspaceThemeMode(
   themeModeForm: HTMLFormElement,
 ): ThemeMode {
   return normalizeThemeMode(
@@ -29,7 +29,7 @@ export function getSelectedStudioThemeMode(
   );
 }
 
-export function applyStudioTheme(
+export function applyWorkspaceTheme(
   themeMode: ThemeMode,
   prefersDark: boolean,
   documentElement: HTMLElement = document.documentElement,
@@ -41,17 +41,17 @@ export function applyStudioTheme(
   documentElement.dataset.themeMode = themeMode;
 }
 
-export function applyStudioLayoutMode(
-  studioShell: HTMLElement,
+export function applyWorkspaceLayoutMode(
+  workspaceShell: HTMLElement,
   layoutMode: LayoutMode,
 ): void {
   if (layoutMode === "horizontal") {
-    studioShell.classList.add("layout-split");
-    studioShell.classList.remove("layout-stacked");
+    workspaceShell.classList.add("layout-split");
+    workspaceShell.classList.remove("layout-stacked");
   } else if (layoutMode === "vertical") {
-    studioShell.classList.add("layout-stacked");
-    studioShell.classList.remove("layout-split");
+    workspaceShell.classList.add("layout-stacked");
+    workspaceShell.classList.remove("layout-split");
   } else {
-    studioShell.classList.remove("layout-split", "layout-stacked");
+    workspaceShell.classList.remove("layout-split", "layout-stacked");
   }
 }

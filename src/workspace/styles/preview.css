@@ -4,7 +4,7 @@
   height: 100%;
   min-height: 0;
   overflow: hidden;
-  background: var(--studio-surface);
+  background: var(--workspace-surface);
 }
 
 .render-mount .abcdesk-host {
@@ -13,7 +13,7 @@
   min-height: 0;
 }
 
-.studio-render-source {
+.workspace-render-source {
   display: none;
 }
 
@@ -25,15 +25,15 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px dashed var(--studio-border-strong);
+  border: 1px dashed var(--workspace-border-strong);
   border-radius: 8px;
-  background: var(--studio-empty-bg);
-  color: var(--studio-muted);
+  background: var(--workspace-empty-bg);
+  color: var(--workspace-muted);
   text-align: center;
 }
 
 .empty-preview strong {
-  color: var(--studio-text);
+  color: var(--workspace-text);
   font-size: 15px;
 }
 

@@ -10,7 +10,7 @@ interface SourceStatsTargets {
   sourceStats: HTMLElement;
 }
 
-interface ImportStudioAbcFileOptions {
+interface ImportWorkspaceAbcFileOptions {
   abcFileInput: HTMLInputElement;
   importAbcButton: HTMLButtonElement;
   qualityPanel: HTMLElement;
@@ -25,7 +25,7 @@ export function getSourceStatsText(sourceText: string): string {
   return `${lineCount} lines, ${characterCount} chars`;
 }
 
-export function updateStudioSourceStats(
+export function updateWorkspaceSourceStats(
   targets: SourceStatsTargets,
   sourceText: string,
 ): void {
@@ -35,7 +35,7 @@ export function updateStudioSourceStats(
   targets.exportAbcButton.disabled = characterCount === 0;
 }
 
-export async function copyStudioSourceToClipboard(
+export async function copyWorkspaceSourceToClipboard(
   sourceText: string,
   sourceStats: HTMLElement,
   updateSourceStats: () => void,
@@ -51,14 +51,14 @@ export async function copyStudioSourceToClipboard(
   window.setTimeout(updateSourceStats, 1200);
 }
 
-export async function importStudioAbcFile({
+export async function importWorkspaceAbcFile({
   abcFileInput,
   importAbcButton,
   qualityPanel,
   renderCurrentInput,
   renderStatus,
   setInputValue,
-}: ImportStudioAbcFileOptions): Promise<void> {
+}: ImportWorkspaceAbcFileOptions): Promise<void> {
   const file = abcFileInput.files?.[0];
   if (!file) return;
 
@@ -79,7 +79,7 @@ export async function importStudioAbcFile({
   }
 }
 
-export function exportStudioAbcFile(
+export function exportWorkspaceAbcFile(
   sourceText: string,
   sourceStats: HTMLElement,
   updateSourceStats: () => void,

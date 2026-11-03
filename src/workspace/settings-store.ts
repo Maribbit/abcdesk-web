@@ -25,7 +25,7 @@ import {
   type ExtensionStorageArea,
 } from "../shared/extension-runtime";
 
-export interface StudioSettings {
+export interface WorkspaceSettings {
   themeMode: ThemeMode;
   layoutMode: LayoutMode;
   keyboardVisibility: KeyboardVisibility;
@@ -33,10 +33,10 @@ export interface StudioSettings {
   editorWrap: EditorWrap;
 }
 
-export async function loadStudioSettings(): Promise<StudioSettings> {
+export async function loadWorkspaceSettings(): Promise<WorkspaceSettings> {
   const extensionStorage = getExtensionSyncStorage();
 
-  if (extensionStorage) return loadExtensionStudioSettings(extensionStorage);
+  if (extensionStorage) return loadExtensionWorkspaceSettings(extensionStorage);
 
   return {
     themeMode: normalizeThemeMode(
@@ -61,7 +61,7 @@ export async function loadStudioSettings(): Promise<StudioSettings> {
   };
 }
 
-export async function saveStudioThemeMode(themeMode: ThemeMode): Promise<void> {
+export async function saveWorkspaceThemeMode(themeMode: ThemeMode): Promise<void> {
   const extensionStorage = getExtensionSyncStorage();
 
   if (extensionStorage) {
@@ -72,7 +72,7 @@ export async function saveStudioThemeMode(themeMode: ThemeMode): Promise<void> {
   window.localStorage.setItem(THEME_MODE_STORAGE_KEY, themeMode);
 }
 
-export async function saveStudioLayoutMode(
+export async function saveWorkspaceLayoutMode(
   layoutMode: LayoutMode,
 ): Promise<void> {
   const extensionStorage = getExtensionSyncStorage();
@@ -85,7 +85,7 @@ export async function saveStudioLayoutMode(
   window.localStorage.setItem(LAYOUT_MODE_STORAGE_KEY, layoutMode);
 }
 
-export async function saveStudioAbcAutoCheck(
+export async function saveWorkspaceAbcAutoCheck(
   abcAutoCheck: AbcAutoCheck,
 ): Promise<void> {
   const extensionStorage = getExtensionSyncStorage();
@@ -98,7 +98,7 @@ export async function saveStudioAbcAutoCheck(
   window.localStorage.setItem(ABC_AUTO_CHECK_STORAGE_KEY, abcAutoCheck);
 }
 
-export async function saveStudioEditorWrap(
+export async function saveWorkspaceEditorWrap(
   editorWrap: EditorWrap,
 ): Promise<void> {
   const extensionStorage = getExtensionSyncStorage();
@@ -111,9 +111,9 @@ export async function saveStudioEditorWrap(
   window.localStorage.setItem(EDITOR_WRAP_STORAGE_KEY, editorWrap);
 }
 
-function loadExtensionStudioSettings(
+function loadExtensionWorkspaceSettings(
   extensionStorage: ExtensionStorageArea,
-): Promise<StudioSettings> {
+): Promise<WorkspaceSettings> {
   return new Promise((resolve) => {
     extensionStorage.get(
       [

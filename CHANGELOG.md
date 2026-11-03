@@ -9,6 +9,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 ### Changed
 
 - The project is renamed to **ABC Desk Web** (`abcdesk-web`), the web counterpart of the ABC Desk VS Code workbench. Branding, package name, storage keys, custom element tags and CSS custom properties move from `chatmusic` to `abcdesk`.
+- The "Studio" concept is renamed to "workspace" so the app name, the code and the docs share one word: `src/studio/` becomes `src/workspace/`, `docs/specs/studio.md` becomes `workspace.md`, and the related settings helpers, storage keys, CSS classes and custom properties follow.
 - The Chrome extension target has been removed. ABC Desk Web is now a web-only ABC editor: the content script, ABC detectors, popup, background worker and MV3 manifest are gone, and the last extension state is preserved at tag `extension-v0.4.0`.
 - The build now produces a single static site in `dist/`. `npm run dev`, `npm run build` and `npm run check` all target the Studio app, and `SITE_BASE` replaces `CHATMUSIC_WEB_BASE` for subpath deployments.
 - Refined Studio responsive layout: compact header breakpoint at 1000px (tighter gap/padding) and the Layout Mode control hides at 860px, where auto mode forces the stacked layout.

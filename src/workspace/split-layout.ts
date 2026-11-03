@@ -1,22 +1,22 @@
 import type { LayoutMode } from "../shared/settings";
 
-const STUDIO_DESKTOP_SPLIT_STORAGE_KEY = "abcdeskStudioDesktopSplit";
-const STUDIO_MOBILE_SPLIT_STORAGE_KEY = "abcdeskStudioMobileSplit";
+const WORKSPACE_DESKTOP_SPLIT_STORAGE_KEY = "abcdeskWorkspaceDesktopSplit";
+const WORKSPACE_MOBILE_SPLIT_STORAGE_KEY = "abcdeskWorkspaceMobileSplit";
 const MIN_DESKTOP_EDITOR_WIDTH = 280;
 const MIN_DESKTOP_PREVIEW_WIDTH = 320;
 const MIN_MOBILE_EDITOR_HEIGHT = 160;
 const MIN_MOBILE_PREVIEW_HEIGHT = 220;
 const SPLIT_KEYBOARD_STEP = 24;
 
-interface StudioSplitLayoutOptions {
+interface WorkspaceSplitLayoutOptions {
   editorPane: HTMLElement;
   resizer: HTMLElement;
   stackedLayoutQuery: Pick<MediaQueryList, "matches">;
-  studioShell: HTMLElement;
+  workspaceShell: HTMLElement;
   getLayoutMode: () => LayoutMode;
 }
 
-export interface StudioSplitLayout {
+export interface WorkspaceSplitLayout {
   clampRestoredSize: () => void;
   handleKeydown: (event: KeyboardEvent) => void;
   restoreSizes: () => void;
@@ -26,13 +26,13 @@ export interface StudioSplitLayout {
   updateOrientation: () => void;
 }
 
-export function createStudioSplitLayout({
+export function createWorkspaceSplitLayout({
   editorPane,
   resizer,
   stackedLayoutQuery,
-  studioShell,
+  workspaceShell,
   getLayoutMode,
-}: StudioSplitLayoutOptions): StudioSplitLayout {
+}: WorkspaceSplitLayoutOptions): WorkspaceSplitLayout {
   let isResizing = false;
 
   const isStackedLayout = () => {
@@ -44,39 +44,39 @@ export function createStudioSplitLayout({
 
   const setDesktopEditorWidth = (width: number) => {
     const maxWidth =
-      studioShell.getBoundingClientRect().width - MIN_DESKTOP_PREVIEW_WIDTH;
+      workspaceShell.getBoundingClientRect().width - MIN_DESKTOP_PREVIEW_WIDTH;
     const editorWidth = clamp(width, MIN_DESKTOP_EDITOR_WIDTH, maxWidth);
     const value = `${editorWidth}px`;
 
-    studioShell.style.setProperty("--studio-editor-size", value);
-    window.localStorage.setItem(STUDIO_DESKTOP_SPLIT_STORAGE_KEY, value);
+    workspaceShell.style.setProperty("--workspace-editor-size", value);
+    window.localStorage.setItem(WORKSPACE_DESKTOP_SPLIT_STORAGE_KEY, value);
   };
 
   const setMobileEditorHeight = (height: number) => {
     const maxHeight =
-      studioShell.getBoundingClientRect().height -
+      workspaceShell.getBoundingClientRect().height -
       MIN_MOBILE_PREVIEW_HEIGHT -
       resizer.getBoundingClientRect().height;
     const editorHeight = clamp(height, MIN_MOBILE_EDITOR_HEIGHT, maxHeight);
     const value = `${editorHeight}px`;
 
-    studioShell.style.setProperty("--studio-editor-mobile-size", value);
-    window.localStorage.setItem(STUDIO_MOBILE_SPLIT_STORAGE_KEY, value);
+    workspaceShell.style.setProperty("--workspace-editor-mobile-size", value);
+    window.localStorage.setItem(WORKSPACE_MOBILE_SPLIT_STORAGE_KEY, value);
   };
 
   const restoreSizes = () => {
     const desktopSplit = window.localStorage.getItem(
-      STUDIO_DESKTOP_SPLIT_STORAGE_KEY,
+      WORKSPACE_DESKTOP_SPLIT_STORAGE_KEY,
     );
     const mobileSplit = window.localStorage.getItem(
-      STUDIO_MOBILE_SPLIT_STORAGE_KEY,
+      WORKSPACE_MOBILE_SPLIT_STORAGE_KEY,
     );
 
     if (desktopSplit) {
-      studioShell.style.setProperty("--studio-editor-size", desktopSplit);
+      workspaceShell.style.setProperty("--workspace-editor-size", desktopSplit);
     }
     if (mobileSplit) {
-      studioShell.style.setProperty("--studio-editor-mobile-size", mobileSplit);
+      workspaceShell.style.setProperty("--workspace-editor-mobile-size", mobileSplit);
     }
   };
 
@@ -95,7 +95,7 @@ export function createStudioSplitLayout({
 
   const startResize = (event: PointerEvent) => {
     isResizing = true;
-    studioShell.classList.add("is-resizing");
+    workspaceShell.classList.add("is-resizing");
     resizer.setPointerCapture(event.pointerId);
   };
 
@@ -108,7 +108,7 @@ export function createStudioSplitLayout({
       );
     } else {
       setDesktopEditorWidth(
-        event.clientX - studioShell.getBoundingClientRect().left,
+        event.clientX - workspaceShell.getBoundingClientRect().left,
       );
     }
   };
@@ -116,7 +116,7 @@ export function createStudioSplitLayout({
   const stopResize = () => {
     if (!isResizing) return;
     isResizing = false;
-    studioShell.classList.remove("is-resizing");
+    workspaceShell.classList.remove("is-resizing");
   };
 
   const handleKeydown = (event: KeyboardEvent) => {

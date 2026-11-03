@@ -4,7 +4,7 @@ import type {
 } from "../shared/abc-quality/diagnostics";
 import { validateAbcSource } from "../shared/abc-quality/validate";
 
-export function checkStudioAbcSource(
+export function checkWorkspaceAbcSource(
   abcText: string,
   renderStatus: HTMLElement,
   qualityPanel: HTMLElement,

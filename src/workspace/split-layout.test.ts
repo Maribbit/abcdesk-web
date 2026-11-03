@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import type { LayoutMode } from "../shared/settings";
-import { createStudioSplitLayout } from "./split-layout";
+import { createWorkspaceSplitLayout } from "./split-layout";
 
 function setRect(element: HTMLElement, rect: Partial<DOMRect>): void {
   element.getBoundingClientRect = () =>
@@ -24,20 +24,20 @@ function createLayout(
     stackedMatches?: boolean;
   } = {},
 ) {
-  const studioShell = document.createElement("section");
+  const workspaceShell = document.createElement("section");
   const editorPane = document.createElement("section");
   const resizer = document.createElement("div");
   let layoutMode = options.layoutMode ?? "auto";
 
-  setRect(studioShell, { height: 720, width: 1000 });
+  setRect(workspaceShell, { height: 720, width: 1000 });
   setRect(editorPane, { height: 300, width: 400, top: 100 });
   setRect(resizer, { height: 8 });
 
-  const splitLayout = createStudioSplitLayout({
+  const splitLayout = createWorkspaceSplitLayout({
     editorPane,
     resizer,
     stackedLayoutQuery: { matches: options.stackedMatches ?? false },
-    studioShell,
+    workspaceShell,
     getLayoutMode: () => layoutMode,
   });
 
@@ -45,30 +45,30 @@ function createLayout(
     editorPane,
     resizer,
     splitLayout,
-    studioShell,
+    workspaceShell,
     setLayoutMode: (nextLayoutMode: LayoutMode) => {
       layoutMode = nextLayoutMode;
     },
   };
 }
 
-describe("Studio split layout", () => {
+describe("Workspace split layout", () => {
   afterEach(() => {
     window.localStorage.clear();
   });
 
   it("restores persisted desktop and mobile split sizes", () => {
-    const { splitLayout, studioShell } = createLayout();
-    window.localStorage.setItem("abcdeskStudioDesktopSplit", "420px");
-    window.localStorage.setItem("abcdeskStudioMobileSplit", "260px");
+    const { splitLayout, workspaceShell } = createLayout();
+    window.localStorage.setItem("abcdeskWorkspaceDesktopSplit", "420px");
+    window.localStorage.setItem("abcdeskWorkspaceMobileSplit", "260px");
 
     splitLayout.restoreSizes();
 
-    expect(studioShell.style.getPropertyValue("--studio-editor-size")).toBe(
+    expect(workspaceShell.style.getPropertyValue("--workspace-editor-size")).toBe(
       "420px",
     );
     expect(
-      studioShell.style.getPropertyValue("--studio-editor-mobile-size"),
+      workspaceShell.style.getPropertyValue("--workspace-editor-mobile-size"),
     ).toBe("260px");
   });
 
@@ -90,7 +90,7 @@ describe("Studio split layout", () => {
   });
 
   it("resizes the desktop split with keyboard arrows and clamps to bounds", () => {
-    const { editorPane, splitLayout, studioShell } = createLayout({
+    const { editorPane, splitLayout, workspaceShell } = createLayout({
       layoutMode: "horizontal",
     });
     setRect(editorPane, { width: 670 });
@@ -99,10 +99,10 @@ describe("Studio split layout", () => {
       new KeyboardEvent("keydown", { key: "ArrowRight" }),
     );
 
-    expect(studioShell.style.getPropertyValue("--studio-editor-size")).toBe(
+    expect(workspaceShell.style.getPropertyValue("--workspace-editor-size")).toBe(
       "680px",
     );
-    expect(window.localStorage.getItem("abcdeskStudioDesktopSplit")).toBe(
+    expect(window.localStorage.getItem("abcdeskWorkspaceDesktopSplit")).toBe(
       "680px",
     );
   });

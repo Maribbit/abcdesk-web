@@ -26,7 +26,7 @@ export interface RenderViewHandlers {
   onCopyQualityFeedback?: () => void;
   onExportScore?: () => void;
   onExportMidi?: () => void;
-  onOpenStudio?: () => void;
+  onOpenWorkspace?: () => void;
   onToggleCode?: () => void;
 }
 
@@ -119,10 +119,10 @@ function renderContainerTemplate(): TemplateResult {
           ${renderMusicIcon()}
         </button>
         <button
-          class="abcdesk-studio-button"
+          class="abcdesk-workspace-button"
           type="button"
-          title="Open in Studio"
-          aria-label="Open in Studio"
+          title="Open in Workspace"
+          aria-label="Open in Workspace"
         >
           ${renderExternalLinkIcon()}
         </button>
@@ -204,8 +204,8 @@ function setupRenderViewActions(
       handlers.onExportMidi,
     ),
     setupButtonAction(
-      container.querySelector(".abcdesk-studio-button"),
-      handlers.onOpenStudio,
+      container.querySelector(".abcdesk-workspace-button"),
+      handlers.onOpenWorkspace,
       true,
     ),
     setupElementAction(

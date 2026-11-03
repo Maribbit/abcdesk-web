@@ -4,19 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ABC Desk Web</title>
-  <link rel="stylesheet" href="./studio.css">
+  <link rel="stylesheet" href="./workspace.css">
 </head>
 <body>
-  <main class="studio-shell">
-    <header class="studio-header">
-      <div class="studio-brand" aria-label="ABC Desk Web">
-        <img class="studio-brand-mark" src="%BASE_URL%icons/icon48.png" alt="" aria-hidden="true">
+  <main class="workspace-shell">
+    <header class="workspace-header">
+      <div class="workspace-brand" aria-label="ABC Desk Web">
+        <img class="workspace-brand-mark" src="%BASE_URL%icons/icon48.png" alt="" aria-hidden="true">
         <div>
           <h1>ABC Desk Web</h1>
         </div>
       </div>
 
-      <div class="studio-actions" aria-label="Studio actions">
+      <div class="workspace-actions" aria-label="Workspace actions">
         <form id="layoutModeForm" class="segmented-control" aria-label="Layout mode" title="Layout mode">
           <label>
             <input type="radio" name="layoutMode" value="auto" title="Auto Layout">
@@ -61,7 +61,7 @@
       </div>
     </header>
 
-    <div class="studio-layout">
+    <div class="workspace-layout">
       <section class="editor-pane" aria-labelledby="editorTitle">
         <div class="pane-header">
           <div class="pane-tools">
@@ -119,8 +119,8 @@
       </section>
 
         <div
-          class="studio-resizer"
-          id="studioResizer"
+          class="workspace-resizer"
+          id="workspaceResizer"
           role="separator"
           aria-label="Resize editor and preview"
           aria-orientation="vertical"
@@ -133,13 +133,13 @@
             <strong>No score</strong>
             <span>Waiting for source</span>
           </div>
-          <pre class="studio-render-source" id="studioSource" aria-hidden="true"></pre>
+          <pre class="workspace-render-source" id="workspaceSource" aria-hidden="true"></pre>
         </div>
       </section>
     </div>
   </main>
 
-  <dialog id="infoDialog" class="studio-dialog">
+  <dialog id="infoDialog" class="workspace-dialog">
     <div class="dialog-header">
       <h2>About ABC Desk</h2>
       <button class="icon-button" id="closeInfoButton" type="button" aria-label="Close" title="Close">
@@ -169,6 +169,6 @@
     </div>
   </dialog>
 
-  <script type="module" src="./studio.ts"></script>
+  <script type="module" src="./workspace.ts"></script>
 </body>
 </html>

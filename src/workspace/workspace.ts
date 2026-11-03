@@ -5,36 +5,36 @@ import {
   type KeyboardVisibility,
   type LayoutMode,
 } from "../shared/settings";
-import { decodeStudioAbcHash } from "../shared/studio-url";
+import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
 import type { SourceHighlightRange } from "../player/renderer";
 import {
   createSourceHighlightFragment,
   normalizeSourceHighlightRanges,
 } from "./source-highlight";
-import { checkStudioAbcSource, hideQualityPanel } from "./quality-report";
+import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
-  loadStudioSettings,
-  saveStudioAbcAutoCheck,
-  saveStudioEditorWrap,
-  saveStudioThemeMode,
-  saveStudioLayoutMode,
+  loadWorkspaceSettings,
+  saveWorkspaceAbcAutoCheck,
+  saveWorkspaceEditorWrap,
+  saveWorkspaceThemeMode,
+  saveWorkspaceLayoutMode,
 } from "./settings-store";
-import { createStudioSplitLayout } from "./split-layout";
+import { createWorkspaceSplitLayout } from "./split-layout";
 import {
-  copyStudioSourceToClipboard,
-  exportStudioAbcFile,
-  importStudioAbcFile,
-  updateStudioSourceStats,
+  copyWorkspaceSourceToClipboard,
+  exportWorkspaceAbcFile,
+  importWorkspaceAbcFile,
+  updateWorkspaceSourceStats,
 } from "./source-actions";
 import {
-  applyStudioEditorWrap,
-  applyStudioLayoutMode,
-  applyStudioTheme,
-  getSelectedStudioThemeMode,
+  applyWorkspaceEditorWrap,
+  applyWorkspaceLayoutMode,
+  applyWorkspaceTheme,
+  getSelectedWorkspaceThemeMode,
 } from "./presentation";
-import { createStudioRenderController } from "./rendering";
+import { createWorkspaceRenderController } from "./rendering";
 
-const STUDIO_SOURCE_STORAGE_KEY = "abcdeskStudioAbcText";
+const WORKSPACE_SOURCE_STORAGE_KEY = "abcdeskWorkspaceAbcText";
 const RENDER_DEBOUNCE_MS = 350;
 
 const EXAMPLE_ABC = `X: 1
@@ -51,11 +51,11 @@ const editorFrame = document.getElementById("abcEditorFrame") as HTMLElement;
 const sourceHighlightMirror = document.getElementById(
   "abcHighlightMirror",
 ) as HTMLElement;
-const studioShell = document.querySelector(".studio-shell") as HTMLElement;
-const sourceElement = document.getElementById("studioSource") as HTMLElement;
+const workspaceShell = document.querySelector(".workspace-shell") as HTMLElement;
+const sourceElement = document.getElementById("workspaceSource") as HTMLElement;
 const renderMount = document.getElementById("renderMount") as HTMLElement;
 const editorPane = document.querySelector(".editor-pane") as HTMLElement;
-const studioResizer = document.getElementById("studioResizer") as HTMLElement;
+const workspaceResizer = document.getElementById("workspaceResizer") as HTMLElement;
 const sourceStats = document.getElementById("sourceStats") as HTMLElement;
 const renderStatus = document.getElementById("renderStatus") as HTMLElement;
 const qualityPanel = document.getElementById("qualityPanel") as HTMLElement;
@@ -96,17 +96,17 @@ let currentEditorWrap: EditorWrap = "disabled";
 let explicitLayoutMode: LayoutMode = "auto";
 let currentSourceHighlightKey = "";
 
-const splitLayout = createStudioSplitLayout({
+const splitLayout = createWorkspaceSplitLayout({
   editorPane,
-  resizer: studioResizer,
+  resizer: workspaceResizer,
   stackedLayoutQuery,
-  studioShell,
+  workspaceShell,
   getLayoutMode: () => explicitLayoutMode,
 });
-const renderController = createStudioRenderController({
+const renderController = createWorkspaceRenderController({
   clearSourceHighlight,
   getKeyboardVisibility: () => currentKeyboardVisibility,
-  getThemeMode: () => getSelectedStudioThemeMode(themeModeForm),
+  getThemeMode: () => getSelectedWorkspaceThemeMode(themeModeForm),
   input,
   renderDelayMs: RENDER_DEBOUNCE_MS,
   renderMount,
@@ -116,20 +116,20 @@ const renderController = createStudioRenderController({
   updateSourceHighlight,
 });
 
-void initializeStudio();
+void initializeWorkspace();
 
-async function initializeStudio(): Promise<void> {
+async function initializeWorkspace(): Promise<void> {
   splitLayout.restoreSizes();
   splitLayout.updateOrientation();
   window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
 
   input.value =
     readAbcFromUrlHash() ??
-    window.localStorage.getItem(STUDIO_SOURCE_STORAGE_KEY) ??
+    window.localStorage.getItem(WORKSPACE_SOURCE_STORAGE_KEY) ??
     EXAMPLE_ABC;
-  window.localStorage.setItem(STUDIO_SOURCE_STORAGE_KEY, input.value);
+  window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, input.value);
 
-  const settings = await loadStudioSettings();
+  const settings = await loadWorkspaceSettings();
   currentKeyboardVisibility = settings.keyboardVisibility;
   currentAbcAutoCheck = settings.abcAutoCheck;
   currentEditorWrap = settings.editorWrap;
@@ -139,13 +139,13 @@ async function initializeStudio(): Promise<void> {
 
   autoCheckInput.checked = settings.abcAutoCheck === "enabled";
   applyEditorWrap(settings.editorWrap);
-  applyStudioTheme(settings.themeMode, colorSchemeQuery.matches);
-  applyStudioLayoutMode(studioShell, settings.layoutMode);
+  applyWorkspaceTheme(settings.themeMode, colorSchemeQuery.matches);
+  applyWorkspaceLayoutMode(workspaceShell, settings.layoutMode);
 
   input.addEventListener("input", () => {
     clearSourceHighlight();
     updateSourceStats();
-    window.localStorage.setItem(STUDIO_SOURCE_STORAGE_KEY, input.value);
+    window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, input.value);
     hideQualityPanel(qualityPanel);
     renderStatus.textContent = "Checking...";
     renderController.scheduleRender();
@@ -184,22 +184,22 @@ async function initializeStudio(): Promise<void> {
     input.focus();
   });
   themeModeForm.addEventListener("change", async () => {
-    const themeMode = getSelectedStudioThemeMode(themeModeForm);
-    applyStudioTheme(themeMode, colorSchemeQuery.matches);
-    await saveStudioThemeMode(themeMode);
+    const themeMode = getSelectedWorkspaceThemeMode(themeModeForm);
+    applyWorkspaceTheme(themeMode, colorSchemeQuery.matches);
+    await saveWorkspaceThemeMode(themeMode);
     renderController.renderCurrentInput();
   });
   layoutModeForm.addEventListener("change", async () => {
     const layoutMode = normalizeLayoutMode(layoutModeForm.layoutMode.value);
     explicitLayoutMode = layoutMode;
-    applyStudioLayoutMode(studioShell, layoutMode);
+    applyWorkspaceLayoutMode(workspaceShell, layoutMode);
     splitLayout.updateOrientation();
-    await saveStudioLayoutMode(layoutMode);
+    await saveWorkspaceLayoutMode(layoutMode);
     window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
   });
   colorSchemeQuery.addEventListener("change", () => {
-    if (getSelectedStudioThemeMode(themeModeForm) === "auto") {
-      applyStudioTheme("auto", colorSchemeQuery.matches);
+    if (getSelectedWorkspaceThemeMode(themeModeForm) === "auto") {
+      applyWorkspaceTheme("auto", colorSchemeQuery.matches);
       renderController.renderCurrentInput();
     }
   });
@@ -236,8 +236,8 @@ async function initializeStudio(): Promise<void> {
       window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
     }
   });
-  studioResizer.addEventListener("pointerdown", splitLayout.startResize);
-  studioResizer.addEventListener("keydown", splitLayout.handleKeydown);
+  workspaceResizer.addEventListener("pointerdown", splitLayout.startResize);
+  workspaceResizer.addEventListener("keydown", splitLayout.handleKeydown);
   window.addEventListener("pointermove", splitLayout.resizeFromPointer);
   window.addEventListener("pointerup", splitLayout.stopResize);
 
@@ -250,17 +250,17 @@ async function updateAbcAutoCheckSetting(
 ): Promise<void> {
   currentAbcAutoCheck = abcAutoCheck;
   autoCheckInput.checked = abcAutoCheck === "enabled";
-  await saveStudioAbcAutoCheck(abcAutoCheck);
+  await saveWorkspaceAbcAutoCheck(abcAutoCheck);
   checkCurrentAbcSource();
 }
 
 async function updateEditorWrapSetting(editorWrap: EditorWrap): Promise<void> {
   applyEditorWrap(editorWrap);
-  await saveStudioEditorWrap(editorWrap);
+  await saveWorkspaceEditorWrap(editorWrap);
 }
 
 function applyEditorWrap(editorWrap: EditorWrap): void {
-  currentEditorWrap = applyStudioEditorWrap(
+  currentEditorWrap = applyWorkspaceEditorWrap(
     editorFrame,
     input,
     editorWrap,
@@ -270,7 +270,7 @@ function applyEditorWrap(editorWrap: EditorWrap): void {
 }
 
 function readAbcFromUrlHash(): string | null {
-  const abcText = decodeStudioAbcHash(window.location.hash);
+  const abcText = decodeWorkspaceAbcHash(window.location.hash);
   if (abcText === null) return null;
 
   window.history.replaceState(null, "", window.location.pathname);
@@ -280,7 +280,7 @@ function readAbcFromUrlHash(): string | null {
 function setInputValue(value: string): void {
   input.value = value;
   clearSourceHighlight();
-  window.localStorage.setItem(STUDIO_SOURCE_STORAGE_KEY, value);
+  window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, value);
   updateSourceStats();
 }
 
@@ -320,14 +320,14 @@ function syncSourceHighlightScroll(): void {
 }
 
 function updateSourceStats(): void {
-  updateStudioSourceStats(
+  updateWorkspaceSourceStats(
     { copySourceButton, exportAbcButton, sourceStats },
     input.value,
   );
 }
 
 function checkCurrentAbcSource(): void {
-  checkStudioAbcSource(
+  checkWorkspaceAbcSource(
     input.value,
     renderStatus,
     qualityPanel,
@@ -344,7 +344,7 @@ function isAutoCheckEnabled(): boolean {
 }
 
 async function copySourceToClipboard(): Promise<void> {
-  await copyStudioSourceToClipboard(
+  await copyWorkspaceSourceToClipboard(
     input.value,
     sourceStats,
     updateSourceStats,
@@ -352,7 +352,7 @@ async function copySourceToClipboard(): Promise<void> {
 }
 
 async function importSelectedAbcFile(): Promise<void> {
-  await importStudioAbcFile({
+  await importWorkspaceAbcFile({
     abcFileInput,
     importAbcButton,
     qualityPanel,
@@ -363,5 +363,5 @@ async function importSelectedAbcFile(): Promise<void> {
 }
 
 function exportCurrentAbcFile(): void {
-  exportStudioAbcFile(input.value, sourceStats, updateSourceStats);
+  exportWorkspaceAbcFile(input.value, sourceStats, updateSourceStats);
 }

@@ -8,7 +8,7 @@
   padding: 8px 20px 20px;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-container {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-container {
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -17,7 +17,7 @@
   padding: 0;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-header {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-header {
   min-height: 36px;
   margin: 0;
   padding: 0 10px;
@@ -25,20 +25,20 @@
   background: var(--abcdesk-panel-bg);
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-score {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-score {
   padding: 12px;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-audio {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-audio {
   padding: 12px;
   margin: 0;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-keyboard {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-keyboard {
   border-top: 1px solid var(--abcdesk-audio-border);
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-quality-panel {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-quality-panel {
   display: none;
 }
 
@@ -54,7 +54,7 @@
   align-self: stretch;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-score {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-score {
   flex: 1 1 0 !important;
   max-height: none !important;
   min-height: 0 !important;
@@ -74,14 +74,14 @@
   flex: 0 0 auto;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-header,
-:host([data-abcdesk-layout="studio"]) .abcdesk-keyboard,
-:host([data-abcdesk-layout="studio"]) .abcdesk-audio {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-header,
+:host([data-abcdesk-layout="workspace"]) .abcdesk-keyboard,
+:host([data-abcdesk-layout="workspace"]) .abcdesk-audio {
   flex: 0 0 auto;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-code-toggle-button,
-:host([data-abcdesk-layout="studio"]) .abcdesk-studio-button {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-code-toggle-button,
+:host([data-abcdesk-layout="workspace"]) .abcdesk-workspace-button {
   display: none;
 }
 
@@ -91,7 +91,7 @@
   margin-top: auto;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-keyboard {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-keyboard {
   margin-top: auto;
 }
 
@@ -104,7 +104,7 @@
   display: block !important;
 }
 
-:host([data-abcdesk-layout="studio"]) .abcdesk-score svg {
+:host([data-abcdesk-layout="workspace"]) .abcdesk-score svg {
   width: 100% !important;
   max-width: none !important;
   height: auto !important;

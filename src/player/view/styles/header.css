@@ -76,7 +76,7 @@ abcdesk-keyboard-toggle {
 .abcdesk-keyboard-toggle-button,
 .abcdesk-export-button,
 .abcdesk-midi-export-button,
-.abcdesk-studio-button,
+.abcdesk-workspace-button,
 .abcdesk-code-toggle-button,
 .abcdesk-fullscreen-button,
 .abcdesk-browser-fullscreen-button {
@@ -116,7 +116,7 @@ abcdesk-keyboard-toggle {
 .abcdesk-keyboard-toggle-button[aria-pressed="true"],
 .abcdesk-export-button:hover,
 .abcdesk-midi-export-button:hover,
-.abcdesk-studio-button:hover,
+.abcdesk-workspace-button:hover,
 .abcdesk-code-toggle-button:hover,
 .abcdesk-code-toggle-button[aria-pressed="true"],
 .abcdesk-fullscreen-button:hover,
@@ -129,7 +129,7 @@ abcdesk-keyboard-toggle {
 .abcdesk-keyboard-toggle-button:focus-visible,
 .abcdesk-export-button:focus-visible,
 .abcdesk-midi-export-button:focus-visible,
-.abcdesk-studio-button:focus-visible,
+.abcdesk-workspace-button:focus-visible,
 .abcdesk-code-toggle-button:focus-visible,
 .abcdesk-fullscreen-button:focus-visible {
   outline: 2px solid var(--abcdesk-audio-thumb);

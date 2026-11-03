@@ -6,7 +6,7 @@ import {
   renderQualityReport,
 } from "./quality-report";
 
-describe("Studio quality report", () => {
+describe("Workspace quality report", () => {
   it("renders warning diagnostics into the quality panel", () => {
     const panel = document.createElement("section");
     const report: AbcQualityReport = {
@@ -45,7 +45,7 @@ describe("Studio quality report", () => {
     expect(panel.textContent).toBe("");
   });
 
-  it("maps quality statuses to Studio status text", () => {
+  it("maps quality statuses to Workspace status text", () => {
     const baseReport: AbcQualityReport = {
       status: "ok",
       tuneCount: 1,

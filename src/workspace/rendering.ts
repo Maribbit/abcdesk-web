@@ -7,7 +7,7 @@ import {
 import type { KeyboardVisibility, ThemeMode } from "../shared/settings";
 import { offsetSourceHighlightRanges } from "./source-highlight";
 
-interface StudioRenderControllerOptions {
+interface WorkspaceRenderControllerOptions {
   clearSourceHighlight: () => void;
   getKeyboardVisibility: () => KeyboardVisibility;
   getThemeMode: () => ThemeMode;
@@ -20,13 +20,13 @@ interface StudioRenderControllerOptions {
   updateSourceHighlight: (ranges: SourceHighlightRange[]) => void;
 }
 
-export interface StudioRenderController {
+export interface WorkspaceRenderController {
   getCurrentInstance: () => RenderInstance | null;
   renderCurrentInput: () => void;
   scheduleRender: () => void;
 }
 
-export function createStudioRenderController({
+export function createWorkspaceRenderController({
   clearSourceHighlight,
   getKeyboardVisibility,
   getThemeMode,
@@ -37,7 +37,7 @@ export function createStudioRenderController({
   runAutoCheck,
   sourceElement,
   updateSourceHighlight,
-}: StudioRenderControllerOptions): StudioRenderController {
+}: WorkspaceRenderControllerOptions): WorkspaceRenderController {
   let renderTimer: number | undefined;
   let currentInstance: RenderInstance | null = null;
 
@@ -75,7 +75,7 @@ export function createStudioRenderController({
           },
         },
       );
-      currentInstance.container.dataset.abcdeskLayout = "studio";
+      currentInstance.container.dataset.abcdeskLayout = "workspace";
       renderMount.classList.add("has-render");
       renderStatus.textContent = "Rendered";
       runAutoCheck();

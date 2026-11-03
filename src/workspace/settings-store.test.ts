@@ -6,10 +6,10 @@ import {
   THEME_MODE_STORAGE_KEY,
 } from "../shared/settings";
 import {
-  loadStudioSettings,
-  saveStudioAbcAutoCheck,
-  saveStudioEditorWrap,
-  saveStudioThemeMode,
+  loadWorkspaceSettings,
+  saveWorkspaceAbcAutoCheck,
+  saveWorkspaceEditorWrap,
+  saveWorkspaceThemeMode,
 } from "./settings-store";
 
 function setChromeStorageMock(storage: {
@@ -36,7 +36,7 @@ function clearChromeMock(): void {
   });
 }
 
-describe("Studio settings store", () => {
+describe("Workspace settings store", () => {
   afterEach(() => {
     window.localStorage.clear();
     clearChromeMock();
@@ -49,7 +49,7 @@ describe("Studio settings store", () => {
     window.localStorage.setItem(ABC_AUTO_CHECK_STORAGE_KEY, "disabled");
     window.localStorage.setItem(EDITOR_WRAP_STORAGE_KEY, "enabled");
 
-    await expect(loadStudioSettings()).resolves.toEqual({
+    await expect(loadWorkspaceSettings()).resolves.toEqual({
       themeMode: "dark",
       layoutMode: "auto",
       keyboardVisibility: "hidden",
@@ -65,7 +65,7 @@ describe("Studio settings store", () => {
     window.localStorage.setItem(EDITOR_WRAP_STORAGE_KEY, "maybe");
     window.localStorage.setItem("layoutMode", "diagonal");
 
-    await expect(loadStudioSettings()).resolves.toEqual({
+    await expect(loadWorkspaceSettings()).resolves.toEqual({
       themeMode: "auto",
       layoutMode: "auto",
       keyboardVisibility: "visible",
@@ -88,7 +88,7 @@ describe("Studio settings store", () => {
     );
     setChromeStorageMock({ get, set: vi.fn() });
 
-    await expect(loadStudioSettings()).resolves.toEqual({
+    await expect(loadWorkspaceSettings()).resolves.toEqual({
       themeMode: "light",
       layoutMode: "horizontal",
       keyboardVisibility: "hidden",
@@ -114,14 +114,14 @@ describe("Studio settings store", () => {
       set,
     });
 
-    await saveStudioThemeMode("dark");
+    await saveWorkspaceThemeMode("dark");
 
     expect(set).toHaveBeenCalledWith({ [THEME_MODE_STORAGE_KEY]: "dark" });
     expect(window.localStorage.getItem(THEME_MODE_STORAGE_KEY)).toBeNull();
   });
 
   it("saves theme mode to localStorage outside extension runtime", async () => {
-    await saveStudioThemeMode("dark");
+    await saveWorkspaceThemeMode("dark");
 
     expect(window.localStorage.getItem(THEME_MODE_STORAGE_KEY)).toBe("dark");
   });
@@ -133,7 +133,7 @@ describe("Studio settings store", () => {
       set,
     });
 
-    await saveStudioAbcAutoCheck("disabled");
+    await saveWorkspaceAbcAutoCheck("disabled");
 
     expect(set).toHaveBeenCalledWith({
       [ABC_AUTO_CHECK_STORAGE_KEY]: "disabled",
@@ -142,7 +142,7 @@ describe("Studio settings store", () => {
   });
 
   it("saves ABC auto-check to localStorage outside extension runtime", async () => {
-    await saveStudioAbcAutoCheck("disabled");
+    await saveWorkspaceAbcAutoCheck("disabled");
 
     expect(window.localStorage.getItem(ABC_AUTO_CHECK_STORAGE_KEY)).toBe(
       "disabled",
@@ -156,14 +156,14 @@ describe("Studio settings store", () => {
       set,
     });
 
-    await saveStudioEditorWrap("enabled");
+    await saveWorkspaceEditorWrap("enabled");
 
     expect(set).toHaveBeenCalledWith({ [EDITOR_WRAP_STORAGE_KEY]: "enabled" });
     expect(window.localStorage.getItem(EDITOR_WRAP_STORAGE_KEY)).toBeNull();
   });
 
   it("saves editor wrap to localStorage outside extension runtime", async () => {
-    await saveStudioEditorWrap("enabled");
+    await saveWorkspaceEditorWrap("enabled");
 
     expect(window.localStorage.getItem(EDITOR_WRAP_STORAGE_KEY)).toBe(
       "enabled",

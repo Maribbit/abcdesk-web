@@ -14,7 +14,7 @@ Keep changes small and reviewable.
 
 - TypeScript in strict mode, no `any` unless the boundary genuinely needs it.
 - ESLint only. Do not add Prettier unless the project decides to adopt it.
-- Keep the boundaries intact: `src/studio/` owns editor wiring, `src/player/` owns rendering and playback, `src/shared/` stays free of DOM state.
+- Keep the boundaries intact: `src/workspace/` owns editor wiring, `src/player/` owns rendering and playback, `src/shared/` stays free of DOM state.
 - Style the player through CSS variables and its Shadow DOM stylesheets, never by rewriting colors in TypeScript.
 - Do not commit `dist/`, `node_modules/` or packaged archives.
 

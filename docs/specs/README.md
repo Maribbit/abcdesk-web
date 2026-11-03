@@ -18,7 +18,7 @@
    Soundfont 调度、合成器状态机、时序对齐与源码高亮。
 3. **[播放器视图 (Interface)](./interface.md)**
    Shadow DOM 隔离、CSS 变量主题、控制栏与无状态视图。
-4. **[独立工作台 (Studio)](./studio.md)**
+4. **[独立工作台 (Workspace)](./workspace.md)**
    分栏布局、源码动作、设置持久化与 hash 分享链路。
 
 ## 映射纪律

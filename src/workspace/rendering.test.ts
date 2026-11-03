@@ -10,7 +10,7 @@ vi.mock("../player/renderer", () => ({
   renderAbc: rendererMocks.renderAbc,
 }));
 
-import { createStudioRenderController } from "./rendering";
+import { createWorkspaceRenderController } from "./rendering";
 
 function createController() {
   const input = document.createElement("textarea");
@@ -21,7 +21,7 @@ function createController() {
   const runAutoCheck = vi.fn();
   const updateSourceHighlight = vi.fn();
 
-  const controller = createStudioRenderController({
+  const controller = createWorkspaceRenderController({
     clearSourceHighlight,
     getKeyboardVisibility: () => "visible",
     getThemeMode: () => "dark",
@@ -46,7 +46,7 @@ function createController() {
   };
 }
 
-describe("Studio render controller", () => {
+describe("Workspace render controller", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     rendererMocks.renderAbc.mockReturnValue({

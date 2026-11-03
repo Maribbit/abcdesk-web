@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 
-// Studio is the only build target. Set SITE_BASE when deploying under a subpath.
+// Workspace is the only build target. Set SITE_BASE when deploying under a subpath.
 export default defineConfig({
-  root: "src/studio",
+  root: "src/workspace",
   publicDir: "../../public",
   base: process.env.SITE_BASE ?? "/",
   build: {

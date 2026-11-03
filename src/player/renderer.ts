@@ -20,7 +20,7 @@ import {
   type ThemeMode,
 } from "../shared/settings";
 import { getExtensionRuntime } from "../shared/extension-runtime";
-import { createOpenStudioMessage } from "../shared/messages";
+import { createOpenWorkspaceMessage } from "../shared/messages";
 import type { ABCDeskQualityElement } from "./components/quality-panel";
 import { createDurationControl } from "./components/duration-control";
 import { createKeyboardController } from "./components/keyboard";
@@ -133,11 +133,11 @@ export function renderAbc(
     onExportMidi: () => {
       if (instance) exportMidi(instance);
     },
-    onOpenStudio: runtime?.sendMessage
+    onOpenWorkspace: runtime?.sendMessage
       ? () => {
           if (instance) {
             void runtime.sendMessage?.(
-              createOpenStudioMessage(instance.abcText),
+              createOpenWorkspaceMessage(instance.abcText),
             );
           }
         }

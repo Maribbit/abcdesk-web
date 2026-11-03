@@ -3,14 +3,14 @@
     overflow: hidden;
   }
 
-  .studio-shell:not(.layout-split) {
+  .workspace-shell:not(.layout-split) {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(160px, var(--studio-editor-mobile-size)) 6px minmax(220px, 1fr);
+    grid-template-rows: auto minmax(160px, var(--workspace-editor-mobile-size)) 6px minmax(220px, 1fr);
     min-height: 0;
     height: 100%;
   }
 
-  .studio-header {
+  .workspace-header {
     grid-column: 1 / -1;
     grid-row: 1;
     align-items: center;
@@ -20,11 +20,11 @@
     padding: 6px 10px;
   }
 
-  .studio-header {
+  .workspace-header {
     gap: 8px;
   }
 
-  .studio-actions {
+  .workspace-actions {
     justify-content: flex-end;
   }
 
@@ -37,24 +37,24 @@
     padding: 0 10px;
   }
 
-  .studio-shell:not(.layout-split) .editor-pane {
+  .workspace-shell:not(.layout-split) .editor-pane {
     grid-column: 1;
     grid-row: 2;
     border-right: 0;
   }
 
-  .studio-shell:not(.layout-split) .studio-resizer {
+  .workspace-shell:not(.layout-split) .workspace-resizer {
     grid-column: 1;
     grid-row: 3;
     cursor: row-resize;
   }
 
-  .studio-shell:not(.layout-split) .studio-resizer::after {
+  .workspace-shell:not(.layout-split) .workspace-resizer::after {
     width: 36px;
     height: 2px;
   }
 
-  .studio-shell:not(.layout-split) .preview-pane {
+  .workspace-shell:not(.layout-split) .preview-pane {
     grid-column: 1;
     grid-row: 4;
   }
@@ -62,37 +62,37 @@
 
 /* Compact header: slightly tighter spacing below 1000px (tablet / small desktop) */
 @media (max-width: 1000px) {
-  .studio-header {
+  .workspace-header {
     gap: 8px;
     padding: 6px 10px;
   }
 }
 
-.studio-shell.layout-stacked {
+.workspace-shell.layout-stacked {
   grid-template-columns: 1fr;
-  grid-template-rows: auto minmax(160px, var(--studio-editor-mobile-size)) 6px minmax(220px, 1fr);
+  grid-template-rows: auto minmax(160px, var(--workspace-editor-mobile-size)) 6px minmax(220px, 1fr);
   min-height: 0;
   height: 100%;
 }
 
-.studio-shell.layout-stacked .editor-pane {
+.workspace-shell.layout-stacked .editor-pane {
   grid-column: 1;
   grid-row: 2;
   border-right: 0;
 }
 
-.studio-shell.layout-stacked .studio-resizer {
+.workspace-shell.layout-stacked .workspace-resizer {
   grid-column: 1;
   grid-row: 3;
   cursor: row-resize;
 }
 
-.studio-shell.layout-stacked .studio-resizer::after {
+.workspace-shell.layout-stacked .workspace-resizer::after {
   width: 36px;
   height: 2px;
 }
 
-.studio-shell.layout-stacked .preview-pane {
+.workspace-shell.layout-stacked .preview-pane {
   grid-column: 1;
   grid-row: 4;
 }

@@ -27,7 +27,7 @@ npm run preview
 Deploying under a subpath:
 
 ```sh
-SITE_BASE=/studio/ npm run build
+SITE_BASE=/workspace/ npm run build
 ```
 
 ## Commands
@@ -45,7 +45,7 @@ SITE_BASE=/studio/ npm run build
 ## Project layout
 
 ```text
-src/studio/   Studio shell: DOM wiring, split layout, settings, source actions
+src/workspace/   Workspace shell: DOM wiring, split layout, settings, source actions
 src/player/   Reusable score rendering, playback, controls and Shadow DOM view
 src/shared/   ABC file, quality, export and asset helpers shared by both
 public/       Icons and bundled soundfont samples (copied into the build)

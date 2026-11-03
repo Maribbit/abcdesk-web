@@ -5,7 +5,7 @@ import {
   offsetSourceHighlightRanges,
 } from "./source-highlight";
 
-describe("Studio source highlighting", () => {
+describe("Workspace source highlighting", () => {
   it("bounds, sorts, and merges overlapping highlight ranges", () => {
     expect(
       normalizeSourceHighlightRanges(

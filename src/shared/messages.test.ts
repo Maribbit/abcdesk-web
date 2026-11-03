@@ -1,24 +1,24 @@
 import { describe, expect, it } from "vitest";
-import { createOpenStudioMessage, isOpenStudioMessage } from "./messages";
+import { createOpenWorkspaceMessage, isOpenWorkspaceMessage } from "./messages";
 
 describe("extension messages", () => {
-  it("creates and validates Open Studio messages", () => {
-    const message = createOpenStudioMessage("X: 1\nK: C\nC |]");
+  it("creates and validates Open Workspace messages", () => {
+    const message = createOpenWorkspaceMessage("X: 1\nK: C\nC |]");
 
-    expect(isOpenStudioMessage(message)).toBe(true);
+    expect(isOpenWorkspaceMessage(message)).toBe(true);
     expect(message).toEqual({
-      type: "OPEN_STUDIO",
+      type: "OPEN_WORKSPACE",
       abcText: "X: 1\nK: C\nC |]",
     });
   });
 
-  it("rejects malformed Open Studio messages", () => {
-    expect(isOpenStudioMessage(null)).toBe(false);
-    expect(isOpenStudioMessage({ type: "OPEN_STUDIO" })).toBe(false);
-    expect(isOpenStudioMessage({ type: "OPEN_STUDIO", abcText: 1 })).toBe(
+  it("rejects malformed Open Workspace messages", () => {
+    expect(isOpenWorkspaceMessage(null)).toBe(false);
+    expect(isOpenWorkspaceMessage({ type: "OPEN_WORKSPACE" })).toBe(false);
+    expect(isOpenWorkspaceMessage({ type: "OPEN_WORKSPACE", abcText: 1 })).toBe(
       false
     );
-    expect(isOpenStudioMessage({ type: "OTHER", abcText: "X: 1" })).toBe(
+    expect(isOpenWorkspaceMessage({ type: "OTHER", abcText: "X: 1" })).toBe(
       false
     );
   });

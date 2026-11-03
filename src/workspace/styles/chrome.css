@@ -1,4 +1,4 @@
-.studio-header {
+.workspace-header {
   grid-column: 1 / -1;
   grid-row: 1;
   display: flex;
@@ -7,31 +7,31 @@
   gap: 12px;
   min-height: 40px;
   padding: 6px 12px;
-  border-bottom: 1px solid var(--studio-border);
-  background: var(--studio-surface);
+  border-bottom: 1px solid var(--workspace-border);
+  background: var(--workspace-surface);
 }
 
-.studio-brand {
+.workspace-brand {
   display: flex;
   align-items: center;
   min-width: 0;
   gap: 10px;
 }
 
-.studio-brand-mark {
+.workspace-brand-mark {
   flex: 0 0 auto;
   width: 26px;
   height: 26px;
   border-radius: 5px;
 }
 
-.studio-brand h1 {
+.workspace-brand h1 {
   margin: 0;
   font-size: 14px;
   line-height: 1.2;
 }
 
-.studio-actions {
+.workspace-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -42,8 +42,8 @@
 .segmented-control {
   display: inline-flex;
   align-items: center;
-  background: var(--studio-bg);
-  border: 1px solid var(--studio-border);
+  background: var(--workspace-bg);
+  border: 1px solid var(--workspace-border);
   border-radius: 6px;
   padding: 2px;
   gap: 2px;
@@ -59,12 +59,12 @@
   height: 24px;
   border-radius: 4px;
   cursor: pointer;
-  color: var(--studio-muted);
+  color: var(--workspace-muted);
   transition: all 0.15s ease-out;
 }
 
 .segmented-control label:hover {
-  color: var(--studio-text-strong);
+  color: var(--workspace-text-strong);
 }
 
 .segmented-control input[type="radio"] {
@@ -75,17 +75,17 @@
 }
 
 .segmented-control input[type="radio"]:checked + svg {
-  color: var(--studio-text-strong);
+  color: var(--workspace-text-strong);
 }
 
 .segmented-control label:has(input[type="radio"]:checked) {
-  background: var(--studio-surface);
+  background: var(--workspace-surface);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   cursor: default;
 }
 
 .segmented-control input[type="radio"]:focus-visible + svg {
-  outline: 2px solid var(--studio-focus-ring);
+  outline: 2px solid var(--workspace-focus-ring);
   border-radius: 2px;
 }
 
@@ -94,15 +94,15 @@
   align-items: center;
   justify-content: center;
   padding: 0 12px;
-  border: 1px solid var(--studio-border);
-  background: var(--studio-panel);
-  color: var(--studio-text);
+  border: 1px solid var(--workspace-border);
+  background: var(--workspace-panel);
+  color: var(--workspace-text);
   font-size: 13px;
   text-decoration: none;
 }
 
 .secondary-button:hover {
-  border-color: var(--studio-border-strong);
+  border-color: var(--workspace-border-strong);
 }
 
 .secondary-button:disabled {
@@ -119,7 +119,7 @@
 .header-divider {
   width: 1px;
   height: 16px;
-  background-color: var(--studio-border);
+  background-color: var(--workspace-border);
   margin: 0 4px;
 }
 
@@ -133,22 +133,22 @@
   border: 1px solid transparent;
   border-radius: 4px;
   background: transparent;
-  color: var(--studio-text);
+  color: var(--workspace-text);
   cursor: pointer;
   transition: all 0.15s ease-out;
 }
 
 .icon-button:hover {
-  background: var(--studio-surface-hover);
-  color: var(--studio-text-strong);
+  background: var(--workspace-surface-hover);
+  color: var(--workspace-text-strong);
 }
 
 .icon-button:active {
-  background: var(--studio-border);
+  background: var(--workspace-border);
 }
 
 .icon-button:focus-visible {
-  outline: 2px solid var(--studio-focus-ring);
+  outline: 2px solid var(--workspace-focus-ring);
   outline-offset: -1px;
 }
 
@@ -160,7 +160,7 @@
 
 .ghost-link {
   font-size: 0.85rem;
-  color: var(--studio-text-muted);
+  color: var(--workspace-text-muted);
   text-decoration: none;
   padding: 4px 8px;
   border-radius: 4px;
@@ -168,6 +168,6 @@
 }
 
 .ghost-link:hover {
-  color: var(--studio-text-strong);
-  background: var(--studio-surface-hover);
+  color: var(--workspace-text-strong);
+  background: var(--workspace-surface-hover);
 }

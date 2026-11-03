@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import {
   getAbcImportErrorMessage,
   getSourceStatsText,
-  updateStudioSourceStats,
+  updateWorkspaceSourceStats,
 } from "./source-actions";
 
-describe("Studio source actions", () => {
+describe("Workspace source actions", () => {
   it("formats source statistics", () => {
     expect(getSourceStatsText("")).toBe("0 lines, 0 chars");
     expect(getSourceStatsText("X:1\nK:C\nC|")).toBe("3 lines, 10 chars");
@@ -16,7 +16,7 @@ describe("Studio source actions", () => {
     const copySourceButton = document.createElement("button");
     const exportAbcButton = document.createElement("button");
 
-    updateStudioSourceStats(
+    updateWorkspaceSourceStats(
       { copySourceButton, exportAbcButton, sourceStats },
       "X:1",
     );
@@ -25,7 +25,7 @@ describe("Studio source actions", () => {
     expect(copySourceButton.disabled).toBe(false);
     expect(exportAbcButton.disabled).toBe(false);
 
-    updateStudioSourceStats(
+    updateWorkspaceSourceStats(
       { copySourceButton, exportAbcButton, sourceStats },
       "",
     );

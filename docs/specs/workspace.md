@@ -1,11 +1,11 @@
-# 独立工作台 (Studio Specs)
+# 独立工作台 (Workspace Specs)
 
-Studio 是产品本体：一个无后端、纯客户端的 ABC 草稿本与乐谱游乐场。
+Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与乐谱游乐场。
 
 ## 1. 定位
 
 - 不依赖任何宿主或浏览器特权 API，可以部署为纯静态站点。
-- 播放器是它的预览内核，两者保持单向解耦：Studio 依赖 Player，Player 不知道 Studio 存在。
+- 播放器是它的预览内核，两者保持单向解耦：Workspace 依赖 Player，Player 不知道 Workspace 存在。
 
 ## 2. 状态生命周期
 
@@ -38,16 +38,16 @@ Studio 是产品本体：一个无后端、纯客户端的 ABC 草稿本与乐�
 ## 代码与测试映射
 
 - **源码锚点**
-  - `src/studio/`: 工作台入口、分栏、源码动作、展示状态、诊断面板与渲染控制。
-  - `src/shared/studio-url.ts`: hash 编解码。
+  - `src/workspace/`: 工作台入口、分栏、源码动作、展示状态、诊断面板与渲染控制。
+  - `src/shared/workspace-url.ts`: hash 编解码。
   - `src/shared/abc-file.ts` 与 `src/shared/filename.ts`: 文件导入导出与安全文件名。
 - **测试锚点**
-  - `src/studio/settings-store.test.ts`: 设置加载、回退与保存。
-  - `src/studio/rendering.test.ts`: 空输入清理、源码修剪渲染与高亮偏移。
-  - `src/studio/quality-report.test.ts`: 诊断面板呈现、清空隐藏与状态文案映射。
-  - `src/studio/presentation.test.ts`: 换行、高亮镜像、主题解析与布局类名。
-  - `src/studio/source-actions.test.ts`: 字符统计、空源码禁用与导入错误规范化。
-  - `src/studio/source-highlight.test.ts`: 高亮范围合并、片段生成与播放偏移。
-  - `src/studio/split-layout.test.ts`: 尺寸恢复、方向切换与键盘调整边界。
-  - `src/shared/studio-url.test.ts`: hash 往返与非 Studio hash 拒绝。
+  - `src/workspace/settings-store.test.ts`: 设置加载、回退与保存。
+  - `src/workspace/rendering.test.ts`: 空输入清理、源码修剪渲染与高亮偏移。
+  - `src/workspace/quality-report.test.ts`: 诊断面板呈现、清空隐藏与状态文案映射。
+  - `src/workspace/presentation.test.ts`: 换行、高亮镜像、主题解析与布局类名。
+  - `src/workspace/source-actions.test.ts`: 字符统计、空源码禁用与导入错误规范化。
+  - `src/workspace/source-highlight.test.ts`: 高亮范围合并、片段生成与播放偏移。
+  - `src/workspace/split-layout.test.ts`: 尺寸恢复、方向切换与键盘调整边界。
+  - `src/shared/workspace-url.test.ts`: hash 往返与非 Workspace hash 拒绝。
   - `src/shared/abc-file.test.ts` 与 `src/shared/filename.test.ts`: 源码导入、扩展名拒绝与文件名清洗。

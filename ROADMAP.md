@@ -6,12 +6,12 @@ ABC Desk Web 是一个纯前端的 ABC 写谱工作台：左侧源码，右侧�
 
 - **工作台**：分栏/堆叠布局、源码持久化、hash 导入、ABC 打开与保存、质量诊断、深浅色主题。
 - **播放器**：本地 soundfont 播放、进度拖拽、节拍覆盖、播放与源码双向联动、88 键视图、SVG/MIDI 导出，作为 Shadow DOM 组件独立于工作台。
-- **质量保障**：Vitest 覆盖 player、studio 和 shared 三层的核心契约；领域索引维护在 `docs/specs/`。
+- **质量保障**：Vitest 覆盖 player、workspace 和 shared 三层的核心契约；领域索引维护在 `docs/specs/`。
 
 ## 优先级
 
 1. **P0: 视觉重做**
-   将站点配色与材质替换为博客的体系（冷灰底色、朱红强调、半透明纸张 + 发丝边），重写 `src/studio/styles/` 与 `src/player/view/styles/` 两套 token；乐谱面保持不透明以保证可读性。
+   将站点配色与材质替换为博客的体系（冷灰底色、朱红强调、半透明纸张 + 发丝边），重写 `src/workspace/styles/` 与 `src/player/view/styles/` 两套 token；乐谱面保持不透明以保证可读性。
 2. **P0: 编辑器内核**
    用 CodeMirror 6 替换 `textarea` + 高亮镜像，换取 ABC 语法高亮、行号、按键行为和更省心的中文输入。
 3. **P1: 分享与离线**

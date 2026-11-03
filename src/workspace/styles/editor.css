@@ -6,7 +6,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: var(--studio-code-bg);
+  background: var(--workspace-code-bg);
 }
 
 #abcInput,
@@ -38,7 +38,7 @@
   min-height: 0;
   overflow: auto;
   background: transparent;
-  color: var(--studio-code-text);
+  color: var(--workspace-code-text);
 }
 
 .abc-highlight-mirror {
