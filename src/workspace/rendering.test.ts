@@ -4,18 +4,21 @@ const rendererMocks = vi.hoisted(() => ({
   playFromSourceOffset: vi.fn(() => true),
   removeRender: vi.fn(),
   renderAbc: vi.fn(),
+  revealSourceOffset: vi.fn(() => true),
 }));
 
 vi.mock("../player/renderer", () => ({
   playFromSourceOffset: rendererMocks.playFromSourceOffset,
   removeRender: rendererMocks.removeRender,
   renderAbc: rendererMocks.renderAbc,
+  revealSourceOffset: rendererMocks.revealSourceOffset,
 }));
 
 import { createWorkspaceRenderController } from "./rendering";
 
 function createController() {
   let sourceText = "";
+  let cursorOffset = 0;
   const renderMount = document.createElement("section");
   const renderStatus = document.createElement("span");
   const sourceElement = document.createElement("pre");
@@ -26,6 +29,7 @@ function createController() {
 
   const controller = createWorkspaceRenderController({
     clearSourceHighlight,
+    getCursorOffset: () => cursorOffset,
     getKeyboardVisibility: () => "visible",
     getSourceText: () => sourceText,
     getThemeMode: () => "dark",
@@ -45,6 +49,9 @@ function createController() {
     renderStatus,
     revealSourceRange,
     runAutoCheck,
+    setCursorOffset: (offset: number) => {
+      cursorOffset = offset;
+    },
     setSourceText: (text: string) => {
       sourceText = text;
     },
@@ -139,5 +146,49 @@ describe("Workspace render controller", () => {
 
     expect(controller.playFromSourcePosition(5)).toBe(false);
     expect(rendererMocks.playFromSourceOffset).not.toHaveBeenCalled();
+  });
+
+  it("reveals a caret measured in the untrimmed source", () => {
+    const { controller, setCursorOffset, setSourceText } = createController();
+    setSourceText("\n  X:1\nK:C\nC|");
+
+    controller.renderCurrentInput();
+
+    expect(controller.revealSourcePosition(11)).toBe(true);
+    expect(rendererMocks.revealSourceOffset).toHaveBeenLastCalledWith(
+      expect.anything(),
+      8,
+    );
+
+    // A caret in the indentation before the trimmed text still points at the
+    // first note instead of a negative offset.
+    setCursorOffset(1);
+    controller.renderCurrentInput();
+    expect(rendererMocks.revealSourceOffset).toHaveBeenLastCalledWith(
+      expect.anything(),
+      0,
+    );
+  });
+
+  it("follows the caret again after a render replaces the score", () => {
+    const { controller, setCursorOffset, setSourceText } = createController();
+    setSourceText("\n  X:1\nK:C\nC|");
+    controller.renderCurrentInput();
+    rendererMocks.revealSourceOffset.mockClear();
+
+    setCursorOffset(13);
+    controller.renderCurrentInput();
+
+    expect(rendererMocks.revealSourceOffset).toHaveBeenCalledWith(
+      expect.anything(),
+      10,
+    );
+  });
+
+  it("does not reveal before anything is rendered", () => {
+    const { controller } = createController();
+
+    expect(controller.revealSourcePosition(5)).toBe(false);
+    expect(rendererMocks.revealSourceOffset).not.toHaveBeenCalled();
   });
 });

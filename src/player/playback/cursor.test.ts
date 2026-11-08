@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { TimingEvent } from "../types";
-import { findTimingEventForSourceOffset } from "./cursor";
+import {
+  findTimingEventForSourceOffset,
+  getFirstNoteStart,
+} from "./cursor";
 
 //              012345678901234567890
 const SOURCE = "X:1\nK:C\nC D E | F G |";
@@ -62,5 +65,16 @@ describe("finding the note at a source offset", () => {
 
   it("returns null when nothing is timed", () => {
     expect(findTimingEventForSourceOffset([], SOURCE, 8)).toBeNull();
+  });
+
+  it("names where the tune starts, past the header", () => {
+    expect(getFirstNoteStart(EVENTS, SOURCE)).toBe(8);
+
+    const late: TimingEvent[] = [
+      { milliseconds: 0, type: "end" },
+      note(16, 18, 500),
+    ];
+    expect(getFirstNoteStart(late, SOURCE)).toBe(16);
+    expect(getFirstNoteStart([], SOURCE)).toBeNull();
   });
 });

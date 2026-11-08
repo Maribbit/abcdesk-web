@@ -25,6 +25,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 - Added score-to-source pointing: clicking a note in the score moves the source caret onto the characters that note was written with and scrolls them into view, without taking focus away from the score.
 - Added play-from-cursor: `Mod-Enter` in the editor starts playback at the note under the caret, or at the next note when the caret sits between notes.
 - Added a play-from-cursor button to the Source header, drawn as a play triangle with a text-cursor badge; its tooltip names the shortcut for the current platform.
+- Added cursor-to-score following: moving the caret scrolls the staff line it belongs to into view, and a caret in the ABC header lines returns to the top of the sheet. Nothing is played, highlighted or focused.
 
 ### Removed
 

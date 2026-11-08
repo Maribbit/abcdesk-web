@@ -101,6 +101,9 @@ const editor = createCodeMirrorEditor({
   lineWrap: "disabled",
   label: "ABC source code",
   onChange: handleSourceChange,
+  onCursorChange: (offset) => {
+    renderController.revealSourcePosition(offset);
+  },
   onPlayFromCursor: playFromCursor,
 });
 
@@ -113,6 +116,7 @@ const splitLayout = createWorkspaceSplitLayout({
 });
 const renderController = createWorkspaceRenderController({
   clearSourceHighlight: () => editor.setPlaybackHighlight([]),
+  getCursorOffset: () => editor.getCursorOffset(),
   getKeyboardVisibility: () => currentKeyboardVisibility,
   getSourceText: () => editor.getValue(),
   getThemeMode: () => getSelectedWorkspaceThemeMode(themeModeForm),

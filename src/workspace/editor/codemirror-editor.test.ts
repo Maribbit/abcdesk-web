@@ -13,19 +13,21 @@ function createEditor(
   document.body.append(host);
 
   const onChange = vi.fn();
+  const onCursorChange = vi.fn();
   const editor = createCodeMirrorEditor({
     host,
     value: SOURCE,
     lineWrap,
     label: "ABC source code",
     onChange,
+    onCursorChange,
     onPlayFromCursor,
   });
 
   const view = EditorView.findFromDOM(host);
   if (!view) throw new Error("EditorView was not mounted into the host");
 
-  return { editor, host, onChange, view };
+  return { editor, host, onChange, onCursorChange, view };
 }
 
 afterEach(() => {
@@ -159,6 +161,25 @@ describe("CodeMirror editor", () => {
 
     expect(editor.getCursorOffset()).toBe(12);
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("reports a caret move but not the edit that moved it", () => {
+    const { onChange, onCursorChange, view } = createEditor();
+
+    view.dispatch({ selection: { anchor: 18 } });
+    expect(onCursorChange).toHaveBeenLastCalledWith(18);
+
+    view.dispatch({ changes: { from: 0, insert: "%\n" } });
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onCursorChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps quiet about a caret the workspace placed", () => {
+    const { editor, onCursorChange } = createEditor();
+
+    editor.revealRange({ start: 18, end: 22 });
+
+    expect(onCursorChange).not.toHaveBeenCalled();
   });
 
   it("turns the play shortcut into an intent, not an edit", () => {

@@ -9,7 +9,7 @@ export function highlightTimingEvent(
   instance.tempoControl.update(event);
   clearPlaybackHighlight(instance, false);
 
-  const elements = flattenTimingElements(event.elements);
+  const elements = getTimingEventElements(event);
   for (const element of elements) {
     element.classList.add("abcdesk-note-playing");
   }
@@ -19,6 +19,11 @@ export function highlightTimingEvent(
   instance.onSourceHighlight?.(
     getTimingEventSourceRanges(event, instance.abcText.length),
   );
+}
+
+/** The SVG nodes abcjs drew for one timing event; chords nest their elements. */
+export function getTimingEventElements(event: TimingEvent): Element[] {
+  return flattenTimingElements(event.elements);
 }
 
 export function clearPlaybackHighlight(

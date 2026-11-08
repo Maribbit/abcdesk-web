@@ -7,6 +7,9 @@
      its own margins, so the sheet's edges stay inside the pane. */
   max-height: min(56vh, 620px);
   overflow: auto;
+  /* A staff scrolled into view should not land flush against the edge:
+     scroll-padding is the breathing room `scrollIntoView` respects. */
+  scroll-padding-block: 16px;
   padding: 6px 10px;
   border: 1px solid var(--abcdesk-score-edge);
   border-radius: 10px;

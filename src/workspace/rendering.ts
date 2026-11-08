@@ -2,6 +2,7 @@ import {
   playFromSourceOffset,
   renderAbc,
   removeRender,
+  revealSourceOffset,
   type RenderInstance,
   type SourceHighlightRange,
 } from "../player/renderer";
@@ -13,6 +14,7 @@ import {
 
 interface WorkspaceRenderControllerOptions {
   clearSourceHighlight: () => void;
+  getCursorOffset: () => number;
   getKeyboardVisibility: () => KeyboardVisibility;
   getSourceText: () => string;
   getThemeMode: () => ThemeMode;
@@ -30,11 +32,14 @@ export interface WorkspaceRenderController {
   /** Play the note under a raw (untrimmed) source offset; false if silent. */
   playFromSourcePosition: (offset: number) => boolean;
   renderCurrentInput: () => void;
+  /** Scroll the note under a raw source offset into view; false if silent. */
+  revealSourcePosition: (offset: number) => boolean;
   scheduleRender: () => void;
 }
 
 export function createWorkspaceRenderController({
   clearSourceHighlight,
+  getCursorOffset,
   getKeyboardVisibility,
   getSourceText,
   getThemeMode,
@@ -49,6 +54,14 @@ export function createWorkspaceRenderController({
   let renderTimer: number | undefined;
   let currentInstance: RenderInstance | null = null;
   let sourceOffset = 0;
+
+  const revealSourcePosition = (offset: number): boolean => {
+    if (!currentInstance) return false;
+    return revealSourceOffset(
+      currentInstance,
+      Math.max(offset - sourceOffset, 0),
+    );
+  };
 
   const renderCurrentInput = () => {
     if (renderTimer !== undefined) {
@@ -91,6 +104,9 @@ export function createWorkspaceRenderController({
       currentInstance.container.dataset.abcdeskLayout = "workspace";
       renderMount.classList.add("has-render");
       renderStatus.textContent = "Rendered";
+      // A fresh score starts at its own top: after an edit, follow the caret
+      // again so the new layout still shows the note being written.
+      revealSourcePosition(getCursorOffset());
       runAutoCheck();
     } catch (error) {
       console.error("[ABC Desk Web] Render failed:", error);
@@ -114,6 +130,7 @@ export function createWorkspaceRenderController({
       );
     },
     renderCurrentInput,
+    revealSourcePosition,
     scheduleRender,
   };
 }

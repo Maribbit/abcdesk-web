@@ -37,6 +37,19 @@ function isNoteEvent(event: TimingEvent): boolean {
   return !event.type || event.type === "event";
 }
 
+/**
+ * Where the tune proper starts. Everything before it is the header — X, T, M,
+ * L, Q, K — which belongs to the whole sheet rather than to the first note.
+ */
+export function getFirstNoteStart(
+  events: readonly TimingEvent[],
+  text: string,
+): number | null {
+  const first = events.find(isNoteEvent);
+  const [range] = first ? getEventRanges(first, text) : [];
+  return range ? range.start : null;
+}
+
 function getEventRanges(
   event: TimingEvent,
   text: string,

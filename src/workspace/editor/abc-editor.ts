@@ -7,11 +7,9 @@ import type { EditorWrap } from "../../shared/settings";
  *
  * Everything outside `src/workspace/editor/` talks to this interface only: the
  * render controller asks for text, the playback loop pushes the ranges that are
- * sounding, and settings push the wrap preference. The textarea that fills it
- * today is an implementation detail — its mirror, the scroll sync between the
- * two elements and every metric they must share all live behind this door, so
- * a real code editor can replace them without touching the rest of the
- * workspace.
+ * sounding, and settings push the wrap preference. CodeMirror fills it today —
+ * its decorations, keymap and scroll behaviour are all behind this door, so the
+ * rest of the workspace never touches the editing DOM.
  */
 export interface AbcEditor {
   /** The document exactly as the user sees it, untrimmed. */
@@ -50,6 +48,12 @@ export interface AbcEditorOptions {
   label: string;
   /** The user changed the text (typing, paste, undo) — never `setValue`. */
   onChange: () => void;
+  /**
+   * The caret moved on its own — an arrow key, a click, a selection. Edits and
+   * the workspace's own `revealRange` both keep quiet: the first moves the
+   * caret as a side effect, the second is already known to the caller.
+   */
+  onCursorChange?: (offset: number) => void;
   /**
    * The user asked to hear the tune from the caret (`Mod-Enter`). The editor
    * knows nothing about playing; it only knows where the caret is.

@@ -44,6 +44,7 @@ import {
 } from "./playback/timing";
 import { copyQualityFeedback, updateQualityPanel } from "./quality";
 export { getSourceHighlightRangesForTest } from "./playback/source-highlight";
+export { revealSourceOffset } from "./view/score-reveal";
 export type {
   RenderAbcOptions,
   RenderInstance,

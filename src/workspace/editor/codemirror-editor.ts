@@ -138,6 +138,7 @@ export function createCodeMirrorEditor({
   lineWrap,
   label,
   onChange,
+  onCursorChange,
   onPlayFromCursor,
 }: AbcEditorOptions): AbcEditor {
   const wrapCompartment = new Compartment();
@@ -171,11 +172,18 @@ export function createCodeMirrorEditor({
           initialWrap === "enabled" ? EditorView.lineWrapping : [],
         ),
         EditorView.updateListener.of((update) => {
-          if (!update.docChanged) return;
           if (update.transactions.some((tr) => tr.annotation(quietChange))) {
             return;
           }
-          onChange();
+          if (update.docChanged) {
+            onChange();
+            return;
+          }
+          // A plain caret move. An edit moves the caret too, but its new
+          // position is only meaningful once the score has caught up.
+          if (update.selectionSet) {
+            onCursorChange?.(update.state.selection.main.head);
+          }
         }),
       ],
     }),
@@ -238,7 +246,8 @@ export function createCodeMirrorEditor({
       view.dispatch({
         selection: { anchor: from, head: to },
         effects: EditorView.scrollIntoView(from, { y: "nearest" }),
-        annotations: Transaction.addToHistory.of(false),
+        // Silent: the caller already knows where it asked the caret to go.
+        annotations: [Transaction.addToHistory.of(false), quietChange.of(true)],
       });
     },
     getCursorOffset: () => view.state.selection.main.head,
