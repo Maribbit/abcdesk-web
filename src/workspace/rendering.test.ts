@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const rendererMocks = vi.hoisted(() => ({
+  playFromSourceOffset: vi.fn(() => true),
   removeRender: vi.fn(),
   renderAbc: vi.fn(),
 }));
 
 vi.mock("../player/renderer", () => ({
+  playFromSourceOffset: rendererMocks.playFromSourceOffset,
   removeRender: rendererMocks.removeRender,
   renderAbc: rendererMocks.renderAbc,
 }));
@@ -117,5 +119,25 @@ describe("Workspace render controller", () => {
     options.onSelectSourceRange({ start: 8, end: 9 });
 
     expect(revealSourceRange).toHaveBeenCalledWith({ start: 11, end: 12 });
+  });
+
+  it("plays from a caret offset measured in the untrimmed source", () => {
+    const { controller, setSourceText } = createController();
+    setSourceText("\n  X:1\nK:C\nC|");
+
+    controller.renderCurrentInput();
+
+    expect(controller.playFromSourcePosition(11)).toBe(true);
+    expect(rendererMocks.playFromSourceOffset).toHaveBeenCalledWith(
+      expect.anything(),
+      8,
+    );
+  });
+
+  it("does not play before anything is rendered", () => {
+    const { controller } = createController();
+
+    expect(controller.playFromSourcePosition(5)).toBe(false);
+    expect(rendererMocks.playFromSourceOffset).not.toHaveBeenCalled();
   });
 });

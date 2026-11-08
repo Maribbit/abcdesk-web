@@ -34,6 +34,8 @@ export interface AbcEditor {
    * invitation to type.
    */
   revealRange(range: SourceHighlightRange): void;
+  /** The caret as an offset into the document. */
+  getCursorOffset(): number;
   /** Apply the wrap preference; returns the mode actually in effect. */
   setLineWrap(editorWrap: EditorWrap): EditorWrap;
   focus(): void;
@@ -48,4 +50,9 @@ export interface AbcEditorOptions {
   label: string;
   /** The user changed the text (typing, paste, undo) — never `setValue`. */
   onChange: () => void;
+  /**
+   * The user asked to hear the tune from the caret (`Mod-Enter`). The editor
+   * knows nothing about playing; it only knows where the caret is.
+   */
+  onPlayFromCursor?: () => void;
 }

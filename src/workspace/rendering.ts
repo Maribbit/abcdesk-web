@@ -1,4 +1,5 @@
 import {
+  playFromSourceOffset,
   renderAbc,
   removeRender,
   type RenderInstance,
@@ -26,6 +27,8 @@ interface WorkspaceRenderControllerOptions {
 
 export interface WorkspaceRenderController {
   getCurrentInstance: () => RenderInstance | null;
+  /** Play the note under a raw (untrimmed) source offset; false if silent. */
+  playFromSourcePosition: (offset: number) => boolean;
   renderCurrentInput: () => void;
   scheduleRender: () => void;
 }
@@ -45,6 +48,7 @@ export function createWorkspaceRenderController({
 }: WorkspaceRenderControllerOptions): WorkspaceRenderController {
   let renderTimer: number | undefined;
   let currentInstance: RenderInstance | null = null;
+  let sourceOffset = 0;
 
   const renderCurrentInput = () => {
     if (renderTimer !== undefined) {
@@ -54,7 +58,7 @@ export function createWorkspaceRenderController({
 
     const rawText = getSourceText();
     const abcText = rawText.trim();
-    const sourceOffset = abcText ? rawText.indexOf(abcText) : 0;
+    sourceOffset = abcText ? rawText.indexOf(abcText) : 0;
     clearSourceHighlight();
     sourceElement.textContent = abcText;
 
@@ -102,6 +106,13 @@ export function createWorkspaceRenderController({
 
   return {
     getCurrentInstance: () => currentInstance,
+    playFromSourcePosition: (offset) => {
+      if (!currentInstance) return false;
+      return playFromSourceOffset(
+        currentInstance,
+        Math.max(offset - sourceOffset, 0),
+      );
+    },
     renderCurrentInput,
     scheduleRender,
   };

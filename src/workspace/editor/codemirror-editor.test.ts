@@ -5,7 +5,10 @@ import { createCodeMirrorEditor } from "./codemirror-editor";
 
 const SOURCE = "X: 1\nT: Test\nK: C\nCDEF | GABc |";
 
-function createEditor(lineWrap: EditorWrap = "disabled") {
+function createEditor(
+  lineWrap: EditorWrap = "disabled",
+  onPlayFromCursor?: () => void,
+) {
   const host = document.createElement("section");
   document.body.append(host);
 
@@ -16,6 +19,7 @@ function createEditor(lineWrap: EditorWrap = "disabled") {
     lineWrap,
     label: "ABC source code",
     onChange,
+    onPlayFromCursor,
   });
 
   const view = EditorView.findFromDOM(host);
@@ -146,5 +150,33 @@ describe("CodeMirror editor", () => {
     expect(view.state.selection.main.from).toBe(SOURCE.length);
     expect(view.state.selection.main.to).toBe(SOURCE.length);
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("reports the caret offset", () => {
+    const { editor, onChange, view } = createEditor();
+
+    view.dispatch({ selection: { anchor: 12 } });
+
+    expect(editor.getCursorOffset()).toBe(12);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("turns the play shortcut into an intent, not an edit", () => {
+    const onPlayFromCursor = vi.fn();
+    const { editor, view } = createEditor("disabled", onPlayFromCursor);
+
+    view.dispatch({ selection: { anchor: 18 } });
+    // jsdom reports no platform, so CodeMirror resolves Mod to Ctrl here.
+    view.contentDOM.dispatchEvent(
+      new KeyboardEvent("keydown", {
+        bubbles: true,
+        cancelable: true,
+        ctrlKey: true,
+        key: "Enter",
+      }),
+    );
+
+    expect(onPlayFromCursor).toHaveBeenCalledTimes(1);
+    expect(editor.getCursorOffset()).toBe(18);
   });
 });

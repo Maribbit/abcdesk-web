@@ -21,6 +21,15 @@
 
 用户手动设置的 BPM 优先；取消或重置时回落到 `Q:` 标定的原始速度。
 
+### 2.3 从光标起播
+
+源码位置到声音之间只有一段桥：timing event 同时带着字符区间与毫秒。
+
+- 光标落在音符上就是那个音；落在两个音符之间，属于"还没响的那个音"——这才是"从这里开始"的意思。
+- 光标越过最后一个音时，回落到最后一个音，而不是停在原地。
+- 已经在播放时只改变位置，不再调用 `play()`；它会切换播放与暂停，会静音自己。
+- 起播位置以最近一次渲染的时序为准；如果渲染还在防抖窗口里，按下快捷键仍按上一版时序起播。
+
 ## 3. 约束
 
 - 声音层不查询 DOM，状态完全由数据驱动。
@@ -31,11 +40,13 @@
 
 - **源码锚点**
   - `src/player/playback/`: 时序、速度、音色库、合成器、进度与高亮同步。
+  - `src/player/playback/cursor.ts`: 源码偏移到 timing event 的桥接（从光标起播）。
   - `src/player/components/tempo-control.ts`: 速度 UI 与 abcjs tempo 输入的桥接。
   - `src/player/renderer.ts`: 播放生命周期、进度拖拽、点击跳转与实例释放。
 - **测试锚点**
   - `src/player/playback/duration.test.ts`: 总时长读取、事件回退、倍率与展示格式。
   - `src/player/playback/tempo.test.ts`: BPM 读取、倍率换算、按小节推导与无效值展示。
+  - `src/player/playback/cursor.test.ts`: 光标命中音符、音符间隙归属与越界回落。
   - `src/player/playback/soundfont.test.ts`: 内置钢琴音源路径与音符重写策略。
   - `src/player/components/tempo-control.test.ts`: 速度组件与 abcjs tempo 输入同步。
   - `src/player/renderer.test.ts`: 实例清理、进度起播、播放事件到源码高亮的集成。

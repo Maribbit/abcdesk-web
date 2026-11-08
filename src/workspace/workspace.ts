@@ -94,6 +94,12 @@ const editor = createCodeMirrorEditor({
   lineWrap: "disabled",
   label: "ABC source code",
   onChange: handleSourceChange,
+  onPlayFromCursor: () => {
+    if (renderController.playFromSourcePosition(editor.getCursorOffset())) {
+      return;
+    }
+    renderStatus.textContent = "Nothing to play here";
+  },
 });
 
 const splitLayout = createWorkspaceSplitLayout({

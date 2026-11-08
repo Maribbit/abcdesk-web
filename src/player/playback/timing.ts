@@ -13,6 +13,18 @@ export function getSeekPercentForElement(
   return percent ?? null;
 }
 
+/** Where in the tune a timing event sits, as a 0–1 position. */
+export function getSeekPercentForTimingEvent(
+  instance: RenderInstance,
+  event: TimingEvent,
+): number | null {
+  const timingEvents = getTimingEvents(instance);
+  const lastEvent = timingEvents[timingEvents.length - 1];
+  if (!lastEvent || lastEvent.milliseconds <= 0) return null;
+
+  return event.milliseconds / lastEvent.milliseconds;
+}
+
 /**
  * Find the timing event matching a clicked abc element and return both
  * the event and the seek percent. Returns null if no match is found.

@@ -72,6 +72,7 @@ export type SeekableSynthControl = Omit<
   "setProgress"
 > & {
   isLoaded?: boolean;
+  isStarted?: boolean;
   play?: () => Promise<unknown>;
   seek?: (percent: number) => void;
   setProgress?: (percent: number, totalTime?: number) => void;

@@ -14,6 +14,7 @@ import {
   drawSelection,
   keymap,
   type DecorationSet,
+  type KeyBinding,
 } from "@codemirror/view";
 import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
 import type {
@@ -137,6 +138,7 @@ export function createCodeMirrorEditor({
   lineWrap,
   label,
   onChange,
+  onPlayFromCursor,
 }: AbcEditorOptions): AbcEditor {
   const wrapCompartment = new Compartment();
   const quietChange = Annotation.define<boolean>();
@@ -149,7 +151,11 @@ export function createCodeMirrorEditor({
       extensions: [
         history(),
         drawSelection(),
-        keymap.of([...defaultKeymap, ...historyKeymap]),
+        keymap.of([
+          ...playKeymap(onPlayFromCursor),
+          ...defaultKeymap,
+          ...historyKeymap,
+        ]),
         EditorState.tabSize.of(2),
         EditorView.contentAttributes.of({
           "aria-label": label,
@@ -235,8 +241,28 @@ export function createCodeMirrorEditor({
         annotations: Transaction.addToHistory.of(false),
       });
     },
+    getCursorOffset: () => view.state.selection.main.head,
     focus: () => view.focus(),
   };
+}
+
+/**
+ * `Mod-Enter` belongs to the workspace, not to CodeMirror: the editor only
+ * reports the intent, because "play from here" is not an editing command.
+ */
+function playKeymap(onPlayFromCursor?: () => void): KeyBinding[] {
+  if (!onPlayFromCursor) return [];
+
+  return [
+    {
+      key: "Mod-Enter",
+      preventDefault: true,
+      run: () => {
+        onPlayFromCursor();
+        return true;
+      },
+    },
+  ];
 }
 
 function buildSyntaxDecorations(doc: Text): DecorationSet {
