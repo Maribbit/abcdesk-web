@@ -25,7 +25,6 @@ const MIN_WHITE_KEY_WIDTH = 20;
 const MIN_WHITE_KEY_HEIGHT = 52;
 const MAX_WHITE_KEY_HEIGHT = 96;
 const WHITE_KEY_HEIGHT_RATIO = 3;
-const KEYBOARD_HORIZONTAL_PADDING = 16;
 const AUDITION_HIGHLIGHT_MS = 220;
 const KEYBOARD_TAG_NAME = "abcdesk-keyboard";
 const KEYBOARD_PITCH_EVENT = "abcdesk-pitch-trigger";
@@ -142,14 +141,16 @@ export class ABCDeskKeyboardElement extends LitElement {
   }
 
   syncSize(): void {
+    /* Read the padding instead of assuming it: the keybed is restyled per
+       layout, and a stale constant left a sliver of phantom scroll width
+       once the keys already filled the pane. */
     const availableWidth = Math.max(
       0,
-      this.clientWidth - KEYBOARD_HORIZONTAL_PADDING,
+      this.clientWidth - getHorizontalPadding(this),
     );
-    const whiteKeyWidth = Math.max(
-      MIN_WHITE_KEY_WIDTH,
-      availableWidth / WHITE_KEY_COUNT,
-    );
+    const fitWidth =
+      Math.floor((availableWidth / WHITE_KEY_COUNT) * 100) / 100;
+    const whiteKeyWidth = Math.max(MIN_WHITE_KEY_WIDTH, fitWidth);
     const blackKeyWidth = whiteKeyWidth * 0.6;
     const whiteKeyHeight = Math.min(
       MAX_WHITE_KEY_HEIGHT,
@@ -321,6 +322,15 @@ function getPianoKeyClassName(
 
 if (!customElements.get(KEYBOARD_TAG_NAME)) {
   customElements.define(KEYBOARD_TAG_NAME, ABCDeskKeyboardElement);
+}
+
+function getHorizontalPadding(element: HTMLElement): number {
+  const styles = getComputedStyle(element);
+
+  return (
+    (Number.parseFloat(styles.paddingLeft) || 0) +
+    (Number.parseFloat(styles.paddingRight) || 0)
+  );
 }
 
 function isBlackPianoKey(pitch: number): boolean {

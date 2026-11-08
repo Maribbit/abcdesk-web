@@ -1,3 +1,6 @@
+/* Stacked layout: same two sheets, rotated. The seam track turns into a
+   horizontal gutter so the resizer keeps a single source of truth. */
+
 @media (max-width: 860px) {
   body {
     overflow: hidden;
@@ -5,7 +8,11 @@
 
   .workspace-shell:not(.layout-split) {
     grid-template-columns: 1fr;
-    grid-template-rows: auto minmax(160px, var(--workspace-editor-mobile-size)) 6px minmax(220px, 1fr);
+    grid-template-rows:
+      auto
+      minmax(160px, var(--workspace-editor-mobile-size))
+      var(--workspace-gutter)
+      minmax(220px, 1fr);
     min-height: 0;
     height: 100%;
   }
@@ -16,12 +23,9 @@
     align-items: center;
     flex-direction: row;
     flex-wrap: wrap;
-    min-height: 44px;
-    padding: 6px 10px;
-  }
-
-  .workspace-header {
     gap: 8px;
+    min-height: 46px;
+    padding: 6px 8px 6px 12px;
   }
 
   .workspace-actions {
@@ -34,13 +38,13 @@
   }
 
   .secondary-button {
-    padding: 0 10px;
+    padding: 0 12px;
   }
 
   .workspace-shell:not(.layout-split) .editor-pane {
     grid-column: 1;
     grid-row: 2;
-    border-right: 0;
+    margin: 0 var(--workspace-inset);
   }
 
   .workspace-shell:not(.layout-split) .workspace-resizer {
@@ -50,13 +54,23 @@
   }
 
   .workspace-shell:not(.layout-split) .workspace-resizer::after {
-    width: 36px;
+    width: 44px;
+    height: 2px;
+  }
+
+  .workspace-shell:not(.layout-split) .workspace-resizer:hover::after,
+  .workspace-shell:not(.layout-split) .workspace-resizer:focus-visible::after,
+  .workspace-shell:not(.layout-split)
+    .is-resizing
+    .workspace-resizer::after {
+    width: 72px;
     height: 2px;
   }
 
   .workspace-shell:not(.layout-split) .preview-pane {
     grid-column: 1;
     grid-row: 4;
+    margin: 0 var(--workspace-inset);
   }
 }
 
@@ -64,13 +78,17 @@
 @media (max-width: 1000px) {
   .workspace-header {
     gap: 8px;
-    padding: 6px 10px;
+    padding: 6px 8px 6px 12px;
   }
 }
 
 .workspace-shell.layout-stacked {
   grid-template-columns: 1fr;
-  grid-template-rows: auto minmax(160px, var(--workspace-editor-mobile-size)) 6px minmax(220px, 1fr);
+  grid-template-rows:
+    auto
+    minmax(160px, var(--workspace-editor-mobile-size))
+    var(--workspace-gutter)
+    minmax(220px, 1fr);
   min-height: 0;
   height: 100%;
 }
@@ -78,7 +96,7 @@
 .workspace-shell.layout-stacked .editor-pane {
   grid-column: 1;
   grid-row: 2;
-  border-right: 0;
+  margin: 0 var(--workspace-inset);
 }
 
 .workspace-shell.layout-stacked .workspace-resizer {
@@ -88,11 +106,19 @@
 }
 
 .workspace-shell.layout-stacked .workspace-resizer::after {
-  width: 36px;
+  width: 44px;
+  height: 2px;
+}
+
+.workspace-shell.layout-stacked .workspace-resizer:hover::after,
+.workspace-shell.layout-stacked .workspace-resizer:focus-visible::after,
+.workspace-shell.layout-stacked .is-resizing .workspace-resizer::after {
+  width: 72px;
   height: 2px;
 }
 
 .workspace-shell.layout-stacked .preview-pane {
   grid-column: 1;
   grid-row: 4;
+  margin: 0 var(--workspace-inset);
 }

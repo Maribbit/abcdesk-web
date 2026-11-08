@@ -99,7 +99,7 @@ export function applyRenderViewTheme(
 function renderContainerTemplate(): TemplateResult {
   return html`
     <div class="abcdesk-header">
-      <span class="abcdesk-label">ABC Desk</span>
+      <span class="abcdesk-label">Preview</span>
       <div class="abcdesk-header-actions">
         <abcdesk-tempo hidden></abcdesk-tempo>
         <button
@@ -161,11 +161,13 @@ function renderIcon(paths: TemplateResult): TemplateResult {
 }
 
 function renderCameraIcon(): TemplateResult {
+  /* Glyphs are drawn to fill roughly the same optical box (~20 of the 24
+     units) so no icon reads as the small one in the row. */
   return renderIcon(svg`
     <path
-      d="M14.5 4h-5L8 7H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-1.5-3z"
+      d="M9.5 3h5L16 6h3.5A2.5 2.5 0 0 1 22 8.5v9a2.5 2.5 0 0 1-2.5 2.5h-15A2.5 2.5 0 0 1 2 17.5v-9A2.5 2.5 0 0 1 4.5 6H8l1.5-3z"
     />
-    <circle cx="12" cy="13" r="3" />
+    <circle cx="12" cy="13" r="3.6" />
   `);
 }
 

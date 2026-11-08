@@ -12,11 +12,11 @@
 }
 
 .abcdesk-audio .abcjs-inline-audio {
-  min-height: 28px;
+  min-height: 30px;
   height: auto;
   background-color: var(--abcdesk-audio-bg);
   border: 1px solid var(--abcdesk-audio-border);
-  border-radius: 4px;
+  border-radius: 8px;
   color: var(--abcdesk-audio-control);
 }
 

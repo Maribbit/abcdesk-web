@@ -202,9 +202,9 @@ function renderTempoIcon(): TemplateResult {
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <path d="M7 21L9.6 4.2A2 2 0 0 1 11.5 2h1A2 2 0 0 1 14.4 4.2L17 21" />
-      <path d="M5 21h14" />
-      <path d="M9 13v-1 M15 13v-1" />
+      <path d="M6 21L9.2 4.4A2 2 0 0 1 11.2 2h1.6A2 2 0 0 1 14.8 4.4L18 21" />
+      <path d="M4 21h16" />
+      <path d="M9.4 13v-1 M14.6 13v-1" />
       <path d="M12 21V8" />
       <circle cx="12" cy="13.5" r="1.5" fill="none" stroke="currentColor" />
     </svg>

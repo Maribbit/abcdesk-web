@@ -1,30 +1,37 @@
+/* Pane chrome: an editorial label on the left, quiet tools on the right. */
+
 .pane-header {
   grid-row: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  min-height: 36px;
-  padding: 0 10px;
+  min-height: 40px;
+  padding: 0 8px 0 14px;
   border-bottom: 1px solid var(--workspace-border);
   background: var(--workspace-panel);
 }
 
-.pane-header h2 {
+/* Editorial micro-label — the blog's `.paper__label` voice. */
+.pane-label {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.2;
   min-width: 0;
   overflow: hidden;
+  color: var(--workspace-muted);
+  font-size: var(--workspace-label);
+  font-weight: 600;
+  letter-spacing: var(--workspace-label-track);
+  line-height: 1.2;
   text-overflow: ellipsis;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
 .pane-header span {
-  color: var(--workspace-muted);
-  font-size: 12px;
   min-width: 0;
   overflow: hidden;
+  color: var(--workspace-muted);
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -46,11 +53,14 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 28px;
-  padding: 0 10px;
-  background: var(--workspace-surface-hover);
+  min-height: 30px;
+  padding: 0 8px 0 14px;
+  border-top: 1px solid var(--workspace-border);
+  background: var(--workspace-panel);
   color: var(--workspace-muted);
-  font-size: 11.5px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 .pane-footer .pane-tools {
@@ -102,17 +112,19 @@
   height: 13px;
 }
 
+/* Diagnostics read as a tinted annotation on the sheet — the same grey-blue
+   accent, because a grey system has no room for a second alarm colour. */
 .quality-panel {
   grid-row: 3;
   min-width: 0;
-  max-height: 128px;
+  max-height: 132px;
   overflow: auto;
   padding: 10px 14px;
-  border-top: 1px solid var(--workspace-border);
-  background: var(--workspace-panel);
+  border-top: 1px solid var(--workspace-accent-line);
+  background: var(--workspace-accent-soft);
   color: var(--workspace-text);
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .quality-panel[hidden] {
@@ -120,6 +132,8 @@
 }
 
 .quality-panel[data-status="ok"] {
+  border-top-color: var(--workspace-border);
+  background: var(--workspace-panel);
   color: var(--workspace-muted);
 }
 
@@ -147,4 +161,5 @@
 
 .quality-location {
   color: var(--workspace-muted);
+  font-variant-numeric: tabular-nums;
 }

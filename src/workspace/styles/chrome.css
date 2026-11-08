@@ -1,3 +1,5 @@
+/* Floating top bar — L2 material: translucent paper over the wall. */
+
 .workspace-header {
   grid-column: 1 / -1;
   grid-row: 1;
@@ -5,10 +7,24 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  min-height: 40px;
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--workspace-border);
-  background: var(--workspace-surface);
+  min-height: 46px;
+  /* Same rhythm as the seam, so the toolbar reads as floating above the
+     desk rather than as a third sheet. */
+  margin: var(--workspace-inset) var(--workspace-inset) var(--workspace-gutter);
+  padding: 6px 10px 6px 14px;
+  border: 1px solid var(--workspace-paper-edge);
+  border-radius: var(--workspace-radius);
+  background: var(--workspace-paper);
+  -webkit-backdrop-filter: blur(var(--workspace-blur))
+    saturate(var(--workspace-saturate));
+  backdrop-filter: blur(var(--workspace-blur))
+    saturate(var(--workspace-saturate));
+  /* Floats above the wall, not above the sheets: the shadow has to spend
+     itself inside the 10px reveal. A softer cloud reaches the headers, and
+     because backdrop-filter lifts this bar into the positioned paint step it
+     would land on the source header only — greying the left sheet while the
+     right one (nested under a positioned mount) stayed clean. */
+  box-shadow: var(--workspace-bar-shadow);
 }
 
 .workspace-brand {
@@ -20,15 +36,24 @@
 
 .workspace-brand-mark {
   flex: 0 0 auto;
-  width: 26px;
-  height: 26px;
-  border-radius: 5px;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  color: var(--workspace-accent);
 }
 
+/* The masthead is the same voice as the pane labels — caps, tracking, grey —
+   only larger, so the three titles read as one editorial system rather than
+   a product name sitting above two section heads. */
 .workspace-brand h1 {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: var(--workspace-label-track);
   line-height: 1.2;
+  color: var(--workspace-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .workspace-actions {
@@ -39,15 +64,17 @@
   gap: 6px;
 }
 
+/* ── Segmented controls: a pill tray with one raised chip ── */
+
 .segmented-control {
   display: inline-flex;
   align-items: center;
-  background: var(--workspace-bg);
-  border: 1px solid var(--workspace-border);
-  border-radius: 6px;
+  margin: 0;
   padding: 2px;
   gap: 2px;
-  margin: 0;
+  border: 1px solid var(--workspace-border);
+  border-radius: 999px;
+  background: var(--workspace-surface-hover);
 }
 
 .segmented-control label {
@@ -57,10 +84,12 @@
   justify-content: center;
   width: 28px;
   height: 24px;
-  border-radius: 4px;
+  border-radius: 999px;
   cursor: pointer;
   color: var(--workspace-muted);
-  transition: all 0.15s ease-out;
+  transition:
+    color 0.16s var(--workspace-ease),
+    background-color 0.16s var(--workspace-ease);
 }
 
 .segmented-control label:hover {
@@ -75,81 +104,95 @@
 }
 
 .segmented-control input[type="radio"]:checked + svg {
-  color: var(--workspace-text-strong);
+  color: var(--workspace-accent);
 }
 
 .segmented-control label:has(input[type="radio"]:checked) {
-  background: var(--workspace-surface);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  background: var(--workspace-chip);
+  box-shadow: 0 1px 2px rgba(34, 46, 54, 0.12);
   cursor: default;
 }
 
 .segmented-control input[type="radio"]:focus-visible + svg {
   outline: 2px solid var(--workspace-focus-ring);
+  outline-offset: 2px;
   border-radius: 2px;
 }
+
+/* ── Buttons ── */
 
 .secondary-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0 12px;
+  padding: 0 14px;
   border: 1px solid var(--workspace-border);
-  background: var(--workspace-panel);
+  border-radius: 999px;
+  background: transparent;
   color: var(--workspace-text);
-  font-size: 13px;
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
   text-decoration: none;
+  transition:
+    color 0.16s var(--workspace-ease),
+    border-color 0.16s var(--workspace-ease),
+    background-color 0.16s var(--workspace-ease);
 }
 
 .secondary-button:hover {
-  border-color: var(--workspace-border-strong);
+  border-color: var(--workspace-accent-line);
+  background: var(--workspace-accent-soft);
+  color: var(--workspace-accent);
 }
 
 .secondary-button:disabled {
   cursor: default;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 .compact-button {
   min-height: 28px;
-  padding: 0 10px;
+  padding: 0 12px;
   font-size: 12px;
 }
 
 .header-divider {
   width: 1px;
-  height: 16px;
-  background-color: var(--workspace-border);
+  height: 14px;
   margin: 0 4px;
+  background-color: var(--workspace-border);
 }
 
 .icon-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: var(--workspace-radius-sm);
   background: transparent;
-  color: var(--workspace-text);
+  color: var(--workspace-text-muted);
   cursor: pointer;
-  transition: all 0.15s ease-out;
+  transition:
+    color 0.16s var(--workspace-ease),
+    background-color 0.16s var(--workspace-ease),
+    border-color 0.16s var(--workspace-ease);
 }
 
 .icon-button:hover {
-  background: var(--workspace-surface-hover);
-  color: var(--workspace-text-strong);
+  background: var(--workspace-accent-soft);
+  color: var(--workspace-accent);
 }
 
 .icon-button:active {
-  background: var(--workspace-border);
+  border-color: var(--workspace-accent-line);
 }
 
 .icon-button:focus-visible {
   outline: 2px solid var(--workspace-focus-ring);
-  outline-offset: -1px;
+  outline-offset: 1px;
 }
 
 .external-links {
@@ -159,15 +202,17 @@
 }
 
 .ghost-link {
-  font-size: 0.85rem;
-  color: var(--workspace-text-muted);
-  text-decoration: none;
   padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.1s ease;
+  border-radius: var(--workspace-radius-sm);
+  color: var(--workspace-text-muted);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition:
+    color 0.16s var(--workspace-ease),
+    background-color 0.16s var(--workspace-ease);
 }
 
 .ghost-link:hover {
-  color: var(--workspace-text-strong);
-  background: var(--workspace-surface-hover);
+  background: var(--workspace-accent-soft);
+  color: var(--workspace-accent);
 }

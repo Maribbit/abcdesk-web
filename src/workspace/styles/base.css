@@ -1,46 +1,142 @@
+/* ────────────────────────────────────────────────────────────────
+   ABC Desk Web — design tokens.
+
+   Three layers, borrowed from the blog's room:
+     L0 scene  — the cool grey wall the sheets hang on (--workspace-bg)
+     L1 sheet  — opaque content surfaces: panes, code, score  (--workspace-surface)
+     L2 paper  — translucent floating chrome: top bar, dialog (--workspace-paper)
+
+   The interface is built from cool grey, like the blog: the accent is a
+   grey-blue, not a colour of its own. The only saturated hue in the app is
+   the live note (--workspace-live), so "this is playing" is the one thing
+   that jumps out.
+   ──────────────────────────────────────────────────────────────── */
+
 :root {
   color-scheme: light;
-  --workspace-bg: #f4f6f8;
-  --workspace-surface: #ffffff;
-  --workspace-surface-hover: #f1f5f9;
-  --workspace-panel: #f9fafb;
-  --workspace-text: #1f2937;
-  --workspace-text-strong: #0f172a;
-  --workspace-text-muted: #64748b;
-  --workspace-muted: #64748b;
-  --workspace-border: #d7dde5;
-  --workspace-border-strong: #aeb8c5;
-  --workspace-focus-ring: #60a5fa;
-  --workspace-accent: #1f6feb;
-  --workspace-accent-hover: #1158c7;
-  --workspace-accent-text: #ffffff;
-  --workspace-code-bg: #f8fafc;
-  --workspace-code-text: #1e293b;
-  --workspace-empty-bg: #eef2f7;
+
+  /* L0 — scene */
+  --workspace-bg: #e8ebec;
+  --workspace-bg-deep: #dde5e6;
+  --workspace-grain-opacity: 0.5;
+
+  /* L1 — sheets */
+  --workspace-surface: #f7f9fa;
+  --workspace-surface-hover: rgba(45, 51, 56, 0.055);
+  --workspace-panel: #f2f6f7;
+  --workspace-empty-bg: #eff3f4;
+  --workspace-sheet-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 10px 26px rgba(34, 46, 54, 0.08);
+
+  /* L2 — translucent paper */
+  --workspace-paper: rgba(237, 241, 242, 0.62);
+  --workspace-paper-strong: rgba(242, 246, 247, 0.88);
+  --workspace-paper-edge: rgba(45, 51, 56, 0.09);
+  --workspace-paper-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 12px 28px rgba(34, 46, 54, 0.1);
+  /* The bar's own shadow: it must fade out inside the 10px reveal, since it
+     floats above the wall and not above the sheets (see chrome.css). */
+  --workspace-bar-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 3px 9px rgba(34, 46, 54, 0.1);
+  --workspace-blur: 12px;
+  --workspace-saturate: 108%;
+  --workspace-chip: rgba(255, 255, 255, 0.86);
+
+  /* Ink */
+  --workspace-text: #2d3338;
+  --workspace-text-strong: #1f262a;
+  --workspace-text-muted: #6b757c;
+  --workspace-muted: #79838a;
+
+  /* Lines */
+  --workspace-border: rgba(45, 51, 56, 0.1);
+  --workspace-border-strong: rgba(45, 51, 56, 0.2);
+
+  /* Accent — grey-blue: a deeper step of the wall, not a new colour */
+  --workspace-accent: #4f6779;
+  --workspace-accent-hover: #40576a;
+  --workspace-accent-text: #f5f8fa;
+  --workspace-accent-soft: rgba(79, 103, 121, 0.12);
+  --workspace-accent-line: rgba(79, 103, 121, 0.34);
+  --workspace-focus-ring: rgba(79, 103, 121, 0.45);
+
+  /* Code */
+  --workspace-code-bg: #f7f9fa;
+  --workspace-code-text: #2f373c;
+  --workspace-code-select: rgba(79, 103, 121, 0.18);
+
+  /* Live playback — the one saturated hue. Chrome is grey-blue; the music
+     that is being played is blue, here and on the score sheet. */
+  --workspace-live: #1f6feb;
+  --workspace-live-soft: rgba(31, 111, 235, 0.14);
+  --workspace-live-line: rgba(31, 111, 235, 0.4);
+
+  /* Metrics + type — one rhythm: every gap around the sheets is the same
+     measurement, so the seam reads as the wall showing through. */
+  --workspace-gutter: 10px; /* seam between the two sheets */
+  --workspace-inset: 10px; /* wall reveal around the sheets */
+  --workspace-radius: 12px;
+  --workspace-radius-sm: 8px;
+  --workspace-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --workspace-label: 0.62rem;
+  --workspace-label-track: 0.2em;
   --workspace-editor-size: 44%;
   --workspace-editor-mobile-size: 38vh;
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --workspace-bg: #202124;
-  --workspace-surface: #17191c;
-  --workspace-surface-hover: #26292d;
-  --workspace-panel: #202329;
-  --workspace-text: #eceff3;
-  --workspace-text-strong: #f8fafc;
-  --workspace-text-muted: #94a3b8;
-  --workspace-muted: #b4bac1;
-  --workspace-border: #34373d;
-  --workspace-border-strong: #4c5562;
-  --workspace-focus-ring: #38bdf8;
-  --workspace-accent: #7dd3fc;
-  --workspace-accent-hover: #38bdf8;
-  --workspace-accent-text: #0f1115;
-  --workspace-code-bg: #0f1115;
-  --workspace-code-text: #d9efff;
-  --workspace-empty-bg: #202329;
+
+  --workspace-bg: #15191b;
+  --workspace-bg-deep: #101416;
+  --workspace-grain-opacity: 0.32;
+
+  --workspace-surface: #1b2023;
+  --workspace-surface-hover: rgba(255, 255, 255, 0.07);
+  --workspace-panel: #20262a;
+  --workspace-empty-bg: #20262a;
+  --workspace-sheet-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    0 12px 30px rgba(0, 0, 0, 0.36);
+
+  --workspace-paper: rgba(40, 47, 50, 0.62);
+  --workspace-paper-strong: rgba(32, 38, 41, 0.9);
+  --workspace-paper-edge: rgba(255, 255, 255, 0.08);
+  --workspace-paper-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 34px rgba(0, 0, 0, 0.45);
+  --workspace-bar-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 3px 9px rgba(0, 0, 0, 0.4);
+  --workspace-chip: rgba(255, 255, 255, 0.1);
+
+  --workspace-text: #dce3e4;
+  --workspace-text-strong: #f0f5f5;
+  --workspace-text-muted: #a3adaf;
+  --workspace-muted: #98a3a6;
+
+  --workspace-border: rgba(255, 255, 255, 0.09);
+  --workspace-border-strong: rgba(255, 255, 255, 0.18);
+
+  --workspace-accent: #9ab0c2;
+  --workspace-accent-hover: #b2c5d4;
+  --workspace-accent-text: #12181d;
+  --workspace-accent-soft: rgba(154, 176, 194, 0.16);
+  --workspace-accent-line: rgba(154, 176, 194, 0.36);
+  --workspace-focus-ring: rgba(154, 176, 194, 0.5);
+
+  --workspace-code-bg: #1b2023;
+  --workspace-code-text: #ccd4d6;
+  --workspace-code-select: rgba(154, 176, 194, 0.24);
+
+  --workspace-live: #7aa2ff;
+  --workspace-live-soft: rgba(122, 162, 255, 0.2);
+  --workspace-live-line: rgba(122, 162, 255, 0.45);
 }
 
 * {
@@ -54,10 +150,32 @@ body {
   margin: 0;
 }
 
+/* The wall: a cool gradient with the floor band settling at the bottom,
+   exactly the vertical relationship the blog's room uses. */
 body {
   overflow: hidden;
-  background: var(--workspace-bg);
+  background: linear-gradient(
+    180deg,
+    var(--workspace-bg) 0%,
+    var(--workspace-bg-deep) 100%
+  );
   color: var(--workspace-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fine paper grain on the wall — only visible in the gutters between
+   sheets, which is what makes the sheets read as separate objects. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  mix-blend-mode: soft-light;
+  opacity: var(--workspace-grain-opacity);
+  pointer-events: none;
 }
 
 button,
@@ -72,8 +190,12 @@ select {
 }
 
 button {
-  border-radius: 6px;
+  border-radius: var(--workspace-radius-sm);
   cursor: pointer;
+}
+
+::selection {
+  background: var(--workspace-code-select);
 }
 
 .visually-hidden {
@@ -86,4 +208,14 @@ button {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

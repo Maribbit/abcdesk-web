@@ -12,11 +12,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
   color: var(--abcdesk-muted-text);
-  user-select: none;
-  font-weight: 500;
+  font-size: var(--abcdesk-label);
+  font-weight: 600;
+  letter-spacing: var(--abcdesk-label-track);
   line-height: 1.2;
+  text-transform: uppercase;
+  user-select: none;
 }
 
 .abcdesk-header-actions {
@@ -88,14 +90,16 @@ abcdesk-keyboard-toggle {
   flex: 0 0 auto;
   width: 28px;
   height: 28px;
-  border-radius: 4px;
-  color: var(--abcdesk-muted-text);
+  border-radius: 8px;
+  color: var(--abcdesk-icon);
   cursor: pointer;
   font-family: inherit;
   font-size: 16px;
   line-height: 1;
   user-select: none;
-  transition: background-color 150ms ease, color 150ms ease;
+  transition:
+    background-color 150ms var(--abcdesk-ease),
+    color 150ms var(--abcdesk-ease);
 }
 
 .abcdesk-tempo-button::-webkit-details-marker {
@@ -121,8 +125,8 @@ abcdesk-keyboard-toggle {
 .abcdesk-code-toggle-button[aria-pressed="true"],
 .abcdesk-fullscreen-button:hover,
 .abcdesk-fullscreen-button[aria-pressed="true"] {
-  background: var(--abcdesk-audio-bg);
-  color: var(--abcdesk-text);
+  background: var(--abcdesk-accent-soft);
+  color: var(--abcdesk-accent);
 }
 
 .abcdesk-tempo-button:focus-visible,
@@ -146,10 +150,10 @@ abcdesk-keyboard-toggle {
   align-items: center;
   gap: 8px;
   padding: 8px;
-  border-radius: 6px;
+  border-radius: 10px;
   background: var(--abcdesk-audio-bg);
   border: 1px solid var(--abcdesk-audio-border);
-  box-shadow: 0 4px 16px rgb(0 0 0 / 20%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 14%);
   white-space: nowrap;
 }
 
@@ -192,6 +196,6 @@ abcdesk-keyboard-toggle {
   background: var(--abcdesk-audio-input-bg);
   color: var(--abcdesk-audio-input-text);
   border: 1px solid var(--abcdesk-audio-input-border);
-  border-radius: 3px;
+  border-radius: 6px;
   font: inherit;
 }

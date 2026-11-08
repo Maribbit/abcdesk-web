@@ -1,4 +1,11 @@
-/* ABC Desk - styles injected inside the shadow root. */
+/* ABC Desk player — styles injected inside the shadow root.
+
+   The player carries its own tokens (it may live in a host page we do not
+   control), mirroring the workspace's cool-grey wall + grey-blue accent.
+   Two deliberate rules: the score sheet stays paper-coloured in both
+   themes (engraving is ink on paper; the desk goes dark, the sheet does
+   not), and the live note is the only saturated hue in the app — a grey
+   accent cannot mark a moving note on paper, blue can. */
 
 :host {
   all: initial;
@@ -6,34 +13,62 @@
   contain: content;
   margin: 8px 0;
   color-scheme: light dark;
-  --abcdesk-container-bg: #fefefe;
-  --abcdesk-text: #222;
-  --abcdesk-muted-text: #888;
-  --abcdesk-score-bg: #fff;
-  --abcdesk-score-text: #111;
+
+  /* Ink */
+  --abcdesk-text: #2d3338;
+  --abcdesk-muted-text: #79838a;
+  /* Tool icons sit one step darker than labels, matching the workspace's
+     .icon-button so the two header rows weigh the same. */
+  --abcdesk-icon: #6b757c;
+
+  /* The one accent: a deeper step of the wall, not a new colour */
+  --abcdesk-accent: #4f6779;
+  --abcdesk-accent-soft: rgba(79, 103, 121, 0.12);
+
+  /* Surfaces */
+  --abcdesk-container-bg: #f7f9fa;
+  --abcdesk-panel-bg: #f2f6f7;
+  --abcdesk-panel-border: rgba(45, 51, 56, 0.1);
+  --abcdesk-score-bg: #fdfefe;
+  --abcdesk-score-edge: rgba(45, 51, 56, 0.09);
+  --abcdesk-score-shadow: 0 2px 10px rgba(34, 46, 54, 0.06);
+  --abcdesk-score-text: #1b2124;
+  /* The live note, not the accent: blue separates from black engraving. */
   --abcdesk-playback-highlight: #1f6feb;
-  --abcdesk-keyboard-bg: #f1f3f5;
-  --abcdesk-key-white-bg: #ffffff;
-  --abcdesk-key-white-text: #6b7280;
-  --abcdesk-key-black-bg: #2f343d;
-  --abcdesk-key-black-text: #d1d5db;
-  --abcdesk-audio-border: #eee;
-  --abcdesk-audio-bg: #f6f7f8;
-  --abcdesk-audio-control: #374151;
-  --abcdesk-audio-control-hover: #111827;
-  --abcdesk-audio-control-pushed-bg: #e4e8ee;
-  --abcdesk-audio-control-pushed-border: #aeb8c5;
-  --abcdesk-audio-track-bg: #eef1f4;
-  --abcdesk-audio-track-border: #ccd2da;
-  --abcdesk-audio-thumb: #4b5563;
-  --abcdesk-audio-input-bg: #fff;
-  --abcdesk-audio-input-text: #222;
-  --abcdesk-audio-input-border: #c9d0da;
-  --abcdesk-warning-bg: #fff8e6;
-  --abcdesk-warning-border: #f3cf74;
-  --abcdesk-error-text: #999;
-  --abcdesk-panel-bg: #f9fafb;
-  --abcdesk-panel-border: #d7dde5;
+
+  /* Keyboard */
+  --abcdesk-keyboard-bg: #f1f5f6;
+  --abcdesk-key-white-bg: #fdfefe;
+  --abcdesk-key-white-text: #7b858b;
+  --abcdesk-key-black-bg: #313a3f;
+  --abcdesk-key-black-text: #d3dbde;
+  --abcdesk-key-active-text: #ffffff;
+  --abcdesk-key-mark: #c2cbcd;
+
+  /* Audio bar */
+  --abcdesk-audio-border: rgba(45, 51, 56, 0.1);
+  --abcdesk-audio-bg: #f1f5f6;
+  --abcdesk-audio-control: #3d454a;
+  --abcdesk-audio-control-hover: #4f6779;
+  --abcdesk-audio-control-pushed-bg: rgba(79, 103, 121, 0.12);
+  --abcdesk-audio-control-pushed-border: rgba(79, 103, 121, 0.34);
+  --abcdesk-audio-track-bg: #e5eaeb;
+  --abcdesk-audio-track-border: rgba(45, 51, 56, 0.12);
+  --abcdesk-audio-thumb: #4f6779;
+  --abcdesk-audio-input-bg: #ffffff;
+  --abcdesk-audio-input-text: #2d3338;
+  --abcdesk-audio-input-border: rgba(45, 51, 56, 0.18);
+
+  /* Diagnostics — a tinted annotation on the sheet, not a traffic light */
+  --abcdesk-warning-bg: rgba(79, 103, 121, 0.09);
+  --abcdesk-warning-border: rgba(79, 103, 121, 0.3);
+  --abcdesk-error-text: #79838a;
+
+  /* Motion + type */
+  --abcdesk-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --abcdesk-label: 0.62rem;
+  --abcdesk-label-track: 0.2em;
+
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -62,34 +97,49 @@
 }
 
 :host([data-abcdesk-theme="dark"]) {
-  --abcdesk-container-bg: #202124;
-  --abcdesk-text: #eceff3;
-  --abcdesk-muted-text: #b4bac1;
-  --abcdesk-score-bg: #17191c;
-  --abcdesk-score-text: #d9dee5;
-  --abcdesk-playback-highlight: #7dd3fc;
-  --abcdesk-keyboard-bg: #262a31;
-  --abcdesk-key-white-bg: #d9dee5;
-  --abcdesk-key-white-text: #4b5563;
-  --abcdesk-key-black-bg: #0f1115;
-  --abcdesk-key-black-text: #cbd5e1;
-  --abcdesk-audio-border: #34373d;
-  --abcdesk-audio-bg: #2b2f36;
-  --abcdesk-audio-control: #d9dee5;
-  --abcdesk-audio-control-hover: #f5f7fa;
-  --abcdesk-audio-control-pushed-bg: #3b414a;
-  --abcdesk-audio-control-pushed-border: #69717d;
-  --abcdesk-audio-track-bg: #23272e;
-  --abcdesk-audio-track-border: #5a626d;
-  --abcdesk-audio-thumb: #c3cad3;
-  --abcdesk-audio-input-bg: #17191c;
-  --abcdesk-audio-input-text: #e2e7ee;
-  --abcdesk-audio-input-border: #4c5562;
-  --abcdesk-warning-bg: #3a2f17;
-  --abcdesk-warning-border: #8b6f2c;
-  --abcdesk-error-text: #a5abb3;
-  --abcdesk-panel-bg: #202329;
-  --abcdesk-panel-border: #34373d;
+  --abcdesk-text: #dce3e4;
+  --abcdesk-muted-text: #98a3a6;
+  --abcdesk-icon: #a3adaf;
+
+  --abcdesk-accent: #9ab0c2;
+  --abcdesk-accent-soft: rgba(154, 176, 194, 0.16);
+
+  --abcdesk-container-bg: #1b2023;
+  --abcdesk-panel-bg: #20262a;
+  --abcdesk-panel-border: rgba(255, 255, 255, 0.09);
+  /* The sheet stays paper — dimmed a touch so it does not glare. */
+  --abcdesk-score-bg: #dde2e1;
+  --abcdesk-score-edge: rgba(0, 0, 0, 0.4);
+  --abcdesk-score-shadow: 0 6px 18px rgba(0, 0, 0, 0.32);
+  --abcdesk-score-text: #1b2124;
+  /* The sheet is paper in this theme too, so the live note keeps the ink
+     blue instead of the pastel a dark page would allow. */
+  --abcdesk-playback-highlight: #1f6feb;
+
+  --abcdesk-keyboard-bg: #20262a;
+  --abcdesk-key-white-bg: #dde3e3;
+  --abcdesk-key-white-text: #5b666b;
+  --abcdesk-key-black-bg: #0f1315;
+  --abcdesk-key-black-text: #c3ccce;
+  --abcdesk-key-active-text: #ffffff;
+  --abcdesk-key-mark: #a7b1b4;
+
+  --abcdesk-audio-border: rgba(255, 255, 255, 0.09);
+  --abcdesk-audio-bg: #20262a;
+  --abcdesk-audio-control: #d2dadb;
+  --abcdesk-audio-control-hover: #b2c5d4;
+  --abcdesk-audio-control-pushed-bg: rgba(154, 176, 194, 0.18);
+  --abcdesk-audio-control-pushed-border: rgba(154, 176, 194, 0.4);
+  --abcdesk-audio-track-bg: #2a3134;
+  --abcdesk-audio-track-border: rgba(255, 255, 255, 0.14);
+  --abcdesk-audio-thumb: #9ab0c2;
+  --abcdesk-audio-input-bg: #171b1e;
+  --abcdesk-audio-input-text: #dce3e4;
+  --abcdesk-audio-input-border: rgba(255, 255, 255, 0.16);
+
+  --abcdesk-warning-bg: rgba(154, 176, 194, 0.12);
+  --abcdesk-warning-border: rgba(154, 176, 194, 0.34);
+  --abcdesk-error-text: #98a3a6;
 }
 
 :host,
@@ -103,9 +153,10 @@
   display: block;
   position: relative;
   padding: 8px 16px 16px;
-  border-radius: 6px;
+  border-radius: 10px;
   background: var(--abcdesk-container-bg);
   color: var(--abcdesk-text);
   font-family: inherit;
   line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
 }

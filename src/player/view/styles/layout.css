@@ -17,25 +17,42 @@
   padding: 0;
 }
 
+/* Mirrors .pane-header in the source pane exactly — same height, same
+   14px label inset, same 8px tool inset — so the two sheets read as a pair. */
 :host([data-abcdesk-layout="workspace"]) .abcdesk-header {
-  min-height: 36px;
+  min-height: 40px;
   margin: 0;
-  padding: 0 10px;
+  padding: 0 8px 0 14px;
   border-bottom: 1px solid var(--abcdesk-panel-border);
   background: var(--abcdesk-panel-bg);
 }
 
+/* Score, keyboard and audio sit on the pane as separate pieces of the
+   desk: the sheet floats, the controls stay flush. */
 :host([data-abcdesk-layout="workspace"]) .abcdesk-score {
-  padding: 12px;
+  margin: 10px 12px 0;
+  /* abcjs writes an inline width:100% on its target, which would push the
+     right margin outside the pane. Cap the used width instead of fighting
+     the inline style: 2 x 12px matches the margins above. */
+  max-width: calc(100% - 24px);
+  padding: 10px 12px;
 }
 
 :host([data-abcdesk-layout="workspace"]) .abcdesk-audio {
-  padding: 12px;
+  padding: 4px 12px 12px;
   margin: 0;
 }
 
+/* The keybed bleeds to the pane edges: a scrolled keyboard is honest
+   about being wider than the pane, while a card would just slice a key.
+   No horizontal padding either — every pixel belongs to a key, so a wide
+   pane can hold the whole 88-key range with nothing left to scroll. */
 :host([data-abcdesk-layout="workspace"]) .abcdesk-keyboard {
-  border-top: 1px solid var(--abcdesk-audio-border);
+  margin: 10px 0 0;
+  padding: 6px 0;
+  border: 0;
+  border-top: 1px solid var(--abcdesk-panel-border);
+  border-radius: 0;
 }
 
 :host([data-abcdesk-layout="workspace"]) .abcdesk-quality-panel {
@@ -48,7 +65,7 @@
   max-height: none !important;
   min-height: 0 !important;
   overflow: auto !important;
-  padding-bottom: 0 !important;
+  padding-bottom: 14px !important;
   display: block !important;
   position: relative !important;
   align-self: stretch;
@@ -59,13 +76,12 @@
   max-height: none !important;
   min-height: 0 !important;
   overflow: auto !important;
-  padding-bottom: 0 !important;
+  padding-bottom: 14px !important;
   display: block !important;
   position: relative !important;
   align-self: stretch;
 }
 
-:host(:fullscreen) .abcdesk-header,
 :host(:fullscreen) .abcdesk-keyboard,
 :host(:fullscreen) .abcdesk-audio,
 :host([data-abcdesk-browser-fullscreen]) .abcdesk-header,
@@ -85,13 +101,15 @@
   display: none;
 }
 
+/* Hiding only the inner button left a zero-width flex item, whose 4px gap
+   pushed the tool row 4px off the pane header's inset. */
+:host([data-abcdesk-layout="workspace"]) abcdesk-code-toggle {
+  display: none;
+}
+
 :host(:fullscreen) .abcdesk-keyboard,
 :host([data-abcdesk-browser-fullscreen]) .abcdesk-keyboard {
   min-height: calc(var(--abcdesk-white-key-height) + 12px);
-  margin-top: auto;
-}
-
-:host([data-abcdesk-layout="workspace"]) .abcdesk-keyboard {
   margin-top: auto;
 }
 

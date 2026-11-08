@@ -54,10 +54,10 @@ function renderKeyboardIcon(): TemplateResult {
       stroke-linejoin="round"
     >
       <path
-        d="M4 6h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"
+        d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"
       />
-      <path d="M8 6v8 M12 6v8 M16 6v8" />
-      <path d="M6 14h12" />
+      <path d="M8 4v11 M12 4v11 M16 4v11" />
+      <path d="M6 15h12" />
     </svg>
   `;
 }

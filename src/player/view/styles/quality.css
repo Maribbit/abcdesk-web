@@ -2,14 +2,14 @@
   display: block;
   max-width: 100%;
   margin: 0 0 8px;
-  padding: 10px;
+  padding: 10px 12px;
   border: 1px solid var(--abcdesk-warning-border);
-  border-radius: 6px;
+  border-radius: 10px;
   background: var(--abcdesk-warning-bg);
   color: var(--abcdesk-text);
   font-family: inherit;
   font-size: 12px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .abcdesk-quality-panel[hidden] {
@@ -34,7 +34,7 @@
   flex: 0 0 auto;
   padding: 4px 8px;
   border: 1px solid var(--abcdesk-audio-input-border);
-  border-radius: 4px;
+  border-radius: 6px;
   background: var(--abcdesk-audio-input-bg);
   color: var(--abcdesk-text);
   cursor: pointer;
@@ -44,7 +44,8 @@
 
 .abcdesk-quality-copy-button:hover,
 .abcdesk-quality-copy-button:focus-visible {
-  border-color: var(--abcdesk-audio-thumb);
+  border-color: var(--abcdesk-accent);
+  color: var(--abcdesk-accent);
   outline: none;
 }
 

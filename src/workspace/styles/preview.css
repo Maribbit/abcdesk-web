@@ -1,3 +1,5 @@
+/* Preview sheet: the player fills it, and the empty state is a blank page. */
+
 .render-mount {
   position: relative;
   width: 100%;
@@ -19,26 +21,29 @@
 
 .empty-preview {
   position: absolute;
-  inset: 16px;
+  inset: var(--workspace-gutter);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   border: 1px dashed var(--workspace-border-strong);
-  border-radius: 8px;
+  border-radius: var(--workspace-radius);
   background: var(--workspace-empty-bg);
   color: var(--workspace-muted);
   text-align: center;
 }
 
 .empty-preview strong {
-  color: var(--workspace-text);
-  font-size: 15px;
+  color: var(--workspace-text-muted);
+  font-size: var(--workspace-label);
+  font-weight: 600;
+  letter-spacing: var(--workspace-label-track);
+  text-transform: uppercase;
 }
 
 .empty-preview span {
-  font-size: 13px;
+  font-size: 12.5px;
 }
 
 .render-mount.has-render .empty-preview {
