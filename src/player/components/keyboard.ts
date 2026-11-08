@@ -11,6 +11,8 @@ export interface KeyboardController {
   setVisible(isVisible: boolean): void;
   highlightPitches(midiPitches: MidiPitch[]): void;
   clearActiveKeys(): void;
+  setPointedPitches(midiPitches: MidiPitch[]): void;
+  clearPointedPitches(): void;
   syncSize(): void;
   dispose(): void;
 }
@@ -68,6 +70,9 @@ export function createKeyboardController(
     highlightPitches: (midiPitches: MidiPitch[]) =>
       keyboard.highlightPitches(midiPitches),
     clearActiveKeys: () => keyboard.clearActiveKeys(),
+    setPointedPitches: (midiPitches: MidiPitch[]) =>
+      keyboard.setPointedPitches(midiPitches),
+    clearPointedPitches: () => keyboard.clearPointedPitches(),
     syncSize: () => keyboard.syncSize(),
     dispose: () => {
       toggle.removeEventListener(KEYBOARD_TOGGLE_EVENT, toggleKeyboard);
@@ -82,11 +87,13 @@ export class ABCDeskKeyboardElement extends LitElement {
     tunePitches: { attribute: false },
     activePitches: { attribute: false },
     auditionPitches: { attribute: false },
+    pointedPitches: { attribute: false },
   };
 
   tunePitches: number[] = [];
   activePitches: number[] = [];
   auditionPitches: number[] = [];
+  pointedPitches: number[] = [];
 
   private focusStartPitch = MIDDLE_C_PITCH;
   private focusEndPitch = MIDDLE_C_PITCH;
@@ -119,6 +126,7 @@ export class ABCDeskKeyboardElement extends LitElement {
     this.clearAuditionPitches();
     this.tunePitches = [...pitches];
     this.activePitches = [];
+    this.pointedPitches = [];
     this.focusStartPitch = pitches[0] ?? MIDDLE_C_PITCH;
     this.focusEndPitch = pitches[pitches.length - 1] ?? MIDDLE_C_PITCH;
 
@@ -131,13 +139,24 @@ export class ABCDeskKeyboardElement extends LitElement {
   }
 
   highlightPitches(midiPitches: MidiPitch[]): void {
-    this.activePitches = midiPitches.flatMap((midiPitch) =>
-      midiPitch.pitch === undefined ? [] : [midiPitch.pitch],
-    );
+    this.activePitches = toPitches(midiPitches);
   }
 
   clearActiveKeys(): void {
     this.activePitches = [];
+  }
+
+  /**
+   * The keys of the note the two panes point at: a reading mark, not a sound.
+   * Kept apart from `activePitches`, which belongs to the note that is playing;
+   * CSS lets the playing colour win when both land on the same key.
+   */
+  setPointedPitches(midiPitches: MidiPitch[]): void {
+    this.pointedPitches = toPitches(midiPitches);
+  }
+
+  clearPointedPitches(): void {
+    this.pointedPitches = [];
   }
 
   syncSize(): void {
@@ -184,9 +203,16 @@ export class ABCDeskKeyboardElement extends LitElement {
     const tunePitches = new Set(this.tunePitches);
     const activePitches = new Set(this.activePitches);
     const auditionPitches = new Set(this.auditionPitches);
+    const pointedPitches = new Set(this.pointedPitches);
 
     return html`${this.getKeyboardPitches().map((pitch) =>
-      this.renderPianoKey(pitch, tunePitches, activePitches, auditionPitches),
+      this.renderPianoKey(
+        pitch,
+        tunePitches,
+        activePitches,
+        auditionPitches,
+        pointedPitches,
+      ),
     )}`;
   }
 
@@ -209,6 +235,7 @@ export class ABCDeskKeyboardElement extends LitElement {
     tunePitches: Set<number>,
     activePitches: Set<number>,
     auditionPitches: Set<number>,
+    pointedPitches: Set<number>,
   ): TemplateResult {
     const noteName = getMidiNoteName(pitch);
 
@@ -219,6 +246,7 @@ export class ABCDeskKeyboardElement extends LitElement {
           tunePitches,
           activePitches,
           auditionPitches,
+          pointedPitches,
         )}
         data-pitch=${String(pitch)}
         data-note=${noteName}
@@ -302,6 +330,7 @@ function getPianoKeyClassName(
   tunePitches: Set<number>,
   activePitches: Set<number>,
   auditionPitches: Set<number>,
+  pointedPitches: Set<number>,
 ): string {
   const classNames = [
     "abcdesk-piano-key",
@@ -312,12 +341,19 @@ function getPianoKeyClassName(
 
   if (tunePitches.has(pitch)) classNames.push("abcdesk-key-in-tune");
   if (pitch === MIDDLE_C_PITCH) classNames.push("abcdesk-key-middle-c");
+  if (pointedPitches.has(pitch)) classNames.push("abcdesk-key-pointed");
   if (activePitches.has(pitch)) classNames.push("abcdesk-key-active");
   if (auditionPitches.has(pitch)) {
     classNames.push("abcdesk-key-auditioning");
   }
 
   return classNames.join(" ");
+}
+
+function toPitches(midiPitches: MidiPitch[]): number[] {
+  return midiPitches.flatMap((midiPitch) =>
+    midiPitch.pitch === undefined ? [] : [midiPitch.pitch],
+  );
 }
 
 if (!customElements.get(KEYBOARD_TAG_NAME)) {

@@ -1,5 +1,5 @@
 import abcjs from "abcjs";
-import type { RenderInstance, TimingEvent } from "../types";
+import type { RenderInstance, SeekableSynthControl, TimingEvent } from "../types";
 import { getTuneDurationSeconds } from "./duration";
 import {
   clearPlaybackHighlight,
@@ -9,6 +9,7 @@ import {
 import { setupProgressDrag } from "./progress";
 import { getLocalPianoSynthOptions } from "./soundfont";
 import { getTimingEvents } from "./timing";
+import { pointSourceOffset } from "../view/score-target";
 
 /**
  * Initialize the abcjs SynthController for playback.
@@ -57,9 +58,26 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
 
 function createCursorControl(instance: RenderInstance): object {
   return {
-    onReady: () => setupKeyboard(instance),
+    // The tune learns its pitches from the soundfont, so until now the note the
+    // panes point at could not name a key to light. Point at it again so the
+    // keyboard shows the target the two panes already agree on.
+    onReady: () => {
+      setupKeyboard(instance);
+      if (instance.targetOffset !== null) {
+        pointSourceOffset(instance, instance.targetOffset);
+      }
+    },
     onStart: () => clearPlaybackHighlight(instance),
-    onEvent: (event: TimingEvent) => highlightTimingEvent(instance, event),
+    // abcjs reports the note at the playhead, not the note that is sounding:
+    // seeking fires this callback as well, even while the tune is stopped.
+    // Only a playing tune wears the sound's colour; a silent playhead that
+    // kept it would sit on the sheet after the reader points elsewhere, and
+    // the score would show two selections at once.
+    onEvent: (event: TimingEvent) => {
+      const synthControl = instance.synthControl as SeekableSynthControl | null;
+      if (synthControl?.isStarted !== true) return;
+      highlightTimingEvent(instance, event);
+    },
     onFinished: () => clearPlaybackHighlight(instance),
   };
 }

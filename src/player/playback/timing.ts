@@ -65,6 +65,16 @@ export function getTimingEvents(instance: RenderInstance): TimingEvent[] {
   if (!tune) return [];
 
   if (!tune.noteTimings || tune.noteTimings.length === 0) {
+    // A timing event names the pitches of its note only once the tune has been
+    // flattened, and flattening is what the soundfont does — but it needs no
+    // audio. Running it up front is what lets the keyboard show the tune's
+    // notes, and the note the panes point at, from the first paint instead of
+    // waiting for the reader to make a sound.
+    try {
+      tune.setUpAudio?.({});
+    } catch {
+      // A tune the flattener cannot read still gets its timings, just without pitches.
+    }
     tune.noteTimings = tune.setTiming?.(0, 0) ?? [];
   }
 

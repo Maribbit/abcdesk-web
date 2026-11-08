@@ -24,11 +24,30 @@
   height: auto;
 }
 
-/* Colour on the sheet has two owners. abcjs marks the note you clicked in its
-   own red, written as a fill attribute — the one red the app allows: a
-   pointer, never a surface, never more than one note. The note that is
-   sounding is ours: ink blue, the one saturated hue in the app, because a
-   grey-blue accent would disappear into black engraving while music moves. */
+/* Colour on the sheet has two owners, and both speak the same language.
+
+   The target is the note the caret stands on or the note you clicked: fill plus
+   a dashed box. The note that is sounding keeps the ink blue and no box, so
+   shape tells the two apart even when they land on the same note. abcjs's own
+   click red is neutralised at render time (see `selectionColor` in
+   score-render.ts), which leaves one selection language instead of three. */
+.abcdesk-score .abcdesk-target,
+.abcdesk-score .abcdesk-target * {
+  fill: var(--abcdesk-target) !important;
+}
+
+/* The box is drawn inside the same SVG as the note it marks: user-space
+   geometry scales with the staff, so a narrow pane never leaves it behind.
+   The stroke stays hairline at any scale. */
+.abcdesk-target-box {
+  fill: none;
+  stroke: var(--abcdesk-target);
+  stroke-width: 1.5px;
+  stroke-dasharray: 4px 3px;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
 .abcdesk-score .abcdesk-note-playing,
 .abcdesk-score .abcdesk-note-playing * {
   fill: var(--abcdesk-playback-highlight) !important;

@@ -27,12 +27,21 @@ export interface RenderInstance {
    *  init and while a re-render is swapping one in. */
   synthReady: Promise<void> | null;
   activePlaybackElements: Element[];
+  /** Where the shared target sits, in the rendered text; null when nothing is
+   *  pointed at. Kept so a re-render for layout can point at it again. */
+  targetOffset: number | null;
+  /** SVG nodes carrying the target mark. */
+  targetElements: Element[];
+  /** abcjs claimed a note for the click in flight, before the score container
+   *  heard it; a click nobody claimed was about the paper, not a note. */
+  scoreClickClaimed: boolean;
   scoreResizeObserver: ResizeObserver | null;
   scoreResizeTimer: number | undefined;
   pendingPlaybackSeekPercent: number | null;
   pendingPlaybackSeekPromise: Promise<unknown> | null;
   progressDragCleanup: (() => void) | null;
   onSourceHighlight: ((ranges: SourceHighlightRange[]) => void) | undefined;
+  onTargetRanges: ((ranges: SourceHighlightRange[]) => void) | undefined;
   onSelectSourceRange: ((range: SourceHighlightRange) => void) | undefined;
   cleanup: () => void;
 }
@@ -44,11 +53,18 @@ export interface SourceHighlightRange {
 
 export interface RenderAbcOptions {
   onSourceHighlight?: (ranges: SourceHighlightRange[]) => void;
+  /**
+   * The shared target changed: the characters of the pointed note, or nothing
+   * when there is no target. The caret and a click both write to it, so the
+   * source marks exactly the note the score shows boxed.
+   */
+  onTargetRanges?: (ranges: SourceHighlightRange[]) => void;
   /** A click on the score names the characters that note was written with. */
   onSelectSourceRange?: (range: SourceHighlightRange) => void;
 }
 
 export interface AbcElementRef {
+  el_type?: string;
   startChar?: number;
   endChar?: number;
 }

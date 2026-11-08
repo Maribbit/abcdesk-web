@@ -26,6 +26,11 @@ export function renderScore(
     staffwidth: staffWidth,
     wrap: { ...SCORE_WRAP_OPTIONS },
     clickListener,
+    // Clicking a note makes abcjs paint its own selection, and it restores that
+    // paint later with the foreground colour. Naming the foreground here keeps
+    // the paint invisible in both directions, so the only selection language
+    // left is the shared target mark the app draws itself.
+    selectionColor: "currentColor",
   });
 
   return { visualObj, staffWidth };

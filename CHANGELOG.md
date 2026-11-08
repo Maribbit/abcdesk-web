@@ -8,6 +8,8 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Changed
 
+- The shared target is now drawn in a bright blue instead of the muted grey-blue, which was too close to the greys around it to read as a selection: the sheet fills the notehead and the dashed box with it, the source tints the characters' background and outlines them with it, and the keys of the target are filled with it. It stays one step lighter and colder than the playback blue, and only the target carries a box, so a note being read never looks like a note being heard.
+- The caret and the score now share one selection. The note under the caret and the note you click are the same state, drawn the same way on both sides: a tinted background inside a dashed outline in the source, a filled note inside a dashed box on the sheet. abcjs's own click colour is neutralised at render time, so there is one selection language instead of three, and the source caret is collapsed rather than turned into a selection.
 - The project is renamed to **ABC Desk Web** (`abcdesk-web`), the web counterpart of the ABC Desk VS Code workbench. Branding, package name, storage keys, custom element tags and CSS custom properties move from `chatmusic` to `abcdesk`.
 - The "Studio" concept is renamed to "workspace" so the app name, the code and the docs share one word: `src/studio/` becomes `src/workspace/`, `docs/specs/studio.md` becomes `workspace.md`, and the related settings helpers, storage keys, CSS classes and custom properties follow.
 - The Chrome extension target has been removed. ABC Desk Web is now a web-only ABC editor: the content script, ABC detectors, popup, background worker and MV3 manifest are gone, and the last extension state is preserved at tag `extension-v0.4.0`.
@@ -18,14 +20,15 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Added
 
+- Added a shared target for the two panes: the note under the caret and the note you click are one state. The sheet draws it as a filled note inside a dashed box, the source as a dashed outline around the characters, and the box lives inside abcjs's own SVG in user-space coordinates, so it stays on its note when the pane is resized (a chord is one box; each note of an expanded tie gets its own).
 - Added browser fullscreen toggle as a complement to system fullscreen, expanding the player to fill the browser viewport without hiding browser chrome.
 - Added Escape key support to exit browser fullscreen mode.
 - Added syntax greys to the source editor: fields, comments and bar lines are dimmed so the notes stay the darkest thing on the page, and the sounding note keeps the only saturated colour.
 - Added diagnostics to the source text: the ranges the quality panel reports are underlined with a thin grey-blue wave, and clicking a panel item (or pressing Enter/Space on it) selects that range and scrolls it into view.
-- Added score-to-source pointing: clicking a note in the score moves the source caret onto the characters that note was written with and scrolls them into view, without taking focus away from the score.
+- Added score-to-source pointing: clicking a note in the score makes it the target, moves the source caret onto the characters that note was written with (collapsed, not a selection) and scrolls them into view, without taking focus away from the score. The score's own reach decides what counts as a click on a note, so the mark follows the rectangle around a notehead, not just the glyph; clicking the paper around the staff lets go of the target in both panes.
 - Added play-from-cursor: `Mod-Enter` in the editor starts playback at the note under the caret, or at the next note when the caret sits between notes.
 - Added a play-from-cursor button to the Source header, drawn as a play triangle with a text-cursor badge; its tooltip names the shortcut for the current platform.
-- Added cursor-to-score following: moving the caret scrolls the staff line it belongs to into view, and a caret in the ABC header lines returns to the top of the sheet. Nothing is played, highlighted or focused.
+- Added cursor-to-score following: moving the caret marks the same note as the target and scrolls the staff line it belongs to into view, and a caret in the ABC header lines clears the target and returns to the top of the sheet. Nothing is played, highlighted or focused.
 
 ### Removed
 
@@ -34,6 +37,13 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Fixed
 
+- Fixed the caret just after a bar line pointing at the last note of the bar that had just ended. A bar line closes a bar, so the caret standing against one now looks at the next bar's first note; standing before the line still belongs to the bar that is ending. `|]`, `||`, `:|`, `::`, `[1` and the other spellings count as bar lines too.
+- Fixed the shared target vanishing after the preview was resized. Every redraw hands abcjs a fresh click listener, and the claim that tells a note apart from the paper it sits on lived in the first render's closure: after a resize (or an edit) the container took a note click for a click on empty paper and cleared the target the same click had just set, so only the playhead moved. The claim now belongs to the instance, so every listener speaks for the same click.
+- Fixed the keyboard losing the shared target. The keys of the note the panes point at are now filled in the target's colour, separately from the playback colour, so pointing at a note shows up on all three surfaces; a key that is both pointed at and sounding keeps the playback blue.
+- Fixed the keyboard knowing nothing about the tune until the first sound. abcjs names the pitches of a timing event only after it flattens the tune, which it does when the soundfont arrives, so the keyboard had no notes to show before the reader pressed play. Flattening needs no audio and now runs before the first timing is read, so the tune's keys are marked from the first paint.
+- Fixed a stopped score lighting up the note you clicked. Seeking fires abcjs's note callback even with the tune stopped, so the clicked note kept the sound's saturated colour after the caret pointed somewhere else and the sheet showed two selections at once. A note now wears that colour only while the tune is playing; a stopped playhead still moves, silently.
+- Fixed a click on empty score paper leaving the target behind. abcjs only reports clicks it can match to a note, so the score container now lets go of the target on any click abcjs did not claim, in both panes at once.
+- Fixed the caret and the score disagreeing about which note is being read. The caret is drawn against the character on its left, so the whitespace after a note now belongs to that note instead of jumping the target to the next one; the target moves only when the caret reaches the next note's first character. Play-from-cursor still reads a gap as "the note that has not sounded yet", which is a different question.
 - Fixed play-from-cursor pressed right after typing: the request landed on the previous score's timing, and the re-render that followed paused the playback it had just started. A waiting edit is now rendered first, the request waits for the new synth, and one request runs at a time so a held shortcut cannot toggle playback back off.
 - Fixed disabled header buttons looking active: icon buttons in the Source pane now dim when they cannot run.
 - Fixed the playback highlight staying on the score, the keybed and the source after pausing. abcjs reports start, notes and the end of the tune but not pause, so the last sounding note kept its blue until the tune finished; the pause path now clears it.

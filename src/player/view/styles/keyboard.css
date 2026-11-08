@@ -126,9 +126,23 @@
 }
 
 /* No second mark inside a key that is already lit. */
+.abcdesk-key-pointed.abcdesk-key-middle-c::before,
 .abcdesk-key-active.abcdesk-key-middle-c::before,
 .abcdesk-key-auditioning.abcdesk-key-middle-c::before {
   opacity: 0;
+}
+
+/* The keyboard is the third pane that shows the shared target: the keys of the
+   note the panes point at are filled in the target's grey-blue. The playback
+   colour comes later and wins when one key is both pointed at and sounding. */
+.abcdesk-key-pointed {
+  background: var(--abcdesk-target);
+  color: var(--abcdesk-key-active-text);
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 30%);
+}
+
+.abcdesk-key-pointed.abcdesk-key-in-tune {
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 35%);
 }
 
 .abcdesk-key-active {

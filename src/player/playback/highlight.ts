@@ -23,7 +23,16 @@ export function highlightTimingEvent(
 
 /** The SVG nodes abcjs drew for one timing event; chords nest their elements. */
 export function getTimingEventElements(event: TimingEvent): Element[] {
-  return flattenTimingElements(event.elements);
+  return getTimingEventElementGroups(event).flat();
+}
+
+/**
+ * The same nodes, grouped the way abcjs drew them: one group per note cluster,
+ * so a chord is a single box and each cluster of an expanded tie is its own.
+ */
+export function getTimingEventElementGroups(event: TimingEvent): Element[][] {
+  if (!event.elements) return [];
+  return event.elements.map(groupElements).filter((group) => group.length > 0);
 }
 
 export function clearPlaybackHighlight(
@@ -52,6 +61,12 @@ function getTuneMidiPitches(instance: RenderInstance): number[] {
   }
 
   return [...pitches].sort((first, second) => first - second);
+}
+
+function groupElements(item: unknown): Element[] {
+  if (item instanceof Element) return [item];
+  if (Array.isArray(item)) return flattenTimingElements(item);
+  return [];
 }
 
 function flattenTimingElements(elements: unknown[] | undefined): Element[] {

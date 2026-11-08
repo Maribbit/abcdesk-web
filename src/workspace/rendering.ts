@@ -1,16 +1,13 @@
 import {
   playFromSourceOffset,
+  pointSourceOffset,
   renderAbc,
   removeRender,
-  revealSourceOffset,
   type RenderInstance,
   type SourceHighlightRange,
 } from "../player/renderer";
 import type { KeyboardVisibility, ThemeMode } from "../shared/settings";
-import {
-  offsetSourceHighlightRange,
-  offsetSourceHighlightRanges,
-} from "./source-highlight";
+import { offsetSourceHighlightRanges } from "./source-highlight";
 
 interface WorkspaceRenderControllerOptions {
   clearSourceHighlight: () => void;
@@ -18,22 +15,23 @@ interface WorkspaceRenderControllerOptions {
   getKeyboardVisibility: () => KeyboardVisibility;
   getSourceText: () => string;
   getThemeMode: () => ThemeMode;
+  placeSourceCaret: (offset: number) => void;
   renderDelayMs: number;
   renderMount: HTMLElement;
   renderStatus: HTMLElement;
-  revealSourceRange: (range: SourceHighlightRange) => void;
   runAutoCheck: () => void;
   sourceElement: HTMLElement;
   updateSourceHighlight: (ranges: SourceHighlightRange[]) => void;
+  updateTargetRanges: (ranges: SourceHighlightRange[]) => void;
 }
 
 export interface WorkspaceRenderController {
   getCurrentInstance: () => RenderInstance | null;
-  /** Play the note under a raw (untrimmed) source offset; false if silent. */
+  /** Play the note at a raw (untrimmed) source offset; false if silent. */
   playFromSourcePosition: (offset: number) => Promise<boolean>;
+  /** Point both panes at the note at a raw source offset; false if none. */
+  pointSourcePosition: (offset: number) => boolean;
   renderCurrentInput: () => void;
-  /** Scroll the note under a raw source offset into view; false if silent. */
-  revealSourcePosition: (offset: number) => boolean;
   scheduleRender: () => void;
 }
 
@@ -43,21 +41,22 @@ export function createWorkspaceRenderController({
   getKeyboardVisibility,
   getSourceText,
   getThemeMode,
+  placeSourceCaret,
   renderDelayMs,
   renderMount,
   renderStatus,
-  revealSourceRange,
   runAutoCheck,
   sourceElement,
   updateSourceHighlight,
+  updateTargetRanges,
 }: WorkspaceRenderControllerOptions): WorkspaceRenderController {
   let renderTimer: number | undefined;
   let currentInstance: RenderInstance | null = null;
   let sourceOffset = 0;
 
-  const revealSourcePosition = (offset: number): boolean => {
+  const pointSourcePosition = (offset: number): boolean => {
     if (!currentInstance) return false;
-    return revealSourceOffset(
+    return pointSourceOffset(
       currentInstance,
       Math.max(offset - sourceOffset, 0),
     );
@@ -73,6 +72,7 @@ export function createWorkspaceRenderController({
     const abcText = rawText.trim();
     sourceOffset = abcText ? rawText.indexOf(abcText) : 0;
     clearSourceHighlight();
+    updateTargetRanges([]);
     sourceElement.textContent = abcText;
 
     if (!abcText) {
@@ -96,17 +96,20 @@ export function createWorkspaceRenderController({
               offsetSourceHighlightRanges(ranges, sourceOffset),
             );
           },
+          onTargetRanges: (ranges) => {
+            updateTargetRanges(offsetSourceHighlightRanges(ranges, sourceOffset));
+          },
           onSelectSourceRange: (range) => {
-            revealSourceRange(offsetSourceHighlightRange(range, sourceOffset));
+            placeSourceCaret(range.start + sourceOffset);
           },
         },
       );
       currentInstance.container.dataset.abcdeskLayout = "workspace";
       renderMount.classList.add("has-render");
       renderStatus.textContent = "Rendered";
-      // A fresh score starts at its own top: after an edit, follow the caret
-      // again so the new layout still shows the note being written.
-      revealSourcePosition(getCursorOffset());
+      // A fresh score starts at its own top: point at the caret again so the
+      // new layout marks the note being read or written.
+      pointSourcePosition(getCursorOffset());
       runAutoCheck();
     } catch (error) {
       console.error("[ABC Desk Web] Render failed:", error);
@@ -133,8 +136,8 @@ export function createWorkspaceRenderController({
         Math.max(offset - sourceOffset, 0),
       );
     },
+    pointSourcePosition,
     renderCurrentInput,
-    revealSourcePosition,
     scheduleRender,
   };
 }

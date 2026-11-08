@@ -35,6 +35,10 @@
   --abcdesk-score-text: #1b2124;
   /* The live note, not the accent: blue separates from black engraving. */
   --abcdesk-playback-highlight: #1f6feb;
+  /* The note the caret or a click points at: a bright blue, one step lighter
+     and colder than the live note so the two are never mistaken for each other,
+     rendered as a notehead fill plus a dashed box. */
+  --abcdesk-target: #1c9bff;
 
   /* Keyboard */
   --abcdesk-keyboard-bg: #f1f5f6;
@@ -115,6 +119,9 @@
   /* The sheet is paper in this theme too, so the live note keeps the ink
      blue instead of the pastel a dark page would allow. */
   --abcdesk-playback-highlight: #1f6feb;
+  /* Paper again: the target keeps the light-theme step so both panes agree
+     with what the sheet shows. */
+  --abcdesk-target: #1c9bff;
 
   --abcdesk-keyboard-bg: #20262a;
   --abcdesk-key-white-bg: #dde3e3;

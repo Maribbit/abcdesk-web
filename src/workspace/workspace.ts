@@ -103,7 +103,7 @@ const editor = createCodeMirrorEditor({
   label: "ABC source code",
   onChange: handleSourceChange,
   onCursorChange: (offset) => {
-    renderController.revealSourcePosition(offset);
+    renderController.pointSourcePosition(offset);
   },
   onPlayFromCursor: () => {
     void playFromCursor();
@@ -123,13 +123,14 @@ const renderController = createWorkspaceRenderController({
   getKeyboardVisibility: () => currentKeyboardVisibility,
   getSourceText: () => editor.getValue(),
   getThemeMode: () => getSelectedWorkspaceThemeMode(themeModeForm),
+  placeSourceCaret: (offset) => editor.placeCaret(offset),
   renderDelayMs: RENDER_DEBOUNCE_MS,
   renderMount,
   renderStatus,
-  revealSourceRange: (range) => editor.revealRange(range),
   runAutoCheck,
   sourceElement,
   updateSourceHighlight: (ranges) => editor.setPlaybackHighlight(ranges),
+  updateTargetRanges: (ranges) => editor.setTargetRanges(ranges),
 });
 
 void initializeWorkspace();

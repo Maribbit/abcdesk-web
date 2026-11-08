@@ -27,11 +27,17 @@ export interface AbcEditor {
   /** Select the diagnostic's range and bring it into view. */
   revealDiagnostic(diagnostic: AbcDiagnostic): void;
   /**
-   * Put the caret on a range and bring it into view, but leave focus where it
-   * is: this marks a place (a note clicked in the score), it is not an
-   * invitation to type.
+   * Move the caret to an offset and bring it into view, but leave focus where
+   * it is: this marks a place (a note clicked in the score), it is not an
+   * invitation to type. The caret is collapsed — the note's own characters are
+   * already carried by `setTargetRanges`.
    */
-  revealRange(range: SourceHighlightRange): void;
+  placeCaret(offset: number): void;
+  /**
+   * Outline the characters of the note the two panes point at, the source half
+   * of the shared target. An empty list removes the outline.
+   */
+  setTargetRanges(ranges: SourceHighlightRange[]): void;
   /** The caret as an offset into the document. */
   getCursorOffset(): number;
   /** Apply the wrap preference; returns the mode actually in effect. */
@@ -50,7 +56,7 @@ export interface AbcEditorOptions {
   onChange: () => void;
   /**
    * The caret moved on its own — an arrow key, a click, a selection. Edits and
-   * the workspace's own `revealRange` both keep quiet: the first moves the
+   * the workspace's own caret placement both keep quiet: the first moves the
    * caret as a side effect, the second is already known to the caller.
    */
   onCursorChange?: (offset: number) => void;

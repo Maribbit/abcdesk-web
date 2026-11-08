@@ -129,28 +129,51 @@ describe("CodeMirror editor", () => {
     expect(host.contains(document.activeElement)).toBe(true);
   });
 
-  it("puts the caret on a range without taking focus", () => {
+  it("outlines the note the two panes point at", () => {
+    const { editor, host, view } = createEditor();
+
+    editor.setTargetRanges([{ start: 18, end: 22 }]);
+    expect(host.querySelectorAll(".abc-target-token")).toHaveLength(1);
+
+    // The outline is drawn, not selected: the caret stays where the user left it.
+    expect(view.state.selection.main.head).toBe(0);
+
+    // Text moves under the mark, so the offsets no longer mean the same notes.
+    view.dispatch({ changes: { from: 0, insert: "%\n" } });
+    expect(host.querySelectorAll(".abc-target-token")).toHaveLength(0);
+  });
+
+  it("lifts the target outline on request", () => {
+    const { editor, host } = createEditor();
+
+    editor.setTargetRanges([{ start: 18, end: 22 }]);
+    editor.setTargetRanges([]);
+
+    expect(host.querySelectorAll(".abc-target-token")).toHaveLength(0);
+  });
+
+  it("puts a caret without taking focus", () => {
     const outside = document.createElement("button");
     document.body.append(outside);
     outside.focus();
 
     const { editor, onChange, view } = createEditor();
 
-    editor.revealRange({ start: 18, end: 22 });
+    editor.placeCaret(18);
 
-    expect(view.state.selection.main.from).toBe(18);
-    expect(view.state.selection.main.to).toBe(22);
+    // Collapsed: the outline names the note, so the caret must not.
+    expect(view.state.selection.main.head).toBe(18);
+    expect(view.state.selection.main.empty).toBe(true);
     expect(document.activeElement).toBe(outside);
     expect(onChange).not.toHaveBeenCalled();
   });
 
-  it("clamps a revealed range to the document", () => {
+  it("clamps a placed caret to the document", () => {
     const { editor, onChange, view } = createEditor();
 
-    editor.revealRange({ start: 200, end: 240 });
+    editor.placeCaret(200);
 
-    expect(view.state.selection.main.from).toBe(SOURCE.length);
-    expect(view.state.selection.main.to).toBe(SOURCE.length);
+    expect(view.state.selection.main.head).toBe(SOURCE.length);
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -177,7 +200,7 @@ describe("CodeMirror editor", () => {
   it("keeps quiet about a caret the workspace placed", () => {
     const { editor, onCursorChange } = createEditor();
 
-    editor.revealRange({ start: 18, end: 22 });
+    editor.placeCaret(18);
 
     expect(onCursorChange).not.toHaveBeenCalled();
   });

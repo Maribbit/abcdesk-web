@@ -57,8 +57,6 @@ const editorTheme = EditorView.theme({
   },
 });
 
-const playbackMark = Decoration.mark({ class: "abc-live-token" });
-
 const syntaxMarks: Record<AbcSyntaxKind, Decoration> = {
   comment: Decoration.mark({ class: "abc-syn-comment" }),
   field: Decoration.mark({ class: "abc-syn-field" }),
@@ -83,7 +81,6 @@ interface DiagnosticSpan {
   severity: AbcDiagnosticSeverity;
 }
 
-const setPlaybackRanges = StateEffect.define<SourceHighlightRange[]>();
 const setDiagnosticSpans = StateEffect.define<DiagnosticSpan[]>();
 
 const syntaxDecorations = StateField.define<DecorationSet>({
@@ -95,24 +92,45 @@ const syntaxDecorations = StateField.define<DecorationSet>({
   provide: (field) => EditorView.decorations.from(field),
 });
 
-const playbackDecorations = StateField.define<DecorationSet>({
-  create: () => Decoration.none,
-  update: (decorations, transaction) => {
-    for (const effect of transaction.effects) {
-      if (!effect.is(setPlaybackRanges)) continue;
-      return buildMarkDecorations(
-        effect.value.map((range) => ({
-          from: range.start,
-          to: range.end,
-          decoration: playbackMark,
-        })),
-      );
-    }
-    // Ranges are offsets into the text as it was; an edit invalidates them.
-    return transaction.docChanged ? Decoration.none : decorations;
-  },
-  provide: (field) => EditorView.decorations.from(field),
-});
+/**
+ * A layer of marks driven by source ranges: the note that is sounding and the
+ * note the two panes point at are the same kind of thing, so they are the same
+ * kind of layer.
+ */
+function rangeMarkLayer(className: string): {
+  set: (ranges: SourceHighlightRange[]) => StateEffect<SourceHighlightRange[]>;
+  field: StateField<DecorationSet>;
+} {
+  const mark = Decoration.mark({ class: className });
+  const setEffect = StateEffect.define<SourceHighlightRange[]>();
+  // `StateEffectType.of` is a method, so it cannot be handed around on its
+  // own: detaching it would lose the type it belongs to.
+  const set = (ranges: SourceHighlightRange[]) => setEffect.of(ranges);
+
+  const field = StateField.define<DecorationSet>({
+    create: () => Decoration.none,
+    update: (decorations, transaction) => {
+      for (const effect of transaction.effects) {
+        if (!effect.is(setEffect)) continue;
+        return buildMarkDecorations(
+          effect.value.map((range) => ({
+            from: range.start,
+            to: range.end,
+            decoration: mark,
+          })),
+        );
+      }
+      // Ranges are offsets into the text as it was; an edit invalidates them.
+      return transaction.docChanged ? Decoration.none : decorations;
+    },
+    provide: (field) => EditorView.decorations.from(field),
+  });
+
+  return { set, field };
+}
+
+const playbackLayer = rangeMarkLayer("abc-live-token");
+const targetLayer = rangeMarkLayer("abc-target-token");
 
 const diagnosticDecorations = StateField.define<DecorationSet>({
   create: () => Decoration.none,
@@ -166,7 +184,8 @@ export function createCodeMirrorEditor({
         }),
         editorTheme,
         syntaxDecorations,
-        playbackDecorations,
+        playbackLayer.field,
+        targetLayer.field,
         diagnosticDecorations,
         wrapCompartment.of(
           initialWrap === "enabled" ? EditorView.lineWrapping : [],
@@ -206,7 +225,17 @@ export function createCodeMirrorEditor({
         view.state.doc.length,
       );
       view.dispatch({
-        effects: setPlaybackRanges.of(normalizedRanges),
+        effects: playbackLayer.set(normalizedRanges),
+        annotations: Transaction.addToHistory.of(false),
+      });
+    },
+    setTargetRanges: (ranges) => {
+      const normalizedRanges = normalizeSourceHighlightRanges(
+        ranges,
+        view.state.doc.length,
+      );
+      view.dispatch({
+        effects: targetLayer.set(normalizedRanges),
         annotations: Transaction.addToHistory.of(false),
       });
     },
@@ -239,13 +268,12 @@ export function createCodeMirrorEditor({
       });
       view.focus();
     },
-    revealRange: (range) => {
+    placeCaret: (offset) => {
       const length = view.state.doc.length;
-      const from = Math.min(Math.max(range.start, 0), length);
-      const to = Math.min(Math.max(range.end, from), length);
+      const caret = Math.min(Math.max(offset, 0), length);
       view.dispatch({
-        selection: { anchor: from, head: to },
-        effects: EditorView.scrollIntoView(from, { y: "nearest" }),
+        selection: { anchor: caret },
+        effects: EditorView.scrollIntoView(caret, { y: "nearest" }),
         // Silent: the caller already knows where it asked the caret to go.
         annotations: [Transaction.addToHistory.of(false), quietChange.of(true)],
       });

@@ -44,13 +44,14 @@ import {
 } from "./playback/timing";
 import { copyQualityFeedback, updateQualityPanel } from "./quality";
 export { getSourceHighlightRangesForTest } from "./playback/source-highlight";
-export { revealSourceOffset } from "./view/score-reveal";
 export type {
   RenderAbcOptions,
   RenderInstance,
   SourceHighlightRange,
 } from "./types";
 import { applyRenderViewTheme, createRenderView } from "./view/view";
+import { clearTarget, pointSourceOffset } from "./view/score-target";
+export { clearTarget, pointSourceOffset };
 import type {
   AbcElementRef,
   RenderAbcOptions,
@@ -77,16 +78,33 @@ const shadowStyles = [
 ].join("\n");
 
 /**
- * A click on the score means "this note": point the source caret at the
- * characters it was written with, and seek there for playback. The two are
- * independent — a tune with no audio still deserves the pointer.
+ * A click on the score means "this note": it becomes the shared target, so the
+ * same note is boxed here and outlined in the source, and the source caret
+ * follows to the characters it was written with. Focus stays where it was —
+ * the click is a pointer, not an invitation to type. Seeking is independent:
+ * a tune with no audio still deserves the target.
  */
 function handleScoreClick(
   instance: RenderInstance,
   abcElement: AbcElementRef,
 ): void {
+  // The container hears every click; abcjs hears only those near a selectable,
+  // and it speaks first (on the way up, before the click). Claiming here — in
+  // the one path every listener is built from — is what lets the container
+  // tell "a note" from "the paper around it" even after a re-render handed
+  // abcjs a fresh listener.
+  instance.scoreClickClaimed = true;
+  pointAtAbcElement(instance, abcElement);
+  void seekToAbcElement(instance, abcElement);
+}
+
+function pointAtAbcElement(
+  instance: RenderInstance,
+  abcElement: AbcElementRef,
+): void {
   const { startChar, endChar } = abcElement;
   if (
+    abcElement.el_type === "note" &&
     typeof startChar === "number" &&
     typeof endChar === "number" &&
     endChar > startChar
@@ -95,11 +113,26 @@ function handleScoreClick(
       start: startChar,
       end: endChar,
     });
-    if (range.end > range.start) instance.onSelectSourceRange?.(range);
+    if (range.end > range.start) {
+      // The same path as the caret: one mapping, one meaning, latest wins.
+      pointSourceOffset(instance, range.start);
+      instance.onSelectSourceRange?.(range);
+      return;
+    }
   }
-  void seekToAbcElement(instance, abcElement);
+
+  // Bar lines, titles and clefs are not notes: the target has nowhere to go.
+  clearTarget(instance);
 }
 
+/**
+ * Move the playhead to the clicked note.
+ *
+ * Pointing and playing are separate questions: the click already named the
+ * shared target, and a tune with no audio still deserves it. What happens here
+ * is only where the music would start from — and, when it is already playing,
+ * which note now sounds.
+ */
 async function seekToAbcElement(
   instance: RenderInstance,
   abcElement: AbcElementRef,
@@ -123,9 +156,15 @@ async function seekToAbcElement(
     seek();
   }
 
-  // Directly fire the highlight — abcjs may skip the event when seeking
-  // lands exactly on its time boundary (e.g. last note before a bar line).
-  highlightTimingEvent(instance, matchingEvent);
+  // Directly fire the highlight — abcjs may skip the event when seeking lands
+  // exactly on its time boundary (e.g. the last note before a bar line) — but
+  // only while the tune is playing. A stopped tune that moves its playhead
+  // makes no sound, and a silent note must not wear the sound's colour: it
+  // would stay lit after the reader points somewhere else, and the sheet would
+  // show two selections at once.
+  if (synthControl.isStarted === true) {
+    highlightTimingEvent(instance, matchingEvent);
+  }
 }
 
 /**
@@ -145,6 +184,7 @@ export function renderAbc(
   if (existing) {
     existing.onSourceHighlight = options.onSourceHighlight;
     existing.onSelectSourceRange = options.onSelectSourceRange;
+    existing.onTargetRanges = options.onTargetRanges;
     applyTheme(existing, themeMode);
     applyKeyboardVisibility(existing, keyboardVisibility);
     if (existing.abcText === abcText) return existing;
@@ -152,6 +192,18 @@ export function renderAbc(
   }
 
   let instance: RenderInstance | null = null;
+  // Pressing down starts a new gesture: whatever the last one claimed is done.
+  const resetScoreClickClaim = (): void => {
+    if (instance) instance.scoreClickClaimed = false;
+  };
+  const handleScoreBackgroundClick = (): void => {
+    if (!instance) return;
+    // The claim is made on the way up (see `handleScoreClick`), so by now it
+    // already knows whether a note was picked — by the same rules the
+    // highlight follows.
+    if (!instance.scoreClickClaimed) clearTarget(instance);
+    instance.scoreClickClaimed = false;
+  };
   const runtime = getExtensionRuntime();
   const elements = createRenderView(preElement, themeMode, shadowStyles, {
     onCopyQualityFeedback: () => {
@@ -196,6 +248,8 @@ export function renderAbc(
       if (instance) handleScoreClick(instance, abcElement);
     },
   );
+  elements.scoreElement.addEventListener("pointerdown", resetScoreClickClaim, true);
+  elements.scoreElement.addEventListener("click", handleScoreBackgroundClick);
 
   instance = {
     container: elements.container,
@@ -216,6 +270,9 @@ export function renderAbc(
     synthControl: null,
     synthReady: null,
     activePlaybackElements: [],
+    targetOffset: null,
+    targetElements: [],
+    scoreClickClaimed: false,
     scoreResizeObserver: null,
     scoreResizeTimer: undefined,
     pendingPlaybackSeekPercent: null,
@@ -223,12 +280,22 @@ export function renderAbc(
     progressDragCleanup: null,
     onSourceHighlight: options.onSourceHighlight,
     onSelectSourceRange: options.onSelectSourceRange,
+    onTargetRanges: options.onTargetRanges,
     cleanup: () => {
       if (instance) {
         disposeScoreResizeObserver(instance);
         instance.progressDragCleanup?.();
         instance.progressDragCleanup = null;
       }
+      elements.scoreElement.removeEventListener(
+        "pointerdown",
+        resetScoreClickClaim,
+        true,
+      );
+      elements.scoreElement.removeEventListener(
+        "click",
+        handleScoreBackgroundClick,
+      );
       keyboard.dispose();
       elements.cleanup();
     },
@@ -318,6 +385,9 @@ function updateRender(
 ): RenderInstance {
   applyTheme(instance, themeMode);
   clearPlaybackHighlight(instance);
+  // The offsets belonged to the old text: the workspace points again once this
+  // render lands, so anything kept here would only be a memory of a lost note.
+  clearTarget(instance);
 
   // Re-render SVG
   const scoreRender = renderScore(
@@ -359,6 +429,12 @@ function rerenderScoreForLayout(instance: RenderInstance): void {
   instance.visualObj = scoreRender.visualObj;
   instance.renderedStaffWidth = scoreRender.staffWidth;
   setupKeyboard(instance);
+
+  // The old boxes died with the old SVG, but the text did not change: point at
+  // the same offset again so a resize does not erase the reader's place.
+  if (instance.targetOffset !== null) {
+    pointSourceOffset(instance, instance.targetOffset);
+  }
 
   if (instance.synthControl) {
     instance.synthControl.pause();

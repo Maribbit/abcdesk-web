@@ -6,7 +6,11 @@ const mocks = vi.hoisted(() => {
   const seek = vi.fn();
   const setProgress = vi.fn();
   const clickListeners: Array<
-    (abcElement: { endChar?: number; startChar?: number }) => void
+    (abcElement: {
+      el_type?: string;
+      endChar?: number;
+      startChar?: number;
+    }) => void
   > = [];
   const cursorControls: Array<{
     onEvent?: (event: {
@@ -35,6 +39,7 @@ const mocks = vi.hoisted(() => {
         _abcText: string,
         params?: {
           clickListener?: (abcElement: {
+            el_type?: string;
             endChar?: number;
             startChar?: number;
           }) => void;
@@ -342,11 +347,18 @@ describe("render lifecycle", () => {
     document.body.append(pre);
     const onSourceHighlight = vi.fn();
 
-    renderAbc(pre, "X:1\nK:C\nC|", undefined, undefined, undefined, {
-      onSourceHighlight,
-    });
+    const instance = renderAbc(
+      pre,
+      "X:1\nK:C\nC|",
+      undefined,
+      undefined,
+      undefined,
+      { onSourceHighlight },
+    );
     await Promise.resolve();
     const cursorControl = mocks.cursorControls[mocks.cursorControls.length - 1];
+    if (!instance.synthControl) return;
+    Object.assign(instance.synthControl, { isStarted: true });
 
     cursorControl?.onEvent?.({
       milliseconds: 0,
@@ -359,6 +371,24 @@ describe("render lifecycle", () => {
     expect(onSourceHighlight).toHaveBeenLastCalledWith([]);
   });
 
+  it("ignores the note at a playhead that is not playing", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onSourceHighlight = vi.fn();
+
+    renderAbc(pre, "X:1\nK:C\nC|", undefined, undefined, undefined, {
+      onSourceHighlight,
+    });
+    await Promise.resolve();
+    const cursorControl = mocks.cursorControls[mocks.cursorControls.length - 1];
+
+    // abcjs fires this same callback when a seek passes a note, so a stopped
+    // tune would light whatever the playhead crossed.
+    cursorControl?.onEvent?.({ milliseconds: 0, startChar: 8, endChar: 9 });
+
+    expect(onSourceHighlight).not.toHaveBeenCalled();
+  });
+
   it("clears the highlight when playback is paused", async () => {
     const pre = document.createElement("pre");
     document.body.append(pre);
@@ -369,6 +399,8 @@ describe("render lifecycle", () => {
     });
     await Promise.resolve();
     const cursorControl = mocks.cursorControls[mocks.cursorControls.length - 1];
+    if (!instance.synthControl) return;
+    Object.assign(instance.synthControl, { isStarted: true });
 
     cursorControl?.onEvent?.({ milliseconds: 0, startChar: 8, endChar: 9 });
     expect(onSourceHighlight).toHaveBeenLastCalledWith([{ start: 8, end: 9 }]);
@@ -379,22 +411,188 @@ describe("render lifecycle", () => {
     expect(onSourceHighlight).toHaveBeenLastCalledWith([]);
   });
 
-  it("points the source caret at the note that was clicked", () => {
+  it("points both panes at the note that was clicked", () => {
     const pre = document.createElement("pre");
     document.body.append(pre);
     const onSelectSourceRange = vi.fn();
+    const onTargetRanges = vi.fn();
 
     renderAbc(pre, "X:1\nK:C\nC|", undefined, undefined, undefined, {
       onSelectSourceRange,
+      onTargetRanges,
     });
     const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
 
-    clickListener?.({ endChar: 9, startChar: 7 });
+    clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
     expect(onSelectSourceRange).toHaveBeenCalledWith({ start: 8, end: 9 });
+    // The click and the caret share one mapping: the score marks the same note
+    // the source does, so the outline and the box always agree.
+    expect(onTargetRanges).toHaveBeenLastCalledWith([{ start: 8, end: 9 }]);
 
-    // Bar lines and titles are clickable too, but they name no range.
+    // Bar lines and titles are clickable too, but they name no note.
     clickListener?.({});
     expect(onSelectSourceRange).toHaveBeenCalledTimes(1);
+    expect(onTargetRanges).toHaveBeenLastCalledWith([]);
+  });
+
+  it("lets go of the target when the click misses every note", () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onTargetRanges = vi.fn();
+
+    const instance = renderAbc(
+      pre,
+      "X:1\nK:C\nC|",
+      undefined,
+      undefined,
+      undefined,
+      { onTargetRanges },
+    );
+    const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
+
+    // First gesture: a note, claimed by abcjs before the container hears it.
+    clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
+    instance.scoreElement.click();
+    expect(onTargetRanges).toHaveBeenLastCalledWith([{ start: 8, end: 9 }]);
+
+    // Second gesture: empty paper, nobody claims it.
+    instance.scoreElement.dispatchEvent(
+      new Event("pointerdown", { bubbles: true }),
+    );
+    instance.scoreElement.click();
+
+    expect(onTargetRanges).toHaveBeenLastCalledWith([]);
+  });
+
+  it("keeps the target abcjs claimed for the click", () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onTargetRanges = vi.fn();
+
+    const instance = renderAbc(
+      pre,
+      "X:1\nK:C\nC|",
+      undefined,
+      undefined,
+      undefined,
+      { onTargetRanges },
+    );
+    const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
+
+    // abcjs picks the nearest note, so its reach is wider than the glyph; the
+    // container must defer to that reach instead of asking where the DOM event
+    // landed.
+    clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
+    instance.scoreElement.click();
+
+    expect(onTargetRanges).toHaveBeenLastCalledWith([{ start: 8, end: 9 }]);
+  });
+
+  it("moves the playhead without lighting a note the tune is not playing", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onSourceHighlight = vi.fn();
+
+    renderAbc(pre, "X:1\nK:C\nC|", undefined, undefined, undefined, {
+      onSourceHighlight,
+    });
+    await Promise.resolve();
+    const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
+
+    clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(mocks.seek).toHaveBeenCalled();
+    // Nothing is sounding, so nothing wears the sound's colour. A lit note
+    // here would stay behind once the reader points somewhere else, and the
+    // sheet would show the target and the click as two selections.
+    expect(onSourceHighlight).not.toHaveBeenCalled();
+  });
+
+  it("lights the note it seeks to while the tune is playing", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onSourceHighlight = vi.fn();
+
+    const instance = renderAbc(
+      pre,
+      "X:1\nK:C\nC|",
+      undefined,
+      undefined,
+      undefined,
+      { onSourceHighlight },
+    );
+    await Promise.resolve();
+    const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
+    if (!instance.synthControl) return;
+    Object.assign(instance.synthControl, { isStarted: true });
+
+    clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(onSourceHighlight).toHaveBeenLastCalledWith([
+      { start: 8, end: 9 },
+    ]);
+  });
+
+  it("keeps the target when the sheet is redrawn at a new width", () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onTargetRanges = vi.fn();
+    const resizeCallbacks: Array<() => void> = [];
+    const realResizeObserver = globalThis.ResizeObserver;
+    globalThis.ResizeObserver = class {
+      constructor(callback: () => void) {
+        resizeCallbacks.push(callback);
+      }
+      observe(): void {}
+      unobserve(): void {}
+      disconnect(): void {}
+    } as unknown as typeof ResizeObserver;
+
+    try {
+      const instance = renderAbc(
+        pre,
+        "X:1\nK:C\nC|",
+        undefined,
+        undefined,
+        undefined,
+        { onTargetRanges },
+      );
+
+      // The pane narrows, so the sheet is redrawn for the new staff width and
+      // abcjs is handed a fresh click listener.
+      instance.scoreElement.getBoundingClientRect = () =>
+        ({
+          bottom: 300,
+          height: 300,
+          left: 0,
+          right: 400,
+          top: 0,
+          width: 400,
+          x: 0,
+          y: 0,
+          toJSON: () => ({}),
+        }) as DOMRect;
+      vi.useFakeTimers();
+      resizeCallbacks[resizeCallbacks.length - 1]?.();
+      vi.advanceTimersByTime(200);
+      vi.useRealTimers();
+
+      const clickListener =
+        mocks.clickListeners[mocks.clickListeners.length - 1];
+      clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
+      // The container hears the same click right after abcjs does; the fresh
+      // listener still has to claim the note, or the paper takes it back.
+      instance.scoreElement.click();
+
+      expect(onTargetRanges).toHaveBeenLastCalledWith([{ start: 8, end: 9 }]);
+    } finally {
+      vi.useRealTimers();
+      globalThis.ResizeObserver = realResizeObserver;
+    }
   });
 
   it("waits for the synth before playing from a caret", async () => {

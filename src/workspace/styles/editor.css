@@ -1,9 +1,10 @@
 /* Source sheet. The editor fills the frame and paints its own layers, so this
    file owns only what the sheet adds on top of it: the tint of the notes that
-   are sounding, the three greys of the syntax, and the wave under a
-   diagnostic. CodeMirror's own chrome — metrics, caret, selection — is handed
-   to it as a theme in codemirror-editor.ts, where it can override that
-   library's base styles without a specificity fight. */
+   are sounding, the dashed outline of the note the two panes point at, the
+   three greys of the syntax, and the wave under a diagnostic. CodeMirror's own
+   chrome — metrics, caret, selection — is handed to it as a theme in
+   codemirror-editor.ts, where it can override that library's base styles
+   without a specificity fight. */
 
 .abc-editor-frame {
   grid-row: 2;
@@ -22,6 +23,22 @@
   border-radius: 3px;
   background: var(--workspace-live-soft);
   box-shadow: inset 0 -1px 0 var(--workspace-live-line);
+}
+
+/* The note both panes point at — the source half of the box the score draws.
+   A tinted background carries the colour at a glance, so the mark reads even
+   when the reader's eye is anywhere on the line; the dashed outline says which
+   characters exactly, and is what makes the mark follow the caret instead of
+   looking like a text selection. An outline, not a border: marks appear and
+   move while the user reads, and a border would shift the text by a pixel
+   every time one lands. When the target is also the note being heard, the two
+   marks nest (each layer is its own span) and their tints compose: the mark
+   deepens instead of losing one of its two meanings. */
+.abc-target-token {
+  border-radius: 3px;
+  background: var(--workspace-target-soft);
+  outline: 1px dashed var(--workspace-target);
+  outline-offset: 1px;
 }
 
 /* Syntax in three greys: metadata, annotation, structure. Anything else — the

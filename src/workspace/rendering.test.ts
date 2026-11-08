@@ -2,16 +2,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const rendererMocks = vi.hoisted(() => ({
   playFromSourceOffset: vi.fn(() => true),
+  pointSourceOffset: vi.fn(() => true),
   removeRender: vi.fn(),
   renderAbc: vi.fn(),
-  revealSourceOffset: vi.fn(() => true),
 }));
 
 vi.mock("../player/renderer", () => ({
   playFromSourceOffset: rendererMocks.playFromSourceOffset,
+  pointSourceOffset: rendererMocks.pointSourceOffset,
   removeRender: rendererMocks.removeRender,
   renderAbc: rendererMocks.renderAbc,
-  revealSourceOffset: rendererMocks.revealSourceOffset,
 }));
 
 import { createWorkspaceRenderController } from "./rendering";
@@ -23,9 +23,10 @@ function createController() {
   const renderStatus = document.createElement("span");
   const sourceElement = document.createElement("pre");
   const clearSourceHighlight = vi.fn();
+  const placeSourceCaret = vi.fn();
   const runAutoCheck = vi.fn();
   const updateSourceHighlight = vi.fn();
-  const revealSourceRange = vi.fn();
+  const updateTargetRanges = vi.fn();
 
   const controller = createWorkspaceRenderController({
     clearSourceHighlight,
@@ -33,21 +34,22 @@ function createController() {
     getKeyboardVisibility: () => "visible",
     getSourceText: () => sourceText,
     getThemeMode: () => "dark",
+    placeSourceCaret,
     renderDelayMs: 10,
     renderMount,
     renderStatus,
-    revealSourceRange,
     runAutoCheck,
     sourceElement,
     updateSourceHighlight,
+    updateTargetRanges,
   });
 
   return {
     clearSourceHighlight,
     controller,
+    placeSourceCaret,
     renderMount,
     renderStatus,
-    revealSourceRange,
     runAutoCheck,
     setCursorOffset: (offset: number) => {
       cursorOffset = offset;
@@ -57,6 +59,7 @@ function createController() {
     },
     sourceElement,
     updateSourceHighlight,
+    updateTargetRanges,
   };
 }
 
@@ -117,15 +120,31 @@ describe("Workspace render controller", () => {
     expect(runAutoCheck).toHaveBeenCalledTimes(1);
   });
 
-  it("offsets the range named by a score click", () => {
-    const { controller, revealSourceRange, setSourceText } = createController();
+  it("moves the caret to the characters a score click names", () => {
+    const { controller, placeSourceCaret, setSourceText } = createController();
     setSourceText("\n  X:1\nK:C\nC|");
 
     controller.renderCurrentInput();
     const options = rendererMocks.renderAbc.mock.calls[0]?.[5];
     options.onSelectSourceRange({ start: 8, end: 9 });
 
-    expect(revealSourceRange).toHaveBeenCalledWith({ start: 11, end: 12 });
+    // The range is trimmed source; the editor holds the untrimmed text.
+    expect(placeSourceCaret).toHaveBeenCalledWith(11);
+  });
+
+  it("offsets the ranges the score marks for the source", () => {
+    const { controller, setSourceText, updateTargetRanges } =
+      createController();
+    setSourceText("\n  X:1\nK:C\nC|");
+
+    controller.renderCurrentInput();
+    // Nothing is marked yet: the old outline must go with the old sheet.
+    expect(updateTargetRanges).toHaveBeenCalledWith([]);
+
+    const options = rendererMocks.renderAbc.mock.calls[0]?.[5];
+    options.onTargetRanges([{ start: 8, end: 9 }]);
+
+    expect(updateTargetRanges).toHaveBeenLastCalledWith([{ start: 11, end: 12 }]);
   });
 
   it("plays from a caret offset measured in the untrimmed source", async () => {
@@ -164,14 +183,14 @@ describe("Workspace render controller", () => {
     );
   });
 
-  it("reveals a caret measured in the untrimmed source", () => {
+  it("points at a caret measured in the untrimmed source", () => {
     const { controller, setCursorOffset, setSourceText } = createController();
     setSourceText("\n  X:1\nK:C\nC|");
 
     controller.renderCurrentInput();
 
-    expect(controller.revealSourcePosition(11)).toBe(true);
-    expect(rendererMocks.revealSourceOffset).toHaveBeenLastCalledWith(
+    expect(controller.pointSourcePosition(11)).toBe(true);
+    expect(rendererMocks.pointSourceOffset).toHaveBeenLastCalledWith(
       expect.anything(),
       8,
     );
@@ -180,7 +199,7 @@ describe("Workspace render controller", () => {
     // first note instead of a negative offset.
     setCursorOffset(1);
     controller.renderCurrentInput();
-    expect(rendererMocks.revealSourceOffset).toHaveBeenLastCalledWith(
+    expect(rendererMocks.pointSourceOffset).toHaveBeenLastCalledWith(
       expect.anything(),
       0,
     );
@@ -190,21 +209,21 @@ describe("Workspace render controller", () => {
     const { controller, setCursorOffset, setSourceText } = createController();
     setSourceText("\n  X:1\nK:C\nC|");
     controller.renderCurrentInput();
-    rendererMocks.revealSourceOffset.mockClear();
+    rendererMocks.pointSourceOffset.mockClear();
 
     setCursorOffset(13);
     controller.renderCurrentInput();
 
-    expect(rendererMocks.revealSourceOffset).toHaveBeenCalledWith(
+    expect(rendererMocks.pointSourceOffset).toHaveBeenCalledWith(
       expect.anything(),
       10,
     );
   });
 
-  it("does not reveal before anything is rendered", () => {
+  it("does not point before anything is rendered", () => {
     const { controller } = createController();
 
-    expect(controller.revealSourcePosition(5)).toBe(false);
-    expect(rendererMocks.revealSourceOffset).not.toHaveBeenCalled();
+    expect(controller.pointSourcePosition(5)).toBe(false);
+    expect(rendererMocks.pointSourceOffset).not.toHaveBeenCalled();
   });
 });
