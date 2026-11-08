@@ -190,6 +190,13 @@
   border-color: var(--workspace-accent-line);
 }
 
+.icon-button:disabled {
+  background: transparent;
+  color: var(--workspace-text-muted);
+  cursor: default;
+  opacity: 0.45;
+}
+
 .icon-button:focus-visible {
   outline: 2px solid var(--workspace-focus-ring);
   outline-offset: 1px;

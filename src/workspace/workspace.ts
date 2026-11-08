@@ -65,6 +65,9 @@ const editorWrapInput = document.getElementById(
 const copySourceButton = document.getElementById(
   "copySourceButton",
 ) as HTMLButtonElement;
+const playFromCursorButton = document.getElementById(
+  "playFromCursorButton",
+) as HTMLButtonElement;
 const importAbcButton = document.getElementById(
   "importAbcButton",
 ) as HTMLButtonElement;
@@ -81,6 +84,10 @@ const clearButton = document.getElementById("clearButton") as HTMLButtonElement;
 const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 const stackedLayoutQuery = window.matchMedia("(max-width: 860px)");
 
+// The button and the key binding are one intent, so the tooltip spells out the
+// keys this platform actually answers to.
+playFromCursorButton.title = `Play from cursor (${getPlayShortcutLabel()})`;
+
 let currentKeyboardVisibility: KeyboardVisibility = "visible";
 let currentAbcAutoCheck: AbcAutoCheck = "enabled";
 let currentEditorWrap: EditorWrap = "disabled";
@@ -94,12 +101,7 @@ const editor = createCodeMirrorEditor({
   lineWrap: "disabled",
   label: "ABC source code",
   onChange: handleSourceChange,
-  onPlayFromCursor: () => {
-    if (renderController.playFromSourcePosition(editor.getCursorOffset())) {
-      return;
-    }
-    renderStatus.textContent = "Nothing to play here";
-  },
+  onPlayFromCursor: playFromCursor,
 });
 
 const splitLayout = createWorkspaceSplitLayout({
@@ -166,6 +168,7 @@ async function initializeWorkspace(): Promise<void> {
   copySourceButton.addEventListener("click", () => {
     void copySourceToClipboard();
   });
+  playFromCursorButton.addEventListener("click", playFromCursor);
   importAbcButton.addEventListener("click", () => {
     abcFileInput.click();
   });
@@ -290,9 +293,20 @@ function handleSourceChange(): void {
 
 function updateSourceStats(): void {
   updateWorkspaceSourceStats(
-    { copySourceButton, exportAbcButton, sourceStats },
+    { copySourceButton, exportAbcButton, playFromCursorButton, sourceStats },
     editor.getValue(),
   );
+}
+
+function playFromCursor(): void {
+  if (renderController.playFromSourcePosition(editor.getCursorOffset())) return;
+  renderStatus.textContent = "Nothing to play here";
+}
+
+function getPlayShortcutLabel(): string {
+  return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
+    ? "⌘↵"
+    : "Ctrl+Enter";
 }
 
 function checkCurrentAbcSource(): void {

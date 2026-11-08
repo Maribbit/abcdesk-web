@@ -24,6 +24,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 - Added diagnostics to the source text: the ranges the quality panel reports are underlined with a thin grey-blue wave, and clicking a panel item (or pressing Enter/Space on it) selects that range and scrolls it into view.
 - Added score-to-source pointing: clicking a note in the score moves the source caret onto the characters that note was written with and scrolls them into view, without taking focus away from the score.
 - Added play-from-cursor: `Mod-Enter` in the editor starts playback at the note under the caret, or at the next note when the caret sits between notes.
+- Added a play-from-cursor button to the Source header, drawn as a play triangle with a text-cursor badge; its tooltip names the shortcut for the current platform.
 
 ### Removed
 
@@ -32,6 +33,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Fixed
 
+- Fixed disabled header buttons looking active: icon buttons in the Source pane now dim when they cannot run.
 - Fixed the playback highlight staying on the score, the keybed and the source after pausing. abcjs reports start, notes and the end of the tune but not pause, so the last sounding note kept its blue until the tune finished; the pause path now clears it.
 - Fixed note-click source highlight that skipped the last note before a bar line. When seeking to a clicked note's timing position, abcjs could fire the next event instead of the clicked one. The highlight is now fired directly after seeking so the correct note is always highlighted.
 
