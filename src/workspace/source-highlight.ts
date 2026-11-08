@@ -31,10 +31,17 @@ export function offsetSourceHighlightRanges(
   ranges: SourceHighlightRange[],
   offset: number,
 ): SourceHighlightRange[] {
-  return ranges.map((range) => ({
+  return ranges.map((range) => offsetSourceHighlightRange(range, offset));
+}
+
+export function offsetSourceHighlightRange(
+  range: SourceHighlightRange,
+  offset: number,
+): SourceHighlightRange {
+  return {
     start: range.start + offset,
     end: range.end + offset,
-  }));
+  };
 }
 
 function clamp(value: number, min: number, max: number): number {

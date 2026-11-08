@@ -20,6 +20,7 @@ function createController() {
   const clearSourceHighlight = vi.fn();
   const runAutoCheck = vi.fn();
   const updateSourceHighlight = vi.fn();
+  const revealSourceRange = vi.fn();
 
   const controller = createWorkspaceRenderController({
     clearSourceHighlight,
@@ -29,6 +30,7 @@ function createController() {
     renderDelayMs: 10,
     renderMount,
     renderStatus,
+    revealSourceRange,
     runAutoCheck,
     sourceElement,
     updateSourceHighlight,
@@ -39,6 +41,7 @@ function createController() {
     controller,
     renderMount,
     renderStatus,
+    revealSourceRange,
     runAutoCheck,
     setSourceText: (text: string) => {
       sourceText = text;
@@ -103,5 +106,16 @@ describe("Workspace render controller", () => {
     expect(renderMount.classList.contains("has-render")).toBe(true);
     expect(renderStatus.textContent).toBe("Rendered");
     expect(runAutoCheck).toHaveBeenCalledTimes(1);
+  });
+
+  it("offsets the range named by a score click", () => {
+    const { controller, revealSourceRange, setSourceText } = createController();
+    setSourceText("\n  X:1\nK:C\nC|");
+
+    controller.renderCurrentInput();
+    const options = rendererMocks.renderAbc.mock.calls[0]?.[5];
+    options.onSelectSourceRange({ start: 8, end: 9 });
+
+    expect(revealSourceRange).toHaveBeenCalledWith({ start: 11, end: 12 });
   });
 });

@@ -30,6 +30,7 @@ export interface RenderInstance {
   pendingPlaybackSeekPromise: Promise<unknown> | null;
   progressDragCleanup: (() => void) | null;
   onSourceHighlight: ((ranges: SourceHighlightRange[]) => void) | undefined;
+  onSelectSourceRange: ((range: SourceHighlightRange) => void) | undefined;
   cleanup: () => void;
 }
 
@@ -40,6 +41,8 @@ export interface SourceHighlightRange {
 
 export interface RenderAbcOptions {
   onSourceHighlight?: (ranges: SourceHighlightRange[]) => void;
+  /** A click on the score names the characters that note was written with. */
+  onSelectSourceRange?: (range: SourceHighlightRange) => void;
 }
 
 export interface AbcElementRef {

@@ -29,6 +29,24 @@ export function getTimingEventSourceRanges(
   );
 }
 
+/**
+ * abcjs measures a note up to the next one, so its ranges carry the separators
+ * around the token. Anything that points at the note itself wants the token
+ * alone, without the space that merely kept the notes apart.
+ */
+export function trimSourceRange(
+  text: string,
+  range: SourceHighlightRange,
+): SourceHighlightRange {
+  let start = Math.max(range.start, 0);
+  let end = Math.min(range.end, text.length);
+
+  while (start < end && /\s/.test(text[start] ?? "")) start += 1;
+  while (end > start && /\s/.test(text[end - 1] ?? "")) end -= 1;
+
+  return { start, end };
+}
+
 export function getSourceHighlightRangesForTest(
   event: TimingEvent,
   sourceLength: number,

@@ -5,6 +5,9 @@ const mocks = vi.hoisted(() => {
   const pause = vi.fn();
   const seek = vi.fn();
   const setProgress = vi.fn();
+  const clickListeners: Array<
+    (abcElement: { endChar?: number; startChar?: number }) => void
+  > = [];
   const cursorControls: Array<{
     onEvent?: (event: {
       endChar?: number;
@@ -15,6 +18,7 @@ const mocks = vi.hoisted(() => {
   }> = [];
 
   return {
+    clickListeners,
     cursorControls,
     play,
     pause,
@@ -25,15 +29,27 @@ const mocks = vi.hoisted(() => {
         warnings: [] as string[],
       },
     ]),
-    renderAbc: vi.fn((element: HTMLElement) => {
-      element.textContent = "rendered score";
-      return [
-        {
-          getTotalTime: () => 13,
-          setTiming: () => [{ milliseconds: 13000 }],
+    renderAbc: vi.fn(
+      (
+        element: HTMLElement,
+        _abcText: string,
+        params?: {
+          clickListener?: (abcElement: {
+            endChar?: number;
+            startChar?: number;
+          }) => void;
         },
-      ];
-    }),
+      ) => {
+        if (params?.clickListener) clickListeners.push(params.clickListener);
+        element.textContent = "rendered score";
+        return [
+          {
+            getTotalTime: () => 13,
+            setTiming: () => [{ milliseconds: 13000 }],
+          },
+        ];
+      },
+    ),
     setTune: vi.fn(() => Promise.resolve({ status: "created" })),
   };
 });
@@ -357,5 +373,23 @@ describe("render lifecycle", () => {
 
     expect(mocks.pause).toHaveBeenCalledTimes(1);
     expect(onSourceHighlight).toHaveBeenLastCalledWith([]);
+  });
+
+  it("points the source caret at the note that was clicked", () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onSelectSourceRange = vi.fn();
+
+    renderAbc(pre, "X:1\nK:C\nC|", undefined, undefined, undefined, {
+      onSelectSourceRange,
+    });
+    const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
+
+    clickListener?.({ endChar: 9, startChar: 7 });
+    expect(onSelectSourceRange).toHaveBeenCalledWith({ start: 8, end: 9 });
+
+    // Bar lines and titles are clickable too, but they name no range.
+    clickListener?.({});
+    expect(onSelectSourceRange).toHaveBeenCalledTimes(1);
   });
 });

@@ -26,6 +26,7 @@ import { createDurationControl } from "./components/duration-control";
 import { createKeyboardController } from "./components/keyboard";
 import { exportMidi, exportScore } from "./exports/actions";
 import { playLocalPianoPitch } from "./playback/soundfont";
+import { trimSourceRange } from "./playback/source-highlight";
 import { createTempoControl } from "./components/tempo-control";
 import { seekPlaybackToPercent } from "./playback/progress";
 import {
@@ -71,6 +72,30 @@ const shadowStyles = [
   abcdeskLayoutStyles,
 ].join("\n");
 
+/**
+ * A click on the score means "this note": point the source caret at the
+ * characters it was written with, and seek there for playback. The two are
+ * independent — a tune with no audio still deserves the pointer.
+ */
+function handleScoreClick(
+  instance: RenderInstance,
+  abcElement: AbcElementRef,
+): void {
+  const { startChar, endChar } = abcElement;
+  if (
+    typeof startChar === "number" &&
+    typeof endChar === "number" &&
+    endChar > startChar
+  ) {
+    const range = trimSourceRange(instance.abcText, {
+      start: startChar,
+      end: endChar,
+    });
+    if (range.end > range.start) instance.onSelectSourceRange?.(range);
+  }
+  void seekToAbcElement(instance, abcElement);
+}
+
 async function seekToAbcElement(
   instance: RenderInstance,
   abcElement: AbcElementRef,
@@ -115,6 +140,7 @@ export function renderAbc(
   const existing = instances.get(preElement);
   if (existing) {
     existing.onSourceHighlight = options.onSourceHighlight;
+    existing.onSelectSourceRange = options.onSelectSourceRange;
     applyTheme(existing, themeMode);
     applyKeyboardVisibility(existing, keyboardVisibility);
     if (existing.abcText === abcText) return existing;
@@ -163,7 +189,7 @@ export function renderAbc(
     elements.scoreElement,
     abcText,
     (abcElement) => {
-      if (instance) void seekToAbcElement(instance, abcElement);
+      if (instance) handleScoreClick(instance, abcElement);
     },
   );
 
@@ -191,6 +217,7 @@ export function renderAbc(
     pendingPlaybackSeekPromise: null,
     progressDragCleanup: null,
     onSourceHighlight: options.onSourceHighlight,
+    onSelectSourceRange: options.onSelectSourceRange,
     cleanup: () => {
       if (instance) {
         disposeScoreResizeObserver(instance);
@@ -284,7 +311,7 @@ function updateRender(
     instance.scoreElement,
     abcText,
     (abcElement) => {
-      void seekToAbcElement(instance, abcElement);
+      handleScoreClick(instance, abcElement);
     },
   );
 
@@ -312,7 +339,7 @@ function rerenderScoreForLayout(instance: RenderInstance): void {
     instance.scoreElement,
     instance.abcText,
     (abcElement) => {
-      void seekToAbcElement(instance, abcElement);
+      handleScoreClick(instance, abcElement);
     },
   );
   instance.visualObj = scoreRender.visualObj;

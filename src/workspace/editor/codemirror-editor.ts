@@ -225,6 +225,16 @@ export function createCodeMirrorEditor({
       });
       view.focus();
     },
+    revealRange: (range) => {
+      const length = view.state.doc.length;
+      const from = Math.min(Math.max(range.start, 0), length);
+      const to = Math.min(Math.max(range.end, from), length);
+      view.dispatch({
+        selection: { anchor: from, head: to },
+        effects: EditorView.scrollIntoView(from, { y: "nearest" }),
+        annotations: Transaction.addToHistory.of(false),
+      });
+    },
     focus: () => view.focus(),
   };
 }

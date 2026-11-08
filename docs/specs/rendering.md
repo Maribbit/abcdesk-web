@@ -24,6 +24,15 @@ abcjs 产出的 SVG 在内联属性里硬编码填充色。
 - 只用 CSS（`currentColor` 及 CSS 变量）覆写，不改 DOM 属性，保证深浅色切换与主题一致性。
 - 颜色规范由 `interface.md` 约束。乐谱容器必须是不透明表面，透明纸材质只用于外层 chrome。
 
+### 2.3 谱面到源码
+
+乐谱是源码的第二个视图，点击是最直接的那根指针。
+
+- `abcelem.startChar` / `endChar` 是位置真相，不要自己重新扫描文本去猜音符边界。
+- 它是按"一个音符量到下一个音符"给的，区间两端会带上分隔用的空白；指向音符本身前必须裁掉。
+- 点击同时做两件事：把源码光标放到该音符的字符上、并 seek 到它的播放位置。两者互不依赖，没有音频时指针照样成立。
+- 光标只移动、不夺焦：用户刚点的是乐谱，编辑器不应该因此开始接收击键。
+
 ## 3. 边界条件
 
 - **XSS**：`T:`、`w:` 等字段来自用户手写或 AI 生成，进入 DOM 前必须清洗。
@@ -34,12 +43,14 @@ abcjs 产出的 SVG 在内联属性里硬编码填充色。
 
 - **源码锚点**
   - `src/player/view/score-render.ts`: SVG 呈现、宽度测量与重排触发。
-  - `src/player/renderer.ts`: 渲染生命周期与 abcjs 告警反馈。
+  - `src/player/renderer.ts`: 渲染生命周期、谱面点击到源码与播放位置的桥接、abcjs 告警反馈。
+  - `src/player/playback/source-highlight.ts`: 播放事件到源码区间的换算与区间边界裁剪。
   - `src/player/exports/`: SVG 导出的动作与序列化。
   - `src/shared/abc-quality/`: 告警清洗、诊断对象构造与修复提示格式化。
   - `src/shared/abc-midi-export.ts`: MIDI 数据导出。
 - **测试锚点**
-  - `src/player/renderer.test.ts`: 告警展示、宽度换行渲染与生命周期集成。
+  - `src/player/renderer.test.ts`: 告警展示、宽度换行渲染、点谱到源码范围与生命周期集成。
+  - `src/player/playback/source-highlight.test.ts`: 音符区间两端空白的裁剪与越界收敛。
   - `src/player/exports/svg-export.test.ts`: 文件名清洗、缺省标题与 SVG 序列化。
   - `src/shared/abc-quality/validate.test.ts`: 空输入、干净 ABC、告警到诊断、HTML 清洗。
   - `src/shared/abc-midi-export.test.ts`: MIDI 文件名、二进制数据与 Blob 包装。

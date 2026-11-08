@@ -22,6 +22,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 - Added Escape key support to exit browser fullscreen mode.
 - Added syntax greys to the source editor: fields, comments and bar lines are dimmed so the notes stay the darkest thing on the page, and the sounding note keeps the only saturated colour.
 - Added diagnostics to the source text: the ranges the quality panel reports are underlined with a thin grey-blue wave, and clicking a panel item (or pressing Enter/Space on it) selects that range and scrolls it into view.
+- Added score-to-source pointing: clicking a note in the score moves the source caret onto the characters that note was written with and scrolls them into view, without taking focus away from the score.
 
 ### Removed
 

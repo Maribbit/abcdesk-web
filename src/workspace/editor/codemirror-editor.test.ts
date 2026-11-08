@@ -122,4 +122,29 @@ describe("CodeMirror editor", () => {
 
     expect(host.contains(document.activeElement)).toBe(true);
   });
+
+  it("puts the caret on a range without taking focus", () => {
+    const outside = document.createElement("button");
+    document.body.append(outside);
+    outside.focus();
+
+    const { editor, onChange, view } = createEditor();
+
+    editor.revealRange({ start: 18, end: 22 });
+
+    expect(view.state.selection.main.from).toBe(18);
+    expect(view.state.selection.main.to).toBe(22);
+    expect(document.activeElement).toBe(outside);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("clamps a revealed range to the document", () => {
+    const { editor, onChange, view } = createEditor();
+
+    editor.revealRange({ start: 200, end: 240 });
+
+    expect(view.state.selection.main.from).toBe(SOURCE.length);
+    expect(view.state.selection.main.to).toBe(SOURCE.length);
+    expect(onChange).not.toHaveBeenCalled();
+  });
 });

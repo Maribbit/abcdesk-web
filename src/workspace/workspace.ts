@@ -111,6 +111,7 @@ const renderController = createWorkspaceRenderController({
   renderDelayMs: RENDER_DEBOUNCE_MS,
   renderMount,
   renderStatus,
+  revealSourceRange: (range) => editor.revealRange(range),
   runAutoCheck,
   sourceElement,
   updateSourceHighlight: (ranges) => editor.setPlaybackHighlight(ranges),

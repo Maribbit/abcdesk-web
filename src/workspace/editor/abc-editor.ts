@@ -28,6 +28,12 @@ export interface AbcEditor {
   setDiagnostics(diagnostics: readonly AbcDiagnostic[]): void;
   /** Select the diagnostic's range and bring it into view. */
   revealDiagnostic(diagnostic: AbcDiagnostic): void;
+  /**
+   * Put the caret on a range and bring it into view, but leave focus where it
+   * is: this marks a place (a note clicked in the score), it is not an
+   * invitation to type.
+   */
+  revealRange(range: SourceHighlightRange): void;
   /** Apply the wrap preference; returns the mode actually in effect. */
   setLineWrap(editorWrap: EditorWrap): EditorWrap;
   focus(): void;

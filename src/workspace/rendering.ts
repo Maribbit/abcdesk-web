@@ -5,7 +5,10 @@ import {
   type SourceHighlightRange,
 } from "../player/renderer";
 import type { KeyboardVisibility, ThemeMode } from "../shared/settings";
-import { offsetSourceHighlightRanges } from "./source-highlight";
+import {
+  offsetSourceHighlightRange,
+  offsetSourceHighlightRanges,
+} from "./source-highlight";
 
 interface WorkspaceRenderControllerOptions {
   clearSourceHighlight: () => void;
@@ -15,6 +18,7 @@ interface WorkspaceRenderControllerOptions {
   renderDelayMs: number;
   renderMount: HTMLElement;
   renderStatus: HTMLElement;
+  revealSourceRange: (range: SourceHighlightRange) => void;
   runAutoCheck: () => void;
   sourceElement: HTMLElement;
   updateSourceHighlight: (ranges: SourceHighlightRange[]) => void;
@@ -34,6 +38,7 @@ export function createWorkspaceRenderController({
   renderDelayMs,
   renderMount,
   renderStatus,
+  revealSourceRange,
   runAutoCheck,
   sourceElement,
   updateSourceHighlight,
@@ -73,6 +78,9 @@ export function createWorkspaceRenderController({
             updateSourceHighlight(
               offsetSourceHighlightRanges(ranges, sourceOffset),
             );
+          },
+          onSelectSourceRange: (range) => {
+            revealSourceRange(offsetSourceHighlightRange(range, sourceOffset));
           },
         },
       );
