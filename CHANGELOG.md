@@ -14,11 +14,14 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 - The build now produces a single static site in `dist/`. `npm run dev`, `npm run build` and `npm run check` all target the Studio app, and `SITE_BASE` replaces `CHATMUSIC_WEB_BASE` for subpath deployments.
 - Refined Studio responsive layout: compact header breakpoint at 1000px (tighter gap/padding) and the Layout Mode control hides at 860px, where auto mode forces the stacked layout.
 - Unified icon sizes across the Studio About dialog (18×18 → 15×15) and gave the tempo icon an unfilled circle stroke, matching the project-wide Lucide/Feather icon language.
+- The source editor is now a CodeMirror 6 view instead of a textarea with a highlight mirror underneath. The mirror — a second copy of the text that had to be kept perfectly aligned with the first — is gone, and the workspace keeps talking to the editor through the `AbcEditor` facade.
 
 ### Added
 
 - Added browser fullscreen toggle as a complement to system fullscreen, expanding the player to fill the browser viewport without hiding browser chrome.
 - Added Escape key support to exit browser fullscreen mode.
+- Added syntax greys to the source editor: fields, comments and bar lines are dimmed so the notes stay the darkest thing on the page, and the sounding note keeps the only saturated colour.
+- Added diagnostics to the source text: the ranges the quality panel reports are underlined with a thin grey-blue wave, and clicking a panel item (or pressing Enter/Space on it) selects that range and scrolls it into view.
 
 ### Removed
 
@@ -27,6 +30,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Fixed
 
+- Fixed the playback highlight staying on the score, the keybed and the source after pausing. abcjs reports start, notes and the end of the tune but not pause, so the last sounding note kept its blue until the tune finished; the pause path now clears it.
 - Fixed note-click source highlight that skipped the last note before a bar line. When seeking to a clicked note's timing position, abcjs could fire the next event instead of the clicked one. The highlight is now fired directly after seeking so the correct note is always highlighted.
 
 ## [0.4.0] - 2026-05-31
