@@ -25,6 +25,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 
 ## 3. 交互链路
 
+- **左屏：源码编辑器**：工作台只通过 `AbcEditor` 门面（取值、写入、播放高亮、换行）使用编辑器，不碰具体 DOM；当前实现是 textarea 加一层高亮镜像。
 - **左屏：源码动作**：导入 `.abc` / `.txt`、导出当前源码、复制、加载示例、清空，以及字符统计。
 - **右屏：预览代理**：输入后按 350ms 防抖重新渲染，并刷新诊断面板与状态文案。
 - **分栏**：可拖拽、可键盘调整，尺寸与方向持久化；窄屏自动降级为上下堆叠。
@@ -39,13 +40,15 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 
 - **源码锚点**
   - `src/workspace/`: 工作台入口、分栏、源码动作、展示状态、诊断面板与渲染控制。
+  - `src/workspace/editor/`: 编辑器门面 `AbcEditor` 与当前 textarea 实现（高亮镜像、滚动同步与换行）。
   - `src/shared/workspace-url.ts`: hash 编解码。
   - `src/shared/abc-file.ts` 与 `src/shared/filename.ts`: 文件导入导出与安全文件名。
 - **测试锚点**
   - `src/workspace/settings-store.test.ts`: 设置加载、回退与保存。
   - `src/workspace/rendering.test.ts`: 空输入清理、源码修剪渲染与高亮偏移。
   - `src/workspace/quality-report.test.ts`: 诊断面板呈现、清空隐藏与状态文案映射。
-  - `src/workspace/presentation.test.ts`: 换行、高亮镜像、主题解析与布局类名。
+  - `src/workspace/presentation.test.ts`: 主题解析与布局类名。
+  - `src/workspace/editor/textarea-editor.test.ts`: 编辑器挂载、编辑回调、播放高亮与换行偏好。
   - `src/workspace/source-actions.test.ts`: 字符统计、空源码禁用与导入错误规范化。
   - `src/workspace/source-highlight.test.ts`: 高亮范围合并、片段生成与播放偏移。
   - `src/workspace/split-layout.test.ts`: 尺寸恢复、方向切换与键盘调整边界。

@@ -10,8 +10,8 @@ import { offsetSourceHighlightRanges } from "./source-highlight";
 interface WorkspaceRenderControllerOptions {
   clearSourceHighlight: () => void;
   getKeyboardVisibility: () => KeyboardVisibility;
+  getSourceText: () => string;
   getThemeMode: () => ThemeMode;
-  input: HTMLTextAreaElement;
   renderDelayMs: number;
   renderMount: HTMLElement;
   renderStatus: HTMLElement;
@@ -29,8 +29,8 @@ export interface WorkspaceRenderController {
 export function createWorkspaceRenderController({
   clearSourceHighlight,
   getKeyboardVisibility,
+  getSourceText,
   getThemeMode,
-  input,
   renderDelayMs,
   renderMount,
   renderStatus,
@@ -47,8 +47,9 @@ export function createWorkspaceRenderController({
       renderTimer = undefined;
     }
 
-    const abcText = input.value.trim();
-    const sourceOffset = abcText ? input.value.indexOf(abcText) : 0;
+    const rawText = getSourceText();
+    const abcText = rawText.trim();
+    const sourceOffset = abcText ? rawText.indexOf(abcText) : 0;
     clearSourceHighlight();
     sourceElement.textContent = abcText;
 

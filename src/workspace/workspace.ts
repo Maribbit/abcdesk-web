@@ -6,11 +6,7 @@ import {
   type LayoutMode,
 } from "../shared/settings";
 import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
-import type { SourceHighlightRange } from "../player/renderer";
-import {
-  createSourceHighlightFragment,
-  normalizeSourceHighlightRanges,
-} from "./source-highlight";
+import { createTextareaEditor } from "./editor/textarea-editor";
 import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
   loadWorkspaceSettings,
@@ -27,7 +23,6 @@ import {
   updateWorkspaceSourceStats,
 } from "./source-actions";
 import {
-  applyWorkspaceEditorWrap,
   applyWorkspaceLayoutMode,
   applyWorkspaceTheme,
   getSelectedWorkspaceThemeMode,
@@ -46,11 +41,7 @@ K: C
 C D E F | G A B c | c B A G | F E D C |
 E2 D2 | C4 |]`;
 
-const input = document.getElementById("abcInput") as HTMLTextAreaElement;
-const editorFrame = document.getElementById("abcEditorFrame") as HTMLElement;
-const sourceHighlightMirror = document.getElementById(
-  "abcHighlightMirror",
-) as HTMLElement;
+const editorHost = document.getElementById("abcEditorFrame") as HTMLElement;
 const workspaceShell = document.querySelector(".workspace-shell") as HTMLElement;
 const sourceElement = document.getElementById("workspaceSource") as HTMLElement;
 const renderMount = document.getElementById("renderMount") as HTMLElement;
@@ -94,7 +85,16 @@ let currentKeyboardVisibility: KeyboardVisibility = "visible";
 let currentAbcAutoCheck: AbcAutoCheck = "enabled";
 let currentEditorWrap: EditorWrap = "disabled";
 let explicitLayoutMode: LayoutMode = "auto";
-let currentSourceHighlightKey = "";
+
+// The editor is a seam: a textarea with a highlight mirror behind it today, a
+// real code editor later. Nothing below this line may know which one it is.
+const editor = createTextareaEditor({
+  host: editorHost,
+  value: "",
+  lineWrap: "disabled",
+  label: "ABC source code",
+  onChange: handleSourceChange,
+});
 
 const splitLayout = createWorkspaceSplitLayout({
   editorPane,
@@ -104,16 +104,16 @@ const splitLayout = createWorkspaceSplitLayout({
   getLayoutMode: () => explicitLayoutMode,
 });
 const renderController = createWorkspaceRenderController({
-  clearSourceHighlight,
+  clearSourceHighlight: () => editor.setPlaybackHighlight([]),
   getKeyboardVisibility: () => currentKeyboardVisibility,
+  getSourceText: () => editor.getValue(),
   getThemeMode: () => getSelectedWorkspaceThemeMode(themeModeForm),
-  input,
   renderDelayMs: RENDER_DEBOUNCE_MS,
   renderMount,
   renderStatus,
   runAutoCheck,
   sourceElement,
-  updateSourceHighlight,
+  updateSourceHighlight: (ranges) => editor.setPlaybackHighlight(ranges),
 });
 
 void initializeWorkspace();
@@ -123,11 +123,15 @@ async function initializeWorkspace(): Promise<void> {
   splitLayout.updateOrientation();
   window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
 
-  input.value =
+  editor.setValue(
     readAbcFromUrlHash() ??
-    window.localStorage.getItem(WORKSPACE_SOURCE_STORAGE_KEY) ??
-    EXAMPLE_ABC;
-  window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, input.value);
+      window.localStorage.getItem(WORKSPACE_SOURCE_STORAGE_KEY) ??
+      EXAMPLE_ABC,
+  );
+  window.localStorage.setItem(
+    WORKSPACE_SOURCE_STORAGE_KEY,
+    editor.getValue(),
+  );
 
   const settings = await loadWorkspaceSettings();
   currentKeyboardVisibility = settings.keyboardVisibility;
@@ -141,16 +145,6 @@ async function initializeWorkspace(): Promise<void> {
   applyEditorWrap(settings.editorWrap);
   applyWorkspaceTheme(settings.themeMode, colorSchemeQuery.matches);
   applyWorkspaceLayoutMode(workspaceShell, settings.layoutMode);
-
-  input.addEventListener("input", () => {
-    clearSourceHighlight();
-    updateSourceStats();
-    window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, input.value);
-    hideQualityPanel(qualityPanel);
-    renderStatus.textContent = "Checking...";
-    renderController.scheduleRender();
-  });
-  input.addEventListener("scroll", syncSourceHighlightScroll);
 
   autoCheckInput.addEventListener("change", () => {
     void updateAbcAutoCheckSetting(
@@ -181,7 +175,7 @@ async function initializeWorkspace(): Promise<void> {
   clearButton.addEventListener("click", () => {
     setInputValue("");
     renderController.renderCurrentInput();
-    input.focus();
+    editor.focus();
   });
   themeModeForm.addEventListener("change", async () => {
     const themeMode = getSelectedWorkspaceThemeMode(themeModeForm);
@@ -260,12 +254,7 @@ async function updateEditorWrapSetting(editorWrap: EditorWrap): Promise<void> {
 }
 
 function applyEditorWrap(editorWrap: EditorWrap): void {
-  currentEditorWrap = applyWorkspaceEditorWrap(
-    editorFrame,
-    input,
-    editorWrap,
-    syncSourceHighlightScroll,
-  );
+  currentEditorWrap = editor.setLineWrap(editorWrap);
   editorWrapInput.checked = currentEditorWrap === "enabled";
 }
 
@@ -278,57 +267,29 @@ function readAbcFromUrlHash(): string | null {
 }
 
 function setInputValue(value: string): void {
-  input.value = value;
-  clearSourceHighlight();
+  editor.setValue(value);
   window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, value);
   updateSourceStats();
 }
 
-function clearSourceHighlight(): void {
-  updateSourceHighlight([]);
-}
-
-function updateSourceHighlight(ranges: SourceHighlightRange[]): void {
-  const normalizedRanges = normalizeSourceHighlightRanges(
-    ranges,
-    input.value.length,
-  );
-  const nextKey = normalizedRanges
-    .map((range) => `${range.start}:${range.end}`)
-    .join(";");
-  if (nextKey === currentSourceHighlightKey) {
-    syncSourceHighlightScroll();
-    return;
-  }
-
-  currentSourceHighlightKey = nextKey;
-  sourceHighlightMirror.hidden = normalizedRanges.length === 0;
-  if (normalizedRanges.length === 0) {
-    sourceHighlightMirror.replaceChildren();
-    return;
-  }
-
-  sourceHighlightMirror.replaceChildren(
-    createSourceHighlightFragment(input.value, normalizedRanges),
-  );
-  syncSourceHighlightScroll();
-}
-
-function syncSourceHighlightScroll(): void {
-  sourceHighlightMirror.scrollTop = input.scrollTop;
-  sourceHighlightMirror.scrollLeft = input.scrollLeft;
+function handleSourceChange(): void {
+  updateSourceStats();
+  window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, editor.getValue());
+  hideQualityPanel(qualityPanel);
+  renderStatus.textContent = "Checking...";
+  renderController.scheduleRender();
 }
 
 function updateSourceStats(): void {
   updateWorkspaceSourceStats(
     { copySourceButton, exportAbcButton, sourceStats },
-    input.value,
+    editor.getValue(),
   );
 }
 
 function checkCurrentAbcSource(): void {
   checkWorkspaceAbcSource(
-    input.value,
+    editor.getValue(),
     renderStatus,
     qualityPanel,
     isAutoCheckEnabled(),
@@ -345,7 +306,7 @@ function isAutoCheckEnabled(): boolean {
 
 async function copySourceToClipboard(): Promise<void> {
   await copyWorkspaceSourceToClipboard(
-    input.value,
+    editor.getValue(),
     sourceStats,
     updateSourceStats,
   );
@@ -363,5 +324,5 @@ async function importSelectedAbcFile(): Promise<void> {
 }
 
 function exportCurrentAbcFile(): void {
-  exportWorkspaceAbcFile(input.value, sourceStats, updateSourceStats);
+  exportWorkspaceAbcFile(editor.getValue(), sourceStats, updateSourceStats);
 }

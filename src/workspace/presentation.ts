@@ -1,25 +1,9 @@
 import {
   DEFAULT_THEME_MODE,
-  normalizeEditorWrap,
   normalizeThemeMode,
-  type EditorWrap,
   type LayoutMode,
   type ThemeMode,
 } from "../shared/settings";
-
-export function applyWorkspaceEditorWrap(
-  editorFrame: HTMLElement,
-  input: HTMLTextAreaElement,
-  editorWrap: EditorWrap,
-  syncSourceHighlightScroll: () => void,
-): EditorWrap {
-  const normalizedEditorWrap = normalizeEditorWrap(editorWrap);
-  editorFrame.dataset.editorWrap = normalizedEditorWrap;
-  input.wrap = normalizedEditorWrap === "enabled" ? "soft" : "off";
-  if (normalizedEditorWrap === "enabled") input.scrollLeft = 0;
-  syncSourceHighlightScroll();
-  return normalizedEditorWrap;
-}
 
 export function getSelectedWorkspaceThemeMode(
   themeModeForm: HTMLFormElement,

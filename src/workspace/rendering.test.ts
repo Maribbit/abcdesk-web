@@ -13,7 +13,7 @@ vi.mock("../player/renderer", () => ({
 import { createWorkspaceRenderController } from "./rendering";
 
 function createController() {
-  const input = document.createElement("textarea");
+  let sourceText = "";
   const renderMount = document.createElement("section");
   const renderStatus = document.createElement("span");
   const sourceElement = document.createElement("pre");
@@ -24,8 +24,8 @@ function createController() {
   const controller = createWorkspaceRenderController({
     clearSourceHighlight,
     getKeyboardVisibility: () => "visible",
+    getSourceText: () => sourceText,
     getThemeMode: () => "dark",
-    input,
     renderDelayMs: 10,
     renderMount,
     renderStatus,
@@ -37,10 +37,12 @@ function createController() {
   return {
     clearSourceHighlight,
     controller,
-    input,
     renderMount,
     renderStatus,
     runAutoCheck,
+    setSourceText: (text: string) => {
+      sourceText = text;
+    },
     sourceElement,
     updateSourceHighlight,
   };
@@ -75,14 +77,14 @@ describe("Workspace render controller", () => {
   it("renders trimmed ABC and offsets playback highlight ranges", () => {
     const {
       controller,
-      input,
       renderMount,
       renderStatus,
       runAutoCheck,
+      setSourceText,
       sourceElement,
       updateSourceHighlight,
     } = createController();
-    input.value = "\n  X:1\nK:C\nC|  ";
+    setSourceText("\n  X:1\nK:C\nC|  ");
 
     controller.renderCurrentInput();
 
