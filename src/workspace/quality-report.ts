@@ -4,17 +4,20 @@ import type {
 } from "../shared/abc-quality/diagnostics";
 import { validateAbcSource } from "../shared/abc-quality/validate";
 
+export type DiagnosticSelectHandler = (diagnostic: AbcDiagnostic) => void;
+
 export function checkWorkspaceAbcSource(
   abcText: string,
   renderStatus: HTMLElement,
   qualityPanel: HTMLElement,
   autoCheckEnabled: boolean,
+  onSelectDiagnostic?: DiagnosticSelectHandler,
 ): AbcQualityReport {
   const report = validateAbcSource(abcText);
   renderStatus.textContent = getQualityStatusText(report);
 
   if (autoCheckEnabled && report.status !== "ok") {
-    renderQualityReport(qualityPanel, report);
+    renderQualityReport(qualityPanel, report, onSelectDiagnostic);
   } else {
     hideQualityPanel(qualityPanel);
   }
@@ -25,6 +28,7 @@ export function checkWorkspaceAbcSource(
 export function renderQualityReport(
   qualityPanel: HTMLElement,
   report: AbcQualityReport,
+  onSelectDiagnostic?: DiagnosticSelectHandler,
 ): void {
   qualityPanel.hidden = false;
   qualityPanel.dataset.status = report.status;
@@ -35,7 +39,7 @@ export function renderQualityReport(
   const list = document.createElement("ul");
   list.className = "quality-list";
   for (const diagnostic of report.diagnostics) {
-    list.append(createDiagnosticItem(diagnostic));
+    list.append(createDiagnosticItem(diagnostic, onSelectDiagnostic));
   }
   qualityPanel.append(list);
 }
@@ -64,7 +68,10 @@ function createQualitySummary(report: AbcQualityReport): HTMLElement {
   return summary;
 }
 
-function createDiagnosticItem(diagnostic: AbcDiagnostic): HTMLElement {
+function createDiagnosticItem(
+  diagnostic: AbcDiagnostic,
+  onSelectDiagnostic?: DiagnosticSelectHandler,
+): HTMLElement {
   const item = document.createElement("li");
   item.className = "quality-item";
 
@@ -85,7 +92,24 @@ function createDiagnosticItem(diagnostic: AbcDiagnostic): HTMLElement {
     item.append(locationElement);
   }
 
+  if (onSelectDiagnostic) {
+    makeActionable(item, () => onSelectDiagnostic(diagnostic));
+  }
+
   return item;
+}
+
+/** A diagnostic that can be clicked is a control, not just a line of text. */
+function makeActionable(item: HTMLElement, select: () => void): void {
+  item.classList.add("is-actionable");
+  item.tabIndex = 0;
+  item.setAttribute("role", "button");
+  item.addEventListener("click", select);
+  item.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    select();
+  });
 }
 
 function formatDiagnosticLocation(diagnostic: AbcDiagnostic): string | null {

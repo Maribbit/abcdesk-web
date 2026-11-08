@@ -27,34 +27,6 @@ export function normalizeSourceHighlightRanges(
   return mergedRanges;
 }
 
-export function createSourceHighlightFragment(
-  sourceText: string,
-  ranges: SourceHighlightRange[],
-): DocumentFragment {
-  const fragment = document.createDocumentFragment();
-  let position = 0;
-
-  for (const range of ranges) {
-    if (range.start > position) {
-      fragment.append(
-        document.createTextNode(sourceText.slice(position, range.start)),
-      );
-    }
-
-    const highlight = document.createElement("mark");
-    highlight.className = "abc-highlight-token";
-    highlight.textContent = sourceText.slice(range.start, range.end);
-    fragment.append(highlight);
-    position = range.end;
-  }
-
-  if (position < sourceText.length) {
-    fragment.append(document.createTextNode(sourceText.slice(position)));
-  }
-
-  return fragment;
-}
-
 export function offsetSourceHighlightRanges(
   ranges: SourceHighlightRange[],
   offset: number,

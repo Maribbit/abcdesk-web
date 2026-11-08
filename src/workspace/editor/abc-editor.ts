@@ -1,4 +1,5 @@
 import type { SourceHighlightRange } from "../../player/renderer";
+import type { AbcDiagnostic } from "../../shared/abc-quality/diagnostics";
 import type { EditorWrap } from "../../shared/settings";
 
 /**
@@ -23,6 +24,10 @@ export interface AbcEditor {
    * the text changes — the next render will send new ones.
    */
   setPlaybackHighlight(ranges: SourceHighlightRange[]): void;
+  /** Underline the ranges the quality report points at. */
+  setDiagnostics(diagnostics: readonly AbcDiagnostic[]): void;
+  /** Select the diagnostic's range and bring it into view. */
+  revealDiagnostic(diagnostic: AbcDiagnostic): void;
   /** Apply the wrap preference; returns the mode actually in effect. */
   setLineWrap(editorWrap: EditorWrap): EditorWrap;
   focus(): void;

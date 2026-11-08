@@ -67,6 +67,11 @@
   --workspace-code-bg: #f7f9fa;
   --workspace-code-text: #2f373c;
   --workspace-code-select: rgba(79, 103, 121, 0.18);
+  --workspace-code-dim: #737e85; /* metadata and comments */
+  --workspace-code-rule: rgba(45, 51, 56, 0.34); /* bar lines */
+
+  /* Diagnostics — an annotation on the sheet, never a traffic light */
+  --workspace-diagnostic: rgba(79, 103, 121, 0.55);
 
   /* Live playback — the one saturated hue. Chrome is grey-blue; the music
      that is being played is blue, here and on the score sheet. */
@@ -133,6 +138,10 @@
   --workspace-code-bg: #1b2023;
   --workspace-code-text: #ccd4d6;
   --workspace-code-select: rgba(154, 176, 194, 0.24);
+  --workspace-code-dim: #93a0a4;
+  --workspace-code-rule: rgba(255, 255, 255, 0.28);
+
+  --workspace-diagnostic: rgba(154, 176, 194, 0.6);
 
   --workspace-live: #7aa2ff;
   --workspace-live-soft: rgba(122, 162, 255, 0.2);

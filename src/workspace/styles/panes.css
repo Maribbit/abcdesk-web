@@ -155,6 +155,24 @@
   gap: 2px;
 }
 
+/* A diagnostic that jumps to its line reads as a control, so it gets a hit
+   area — the negative margin keeps the text on the same left edge. */
+.quality-item.is-actionable {
+  margin: -4px -6px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.quality-item.is-actionable:hover {
+  background: var(--workspace-surface-hover);
+}
+
+.quality-item.is-actionable:focus-visible {
+  outline: 2px solid var(--workspace-focus-ring);
+  outline-offset: 1px;
+}
+
 .quality-title {
   font-weight: 600;
 }

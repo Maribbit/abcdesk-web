@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import {
-  createSourceHighlightFragment,
   normalizeSourceHighlightRanges,
   offsetSourceHighlightRanges,
 } from "./source-highlight";
@@ -22,20 +21,6 @@ describe("Workspace source highlighting", () => {
       { start: 0, end: 7 },
       { start: 8, end: 10 },
     ]);
-  });
-
-  it("creates marked source fragments without losing plain text", () => {
-    const fragment = createSourceHighlightFragment("C D E F", [
-      { start: 2, end: 3 },
-      { start: 6, end: 7 },
-    ]);
-    const host = document.createElement("div");
-    host.append(fragment);
-
-    expect(host.textContent).toBe("C D E F");
-    expect(
-      [...host.querySelectorAll("mark")].map((mark) => mark.textContent),
-    ).toEqual(["D", "F"]);
   });
 
   it("offsets player highlight ranges back into the editor source", () => {

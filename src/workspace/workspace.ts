@@ -6,7 +6,7 @@ import {
   type LayoutMode,
 } from "../shared/settings";
 import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
-import { createTextareaEditor } from "./editor/textarea-editor";
+import { createCodeMirrorEditor } from "./editor/codemirror-editor";
 import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
   loadWorkspaceSettings,
@@ -86,9 +86,9 @@ let currentAbcAutoCheck: AbcAutoCheck = "enabled";
 let currentEditorWrap: EditorWrap = "disabled";
 let explicitLayoutMode: LayoutMode = "auto";
 
-// The editor is a seam: a textarea with a highlight mirror behind it today, a
-// real code editor later. Nothing below this line may know which one it is.
-const editor = createTextareaEditor({
+// The editor is a seam: the workspace never touches its DOM, so the
+// implementation can be swapped without the rest of the app noticing.
+const editor = createCodeMirrorEditor({
   host: editorHost,
   value: "",
   lineWrap: "disabled",
@@ -276,6 +276,7 @@ function handleSourceChange(): void {
   updateSourceStats();
   window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, editor.getValue());
   hideQualityPanel(qualityPanel);
+  editor.setDiagnostics([]);
   renderStatus.textContent = "Checking...";
   renderController.scheduleRender();
 }
@@ -288,12 +289,15 @@ function updateSourceStats(): void {
 }
 
 function checkCurrentAbcSource(): void {
-  checkWorkspaceAbcSource(
+  const report = checkWorkspaceAbcSource(
     editor.getValue(),
     renderStatus,
     qualityPanel,
     isAutoCheckEnabled(),
+    (diagnostic) => editor.revealDiagnostic(diagnostic),
   );
+  const showsDiagnostics = isAutoCheckEnabled() && report.status !== "ok";
+  editor.setDiagnostics(showsDiagnostics ? report.diagnostics : []);
 }
 
 function runAutoCheck(): void {
