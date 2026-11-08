@@ -37,6 +37,7 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
       displayProgress: true,
       displayWarp: true,
     });
+    bindPauseClear(instance, synthControl);
 
     await synthControl.setTune(
       instance.visualObj[0],
@@ -60,6 +61,25 @@ function createCursorControl(instance: RenderInstance): object {
     onStart: () => clearPlaybackHighlight(instance),
     onEvent: (event: TimingEvent) => highlightTimingEvent(instance, event),
     onFinished: () => clearPlaybackHighlight(instance),
+  };
+}
+
+/**
+ * The cursor control hears start, notes and the end of the tune, but not pause:
+ * abcjs stops its timer and buffer silently. Every pause path — the built-in
+ * button, a re-render, a dispose — runs through the controller's own pause, so
+ * wrapping it is the one place that catches them all; otherwise the tint stays
+ * stranded on whatever note was sounding.
+ */
+function bindPauseClear(
+  instance: RenderInstance,
+  synthControl: abcjs.SynthObjectController,
+): void {
+  const pause = synthControl.pause.bind(synthControl);
+
+  synthControl.pause = () => {
+    pause();
+    clearPlaybackHighlight(instance);
   };
 }
 

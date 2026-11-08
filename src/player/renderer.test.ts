@@ -338,4 +338,24 @@ describe("render lifecycle", () => {
     expect(onSourceHighlight).toHaveBeenCalledWith([{ start: 8, end: 9 }]);
     expect(onSourceHighlight).toHaveBeenLastCalledWith([]);
   });
+
+  it("clears the highlight when playback is paused", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+    const onSourceHighlight = vi.fn();
+
+    const instance = renderAbc(pre, "X:1\nK:C\nC|", undefined, undefined, undefined, {
+      onSourceHighlight,
+    });
+    await Promise.resolve();
+    const cursorControl = mocks.cursorControls[mocks.cursorControls.length - 1];
+
+    cursorControl?.onEvent?.({ milliseconds: 0, startChar: 8, endChar: 9 });
+    expect(onSourceHighlight).toHaveBeenLastCalledWith([{ start: 8, end: 9 }]);
+
+    instance.synthControl?.pause();
+
+    expect(mocks.pause).toHaveBeenCalledTimes(1);
+    expect(onSourceHighlight).toHaveBeenLastCalledWith([]);
+  });
 });
