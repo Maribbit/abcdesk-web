@@ -23,6 +23,9 @@ export interface RenderInstance {
   visualObj: abcjs.TuneObject[] | null;
   renderedStaffWidth: number;
   synthControl: abcjs.SynthObjectController | null;
+  /** Resolves when the current synth control is loaded; null before the first
+   *  init and while a re-render is swapping one in. */
+  synthReady: Promise<void> | null;
   activePlaybackElements: Element[];
   scoreResizeObserver: ResizeObserver | null;
   scoreResizeTimer: number | undefined;

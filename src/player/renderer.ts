@@ -214,6 +214,7 @@ export function renderAbc(
     visualObj: scoreRender.visualObj,
     renderedStaffWidth: scoreRender.staffWidth,
     synthControl: null,
+    synthReady: null,
     activePlaybackElements: [],
     scoreResizeObserver: null,
     scoreResizeTimer: undefined,
@@ -241,9 +242,17 @@ export function renderAbc(
   setupScoreResizeObserver(instance, () => rerenderScoreForLayout(instance));
 
   // Initialize synth (async, non-blocking)
-  initSynth(instance);
+  startSynth(instance);
 
   return instance;
+}
+
+/**
+ * Kick off the synth and keep the promise it resolves with, so anything that
+ * needs sound can wait for it instead of racing the soundfont.
+ */
+function startSynth(instance: RenderInstance): void {
+  instance.synthReady = initSynth(instance);
 }
 
 function playKeyboardPitch(pitch: number): void {
@@ -330,7 +339,8 @@ function updateRender(
     instance.synthControl.pause();
     instance.synthControl = null;
   }
-  initSynth(instance);
+  instance.synthReady = null;
+  startSynth(instance);
 
   return instance;
 }
@@ -353,7 +363,7 @@ function rerenderScoreForLayout(instance: RenderInstance): void {
   if (instance.synthControl) {
     instance.synthControl.pause();
     instance.synthControl = null;
-    initSynth(instance);
+    startSynth(instance);
   }
 }
 
@@ -372,11 +382,17 @@ export function updateRenderThemes(themeMode: ThemeMode): void {
  * Start the tune at the note nearest a character offset in the source: the
  * chord under the caret, or the next one if the caret sits between notes.
  * Returns false when there is nothing to play (no timing, no synth).
+ *
+ * The wait matters: a fresh render swaps the synth control and reloads the
+ * soundfont, so a request that lands in that window must queue behind it
+ * rather than act on a controller that is about to be replaced.
  */
-export function playFromSourceOffset(
+export async function playFromSourceOffset(
   instance: RenderInstance,
   offset: number,
-): boolean {
+): Promise<boolean> {
+  await instance.synthReady;
+
   const event = findTimingEventForSourceOffset(
     getTimingEvents(instance),
     instance.abcText,

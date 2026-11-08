@@ -45,7 +45,10 @@ const mocks = vi.hoisted(() => {
         return [
           {
             getTotalTime: () => 13,
-            setTiming: () => [{ milliseconds: 13000 }],
+            setTiming: () => [
+              { milliseconds: 0, startChar: 8, endChar: 9, type: "event" },
+              { milliseconds: 13000, type: "end" },
+            ],
           },
         ];
       },
@@ -129,6 +132,7 @@ vi.mock("abcjs", () => ({
 
 import {
   getSourceHighlightRangesForTest,
+  playFromSourceOffset,
   removeDisconnectedRenders,
   renderAbc,
 } from "./renderer";
@@ -391,5 +395,17 @@ describe("render lifecycle", () => {
     // Bar lines and titles are clickable too, but they name no range.
     clickListener?.({});
     expect(onSelectSourceRange).toHaveBeenCalledTimes(1);
+  });
+
+  it("waits for the synth before playing from a caret", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+
+    // Nothing awaited yet: the soundfont is still loading, so the controller
+    // would be null for anyone who reads it now.
+    const instance = renderAbc(pre, "X:1\nK:C\nC|");
+
+    await expect(playFromSourceOffset(instance, 8)).resolves.toBe(true);
+    expect(mocks.play).toHaveBeenCalledTimes(1);
   });
 });

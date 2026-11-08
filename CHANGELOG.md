@@ -34,6 +34,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Fixed
 
+- Fixed play-from-cursor pressed right after typing: the request landed on the previous score's timing, and the re-render that followed paused the playback it had just started. A waiting edit is now rendered first, the request waits for the new synth, and one request runs at a time so a held shortcut cannot toggle playback back off.
 - Fixed disabled header buttons looking active: icon buttons in the Source pane now dim when they cannot run.
 - Fixed the playback highlight staying on the score, the keybed and the source after pausing. abcjs reports start, notes and the end of the tune but not pause, so the last sounding note kept its blue until the tune finished; the pause path now clears it.
 - Fixed note-click source highlight that skipped the last note before a bar line. When seeking to a clicked note's timing position, abcjs could fire the next event instead of the clicked one. The highlight is now fired directly after seeking so the correct note is always highlighted.

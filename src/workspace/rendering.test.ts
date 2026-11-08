@@ -128,24 +128,40 @@ describe("Workspace render controller", () => {
     expect(revealSourceRange).toHaveBeenCalledWith({ start: 11, end: 12 });
   });
 
-  it("plays from a caret offset measured in the untrimmed source", () => {
+  it("plays from a caret offset measured in the untrimmed source", async () => {
     const { controller, setSourceText } = createController();
     setSourceText("\n  X:1\nK:C\nC|");
 
     controller.renderCurrentInput();
 
-    expect(controller.playFromSourcePosition(11)).toBe(true);
+    await expect(controller.playFromSourcePosition(11)).resolves.toBe(true);
     expect(rendererMocks.playFromSourceOffset).toHaveBeenCalledWith(
       expect.anything(),
       8,
     );
   });
 
-  it("does not play before anything is rendered", () => {
+  it("does not play before anything is rendered", async () => {
     const { controller } = createController();
 
-    expect(controller.playFromSourcePosition(5)).toBe(false);
+    await expect(controller.playFromSourcePosition(5)).resolves.toBe(false);
     expect(rendererMocks.playFromSourceOffset).not.toHaveBeenCalled();
+  });
+
+  it("renders a waiting edit before playing from the caret", async () => {
+    const { controller, setSourceText } = createController();
+    setSourceText("X:1\nK:C\nC|");
+
+    // Only scheduled, never rendered: the caret points into a text the score
+    // on screen does not know yet.
+    controller.scheduleRender();
+    await controller.playFromSourcePosition(8);
+
+    expect(rendererMocks.renderAbc).toHaveBeenCalledTimes(1);
+    expect(rendererMocks.playFromSourceOffset).toHaveBeenCalledWith(
+      expect.anything(),
+      8,
+    );
   });
 
   it("reveals a caret measured in the untrimmed source", () => {

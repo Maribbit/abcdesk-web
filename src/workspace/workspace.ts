@@ -92,6 +92,7 @@ let currentKeyboardVisibility: KeyboardVisibility = "visible";
 let currentAbcAutoCheck: AbcAutoCheck = "enabled";
 let currentEditorWrap: EditorWrap = "disabled";
 let explicitLayoutMode: LayoutMode = "auto";
+let isStartingPlayback = false;
 
 // The editor is a seam: the workspace never touches its DOM, so the
 // implementation can be swapped without the rest of the app noticing.
@@ -104,7 +105,9 @@ const editor = createCodeMirrorEditor({
   onCursorChange: (offset) => {
     renderController.revealSourcePosition(offset);
   },
-  onPlayFromCursor: playFromCursor,
+  onPlayFromCursor: () => {
+    void playFromCursor();
+  },
 });
 
 const splitLayout = createWorkspaceSplitLayout({
@@ -172,7 +175,9 @@ async function initializeWorkspace(): Promise<void> {
   copySourceButton.addEventListener("click", () => {
     void copySourceToClipboard();
   });
-  playFromCursorButton.addEventListener("click", playFromCursor);
+  playFromCursorButton.addEventListener("click", () => {
+    void playFromCursor();
+  });
   importAbcButton.addEventListener("click", () => {
     abcFileInput.click();
   });
@@ -302,9 +307,19 @@ function updateSourceStats(): void {
   );
 }
 
-function playFromCursor(): void {
-  if (renderController.playFromSourcePosition(editor.getCursorOffset())) return;
-  renderStatus.textContent = "Nothing to play here";
+async function playFromCursor(): Promise<void> {
+  // `play` is a toggle that only flips after the audio context resumes, so a
+  // second press in that window would land on "still stopped" and flip it back
+  // to paused. One request at a time; repeats from a held key are dropped.
+  if (isStartingPlayback) return;
+  isStartingPlayback = true;
+  try {
+    if (await renderController.playFromSourcePosition(editor.getCursorOffset()))
+      return;
+    renderStatus.textContent = "Nothing to play here";
+  } finally {
+    isStartingPlayback = false;
+  }
 }
 
 function getPlayShortcutLabel(): string {

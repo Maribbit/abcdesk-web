@@ -30,7 +30,7 @@ interface WorkspaceRenderControllerOptions {
 export interface WorkspaceRenderController {
   getCurrentInstance: () => RenderInstance | null;
   /** Play the note under a raw (untrimmed) source offset; false if silent. */
-  playFromSourcePosition: (offset: number) => boolean;
+  playFromSourcePosition: (offset: number) => Promise<boolean>;
   renderCurrentInput: () => void;
   /** Scroll the note under a raw source offset into view; false if silent. */
   revealSourcePosition: (offset: number) => boolean;
@@ -122,7 +122,11 @@ export function createWorkspaceRenderController({
 
   return {
     getCurrentInstance: () => currentInstance,
-    playFromSourcePosition: (offset) => {
+    playFromSourcePosition: async (offset) => {
+      // An edit is still waiting for the debounce: playing the score the user
+      // typed is the point, so land it now rather than mapping the caret onto
+      // a text that no longer exists.
+      if (renderTimer !== undefined) renderCurrentInput();
       if (!currentInstance) return false;
       return playFromSourceOffset(
         currentInstance,
