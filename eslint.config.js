@@ -39,4 +39,16 @@ export default tseslint.config(
       },
     },
   },
+  {
+    // The worker is served as-is: a classic script with the service worker's
+    // own globals, not a module the bundler can see.
+    files: ["src/pwa/service-worker.js"],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "script",
+      globals: {
+        ...globals.serviceworker,
+      },
+    },
+  },
 );

@@ -19,7 +19,7 @@
 3. **[播放器视图 (Interface)](./interface.md)**
    Shadow DOM 隔离、CSS 变量主题、控制栏与无状态视图。
 4. **[独立工作台 (Workspace)](./workspace.md)**
-   分栏布局、源码动作、设置持久化与 hash 分享链路。
+   分栏布局、源码动作、设置持久化、hash 分享与离线壳。
 
 ## 映射纪律
 

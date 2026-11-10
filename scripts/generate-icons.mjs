@@ -12,7 +12,9 @@ const root = resolve(__dirname, "..");
 const svgPath = resolve(root, "public/icons/icon.svg");
 const outDir = resolve(root, "public/icons");
 
-const sizes = [16, 48, 128];
+// 192 and 512 are what a manifest wants before a browser will offer to install
+// the workspace; the smaller two are the tab and header marks.
+const sizes = [16, 48, 128, 192, 512];
 
 async function main() {
   const svgBuffer = await readFile(svgPath);

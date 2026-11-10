@@ -1,3 +1,4 @@
+import { registerWorkspaceServiceWorker } from "../pwa/register";
 import {
   normalizeLayoutMode,
   type AbcAutoCheck,
@@ -269,6 +270,10 @@ async function initializeWorkspace(): Promise<void> {
 
   updateSourceStats();
   renderController.renderCurrentInput();
+
+  // Last, and not awaited: the offline copy is a second visit's concern, and
+  // nothing the first paint needs should queue behind a worker install.
+  void registerWorkspaceServiceWorker();
 }
 
 async function updateAbcAutoCheckSetting(

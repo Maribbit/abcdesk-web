@@ -10,6 +10,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    // The Vite config is loaded without a bundler pass that guesses extensions.
+    "allowImportingTsExtensions": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"]
   },
   "include": ["src/**/*.ts"],
