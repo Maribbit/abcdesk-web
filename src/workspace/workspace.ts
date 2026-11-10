@@ -118,6 +118,10 @@ const splitLayout = createWorkspaceSplitLayout({
   getLayoutMode: () => explicitLayoutMode,
 });
 const renderController = createWorkspaceRenderController({
+  clearQualityReport: () => {
+    hideQualityPanel(qualityPanel);
+    editor.setDiagnostics([]);
+  },
   clearSourceHighlight: () => editor.setPlaybackHighlight([]),
   getCursorOffset: () => editor.getCursorOffset(),
   getKeyboardVisibility: () => currentKeyboardVisibility,
@@ -301,9 +305,11 @@ function handleSourceChange(): void {
   const sourceText = editor.getValue();
   updateSourceStats(sourceText);
   window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, sourceText);
-  hideQualityPanel(qualityPanel);
-  editor.setDiagnostics([]);
-  renderStatus.textContent = "Checking...";
+  // The last report stays up while the next one is being computed: its marks
+  // ride the edit, and the pane does not resize under the caret twice a
+  // keystroke. "Editing..." is the honest label for that gap — it is a report
+  // about the text as it was. An empty sheet is cleared by the render, which
+  // knows no check is coming.
   renderController.scheduleRender();
 }
 

@@ -177,8 +177,8 @@ describe("CodeMirror editor", () => {
       severity: "warning" as const,
       source: "abcjs" as const,
       title: "abcjs parser warning",
-      message: "Music Line:1:1: unexpected symbol",
-      line: 1,
+      message: "Music Line:2:1: unexpected symbol",
+      line: 2,
       column: 1,
     };
 
@@ -186,12 +186,16 @@ describe("CodeMirror editor", () => {
     // count.
     editor.setDiagnostics([
       diagnostic,
-      { ...diagnostic, line: 1, column: 7 },
+      { ...diagnostic, line: 2, column: 7 },
     ]);
     expect(host.querySelectorAll(".abc-diagnostic-gutter")).toHaveLength(1);
+    expect(host.querySelector(".abc-diagnostic-gutter")?.textContent).toBe("2");
 
+    // A line written above carries the dot down with its line instead of
+    // blinking it out: the check that will replace it is already on its way.
     view.dispatch({ changes: { from: 0, insert: "%\n" } });
-    expect(host.querySelectorAll(".abc-diagnostic-gutter")).toHaveLength(0);
+    expect(host.querySelectorAll(".abc-diagnostic-gutter")).toHaveLength(1);
+    expect(host.querySelector(".abc-diagnostic-gutter")?.textContent).toBe("3");
   });
 
   it("underlines a diagnostic and selects its line on reveal", () => {
@@ -211,6 +215,29 @@ describe("CodeMirror editor", () => {
     editor.revealDiagnostic(diagnostic);
     expect(view.state.selection.main.from).toBe(18);
     expect(view.state.selection.main.to).toBe(31);
+  });
+
+  it("keeps an underline on its text across an edit, and drops it on the next check", () => {
+    const { editor, host, view } = createEditor();
+    const diagnostic = {
+      severity: "warning" as const,
+      source: "abcjs" as const,
+      title: "abcjs parser warning",
+      message: "Music Line:1:1: unexpected symbol",
+      line: 1,
+      column: 1,
+    };
+
+    editor.setDiagnostics([diagnostic]);
+    expect(host.querySelector(".abc-diagnostic-token")?.textContent).toBe("X: 1");
+
+    view.dispatch({ changes: { from: 0, insert: "%\n" } });
+
+    expect(host.querySelector(".abc-diagnostic-token")?.textContent).toBe("X: 1");
+
+    editor.setDiagnostics([]);
+    expect(host.querySelectorAll(".abc-diagnostic-token")).toHaveLength(0);
+    expect(host.querySelectorAll(".abc-diagnostic-gutter")).toHaveLength(0);
   });
 
   it("moves focus into the editing surface", () => {

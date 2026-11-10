@@ -222,7 +222,13 @@ const diagnosticDecorations = StateField.define<DecorationSet>({
         })),
       );
     }
-    return transaction.docChanged ? Decoration.none : decorations;
+    // The check that replaces these marks is already on its way, and it takes a
+    // debounce; until it lands the marks ride the text, so a keystroke does not
+    // blink every underline off on its way to an answer that is usually the
+    // same one.
+    return transaction.docChanged
+      ? decorations.map(transaction.changes)
+      : decorations;
   },
   provide: (field) => EditorView.decorations.from(field),
 });
@@ -245,7 +251,7 @@ const diagnosticGutter = StateField.define<RangeSet<GutterMarker>>({
       if (!effect.is(setDiagnosticSpans)) continue;
       return buildDiagnosticMarkers(transaction.state.doc, effect.value);
     }
-    return transaction.docChanged ? RangeSet.empty : markers;
+    return transaction.docChanged ? markers.map(transaction.changes) : markers;
   },
   provide: (field) => gutterLineClass.from(field),
 });

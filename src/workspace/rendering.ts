@@ -10,6 +10,8 @@ import type { KeyboardVisibility, ThemeMode } from "../shared/settings";
 import { offsetSourceHighlightRanges } from "./source-highlight";
 
 interface WorkspaceRenderControllerOptions {
+  /** Take down the last report: no check is coming to replace it. */
+  clearQualityReport: () => void;
   clearSourceHighlight: () => void;
   getCursorOffset: () => number;
   getKeyboardVisibility: () => KeyboardVisibility;
@@ -36,6 +38,7 @@ export interface WorkspaceRenderController {
 }
 
 export function createWorkspaceRenderController({
+  clearQualityReport,
   clearSourceHighlight,
   getCursorOffset,
   getKeyboardVisibility,
@@ -79,6 +82,9 @@ export function createWorkspaceRenderController({
       removeRender(sourceElement);
       currentInstance = null;
       renderMount.classList.remove("has-render");
+      // No check follows an empty sheet, so the last report has to die with the
+      // text it was about: nothing else will come along to replace it.
+      clearQualityReport();
       renderStatus.textContent = "Ready";
       return;
     }

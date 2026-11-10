@@ -22,6 +22,7 @@ function createController() {
   const renderMount = document.createElement("section");
   const renderStatus = document.createElement("span");
   const sourceElement = document.createElement("pre");
+  const clearQualityReport = vi.fn();
   const clearSourceHighlight = vi.fn();
   const placeSourceCaret = vi.fn();
   const runAutoCheck = vi.fn();
@@ -29,6 +30,7 @@ function createController() {
   const updateTargetRanges = vi.fn();
 
   const controller = createWorkspaceRenderController({
+    clearQualityReport,
     clearSourceHighlight,
     getCursorOffset: () => cursorOffset,
     getKeyboardVisibility: () => "visible",
@@ -45,6 +47,7 @@ function createController() {
   });
 
   return {
+    clearQualityReport,
     clearSourceHighlight,
     controller,
     placeSourceCaret,
@@ -73,10 +76,12 @@ describe("Workspace render controller", () => {
 
   it("clears renders and status for empty input", () => {
     const {
+      clearQualityReport,
       clearSourceHighlight,
       controller,
       renderMount,
       renderStatus,
+      runAutoCheck,
       sourceElement,
     } = createController();
     renderMount.classList.add("has-render");
@@ -87,6 +92,11 @@ describe("Workspace render controller", () => {
     expect(rendererMocks.removeRender).toHaveBeenCalledWith(sourceElement);
     expect(renderMount.classList.contains("has-render")).toBe(false);
     expect(renderStatus.textContent).toBe("Ready");
+    // Nothing will check an empty sheet later, so the last report is taken down
+    // here rather than left to outlive the text it was about — and no check is
+    // run, since an empty sheet has nothing to report.
+    expect(clearQualityReport).toHaveBeenCalledTimes(1);
+    expect(runAutoCheck).not.toHaveBeenCalled();
   });
 
   it("renders trimmed ABC and offsets playback highlight ranges", () => {
