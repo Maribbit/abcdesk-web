@@ -1,5 +1,6 @@
 import { registerWorkspaceServiceWorker } from "../pwa/register";
 import { watchWorkspaceUpdates } from "../pwa/updates";
+import { watchConnectionNotice } from "./connection-notice";
 import {
   normalizeLayoutMode,
   type AbcAutoCheck,
@@ -74,6 +75,7 @@ const copySourceButton = document.getElementById(
 ) as HTMLButtonElement;
 const shareButton = document.getElementById("shareButton") as HTMLButtonElement;
 const updateNotice = document.getElementById("updateNotice") as HTMLElement;
+const offlineNotice = document.getElementById("offlineNotice") as HTMLElement;
 const updateButton = document.getElementById(
   "updateButton",
 ) as HTMLButtonElement;
@@ -148,6 +150,10 @@ const renderController = createWorkspaceRenderController({
 void initializeWorkspace();
 
 async function initializeWorkspace(): Promise<void> {
+  // Before anything else that can wait: the bar should say the page is
+  // offline while it still looks like it is loading something.
+  watchConnectionNotice({ element: offlineNotice });
+
   splitLayout.restoreSizes();
   splitLayout.updateOrientation();
   window.requestAnimationFrame(() => splitLayout.clampRestoredSize());

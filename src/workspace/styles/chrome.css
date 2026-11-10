@@ -226,6 +226,51 @@
 
 /* ── A new build waiting at the door ── */
 
+/* States of the app — no network, a build waiting — share one slot between
+   the masthead and the controls, so they collect in the same place instead
+   of each claiming its own edge of the bar. */
+.workspace-status {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Offline is a state, not a fault: the saved copy still opens and edits
+   still land on the device. It is the masthead's own voice — caps, tracking,
+   muted ink — one step quieter than the update prompt, which asks for a
+   click. The dot is the connection light that would be out. */
+.workspace-offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px 2px 8px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 999px;
+  color: var(--workspace-text-muted);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.workspace-offline::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+
+/* The label's own display would otherwise beat the attribute. */
+.workspace-offline[hidden],
+.workspace-status[hidden] {
+  display: none;
+}
+
 /* The worker does not swap the caches under an open page, so the page is the
    one that says a new version is ready, and the reader is the one who picks
    the moment. It sits in the bar between the masthead and the controls — a

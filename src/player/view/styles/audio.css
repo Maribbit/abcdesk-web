@@ -191,3 +191,13 @@
   margin: 0;
   line-height: 1.4;
 }
+
+/* Missing sounds are a footnote, not an error state: the transport still
+   works, the sheet is still there, and the sentence only says what will not
+   be heard. Muted ink, the same size as the clock beside it. */
+.abcdesk-audio-notice {
+  margin: 6px 2px 0;
+  color: var(--abcdesk-muted-text);
+  font-size: 11.5px;
+  line-height: 1.4;
+}

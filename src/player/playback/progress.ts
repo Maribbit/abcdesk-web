@@ -1,3 +1,4 @@
+import { reportMissingSounds } from "./audio-notice";
 import { getTuneDurationSeconds } from "./duration";
 import { getTimingEvents } from "./timing";
 import type { RenderInstance, SeekableSynthControl } from "../types";
@@ -117,7 +118,11 @@ export function seekPlaybackToPercent(
     return;
   }
 
-  void flushPendingPlaybackSeek(instance);
+  // Seeking before the tune is loaded itself starts the load, so it can fail
+  // the same way play does — with no sound and no sentence unless we add it.
+  void flushPendingPlaybackSeek(instance).catch(() =>
+    reportMissingSounds(instance.audioElement),
+  );
 }
 
 function getProgressPercent(
@@ -139,7 +144,12 @@ async function playAfterPendingSeek(instance: RenderInstance): Promise<void> {
   const synthControl = instance.synthControl as SeekableSynthControl | null;
   if (!synthControl) return;
 
-  await flushPendingPlaybackSeek(instance);
+  try {
+    await flushPendingPlaybackSeek(instance);
+  } catch {
+    reportMissingSounds(instance.audioElement);
+    return;
+  }
   await synthControl.play?.();
 }
 

@@ -25,6 +25,7 @@ import type { ABCDeskQualityElement } from "./components/quality-panel";
 import { createDurationControl } from "./components/duration-control";
 import { createKeyboardController } from "./components/keyboard";
 import { exportMidi, exportScore } from "./exports/actions";
+import { reportMissingSounds } from "./playback/audio-notice";
 import { playLocalPianoPitch } from "./playback/soundfont";
 import { trimSourceRange } from "./playback/source-highlight";
 import { createTempoControl } from "./components/tempo-control";
@@ -231,7 +232,9 @@ export function renderAbc(
     elements.keyboardElement,
     elements.keyboardToggleElement,
     keyboardVisibility === "visible",
-    playKeyboardPitch,
+    (pitch) => {
+      if (instance) playKeyboardPitch(instance, pitch);
+    },
   );
   const durationControl = createDurationControl();
   const tempoControl = createTempoControl(
@@ -321,9 +324,12 @@ function startSynth(instance: RenderInstance): void {
   instance.synthReady = initSynth(instance);
 }
 
-function playKeyboardPitch(pitch: number): void {
+function playKeyboardPitch(instance: RenderInstance, pitch: number): void {
   playLocalPianoPitch(pitch).catch((err: unknown) => {
     console.warn("[ABC Desk] Keyboard pitch playback failed:", err);
+    // A silent key is the same missing sound the transport would hit, so it
+    // earns the same sentence rather than only a console line.
+    reportMissingSounds(instance.audioElement);
   });
 }
 

@@ -10,7 +10,7 @@ The project started as a Chrome extension that rendered ABC found in AI chat pag
 
 - Live rendering with a 350 ms debounce, horizontal or stacked layout, draggable split and keyboard-resizable panes.
 - Playback with a bundled FluidR3 piano soundfont, so it works offline and never requests remote samples.
-- Installable and offline: a service worker keeps the app shell and every piano sample, so the workspace still opens, edits and plays with no network.
+- Installable and offline: a service worker keeps the app shell and every piano sample, so the workspace still opens, edits and plays with no network; the header says `Offline` while it has none, and a missing sample explains itself under the transport.
 - Playback-driven source highlighting, click-to-seek on any note, tempo override, duration display and an 88-key keyboard view.
 - abcjs parser warnings surfaced as a diagnostics panel instead of failing silently.
 - `.abc` import and export, plus SVG and MIDI export.

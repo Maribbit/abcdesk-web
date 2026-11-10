@@ -35,6 +35,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 - 激活时删掉上一版的壳缓存，样本缓存不受影响。
 - 新 worker 装好后停在 waiting：激活就会删掉旧壳，而打开的页面还在跑旧代码，替它做这个决定会让页面去要已经不存在的文件。页面在标题栏里放一枚 `New version ready` + `Reload` 的小签，读者按下才发 `skip-waiting`，等 `controllerchange` 后刷新。首次安装没有可替换的 worker，它直接激活并接管当前页，不弹提示——“更新”按“有东西可替换”判定，而不是按“有个 worker 装好了”。
 - 只在生产构建注册，作用域就是部署基路径（`SITE_BASE`），不会替同源下的其他应用作答；浏览器拒绝时（隐私模式、策略）只失去离线副本，在线功能不变，控制台留一条警告。离线副本是增强，不是前提。
+- 断网时标题栏出现一枚 `Offline` 小签，和 `New version ready` 共用标题栏中间的那一个位置（状态填在同一个槽里，不各占一边）。它是纸的一部分而不是警报：只有描边、用页眉自己的小字与字距，不浮起、不上红——离线是这个应用的常态，谱面照常可读可编辑。标签跟 `navigator.onLine` 与 `online` / `offline` 事件走，不轮询；悬停提示只在真的有 worker 接管时才承诺“从保存的副本运行”，否则只说“没有网络”，不替没能生效的副本背书。
 
 ## 3. 交互链路
 
@@ -60,9 +61,11 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
   - `src/workspace/editor/`: 编辑器门面 `AbcEditor`、CodeMirror 6 实现（装饰层、换行与跳转）与纯净的语法扫描器。
   - `src/shared/workspace-url.ts`: hash 编解码，压缩载荷与老链接兼容。
   - `src/pwa/`: service worker 模板（不经打包）、构建期填充与生产环境注册。
+  - `src/workspace/connection-notice.ts`: 标题栏的 `Offline` 小签（随机能状态变化，提示语只在有 worker 接管时承诺保存的副本）。
   - `src/shared/abc-file.ts` 与 `src/shared/filename.ts`: 文件导入导出与安全文件名。
 - **测试锚点**
   - `src/workspace/settings-store.test.ts`: 设置加载、回退与保存。
+  - `src/workspace/connection-notice.test.ts`: 离线时显示、提示语按是否有 worker 区分、跟随 online/offline 事件、卸载后停止监听。
   - `src/workspace/rendering.test.ts`: 空输入清理与撤下上一份报告、源码修剪渲染、播放高亮与共享目标的偏移、谱面点击回传的光标位置。
   - `src/workspace/quality-report.test.ts`: 诊断面板呈现、清空隐藏与状态文案映射。
   - `src/workspace/presentation.test.ts`: 主题解析与布局类名。

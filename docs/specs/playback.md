@@ -54,6 +54,17 @@
 - 两个按钮用同一套居中规则（`display: flex` + `align-items: center`，图标 `display: block`）：abcjs 的按钮是块级容器，行内 svg 会贴着文字基线落下去，图标就会比隔壁的播放键高一截、看起来也更大。三角本身也按播放键的高度画（13.5 单位），两个键并排，谁也不该比谁重。
 - 播放键左边是「从光标播放」：图形是左三角右光标（两半并排，表达“从这个位置开始”而不是“加一个光标角标”）。颜色用共享目标的蓝，但浅色主题下压深一档（`--abcdesk-target-deep: #0a7fd4`）：同一支蓝在纸上是染色，在播放条的灰底上做控件只有 2.7:1，压深后 3.8:1，才够得上控件所需的 3:1；深色主题的条底本身就暗，保持 `#1c9bff` 不变。它是播放条上唯一一个关于目标而不是关于曲子的动作，没有目标时变成灰的禁用态。它排在主播放键之前：具体动作在前，普通播放在后。
 
+### 2.6 音源缺失
+
+样本按需加载，所以「没有声音」有两种成因：浏览器的音频能力缺失（初始化就被挡住，播放条直接换成一句说明），以及某个音根本没到（离线又不在缓存里、请求失败）。后者在 abcjs 里是静音的：它把缺失的音当作“这一段留白”，`play()` 返回的 Promise 拒了也没人接，按钮就一直转圈。
+
+- 播放条下面一行灰字说明原因，而不是只写控制台：在线是 `This tune's sounds could not be loaded. Reload to try again.`，离线是 `Offline, and this tune's sounds are not all on this device. Reconnect, then reload.`。用 `role="status"` 而不是 `alert`：曲子本身没坏，读者也只是刚按了一下。
+- 为什么是“重新加载”而不是“再按一次”：abcjs 把失败的样本 Promise 缓存在模块级，不重新加载页面就不会再取一次；提示若只说“再试”就成了谎。
+- 播放键不能停在转圈：`play()` 的 Promise 必须被接管（在 `load()` 把 `synthControl.play` 拿去做 `playPromiseHandler` 之前换掉），失败时清掉 abcjs 的 `isLoading`。它的加载标志只在成功路径上归零，留着的话以后每次点击都会排在那个永远不会结束的加载后面。
+- 失败按“声音没能到”处理，不区分是哪一首曲子的哪个音：这一层的音源只有一份内置钢琴，能失败的就是它。
+- 键盘试听走 `abcjs.synth.playEvent`，缺的是同一批样本，所以显示同一行说明而不是只在控制台留警告。
+- 一行就够：第二次失败只替换文字，不在播放条下面叠第二行。
+
 ## 3. 约束
 
 - 声音层不查询 DOM，状态完全由数据驱动。
@@ -69,6 +80,8 @@
   - `src/player/playback/transport-icons.ts`: 播放条图标的替换（保留 abcjs 的类名与状态切换）。
   - `src/player/playback/transport.ts`: 播放条的收尾——图标、从光标播放键、与共享目标同步的可用态。
   - `src/player/playback/play-from-cursor.ts`: 源码偏移到起播的入口（播放条的键与快捷键共用）。
+  - `src/player/playback/audio-notice.ts`: 音源没到时的说明（在线/离线两种措辞，一行，不叠加）。
+  - `src/player/playback/synth.ts`: 合成器初始化与播放失败的接管（清掉 abcjs 的加载标志）。
   - `src/player/renderer.ts`: 播放生命周期、进度拖拽、点击跳转与实例释放。
 - **测试锚点**
   - `src/player/playback/duration.test.ts`: 总时长读取、事件回退、倍率与展示格式。
@@ -78,5 +91,6 @@
   - `src/player/playback/transport-icons.test.ts`: 播放条图标换成面板同一套描边图形，保留 abcjs 控制显隐的类名。
   - `src/player/playback/transport.test.ts`: 从光标播放键的位置、禁用态、点击起点与不重复插入。
   - `src/player/playback/soundfont.test.ts`: 内置钢琴音源路径与音符重写策略。
+  - `src/player/playback/audio-notice.test.ts`: 缺音源的措辞、只留一行、不改动播放条。
   - `src/player/components/tempo-control.test.ts`: 速度组件与 abcjs tempo 输入同步。
   - `src/player/renderer.test.ts`: 实例清理、进度起播、播放事件到源码高亮的集成。

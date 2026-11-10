@@ -1,5 +1,6 @@
 import abcjs from "abcjs";
 import type { RenderInstance, SeekableSynthControl, TimingEvent } from "../types";
+import { reportMissingSounds } from "./audio-notice";
 import { getTuneDurationSeconds } from "./duration";
 import {
   clearPlaybackHighlight,
@@ -36,6 +37,12 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
 
   try {
     const synthControl = new abcjs.synth.SynthController();
+    // The soundfont loads inside `play()`, not here, and abcjs drops the
+    // promise when a sample fails: the button would spin forever and every
+    // later press would wait on a tune that never finishes loading. Take the
+    // promise before `load()` captures its own handler, so a missing sound
+    // ends as a sentence instead of a spinner.
+    guardPlayback(synthControl, instance);
     synthControl.load(audioEl, createCursorControl(instance), {
       displayRestart: false,
       displayPlay: true,
@@ -59,6 +66,41 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
     audioEl.innerHTML =
       '<p class="abcdesk-no-audio">Failed to initialize audio playback.</p>';
   }
+}
+
+interface RecoverableSynthControl extends abcjs.SynthObjectController {
+  isLoading?: boolean;
+}
+
+function guardPlayback(
+  synthControl: abcjs.SynthObjectController,
+  instance: RenderInstance,
+): void {
+  const control = synthControl as RecoverableSynthControl;
+  const play = synthControl.play as unknown as (
+    this: unknown,
+    event?: unknown,
+  ) => unknown;
+
+  const guarded = (event?: unknown): Promise<unknown> => {
+    let started: unknown;
+    try {
+      started = play.call(synthControl, event);
+    } catch (error) {
+      started = Promise.reject(error);
+    }
+
+    return Promise.resolve(started).catch((error: unknown) => {
+      // abcjs only clears the loading flag on success; leaving it set would
+      // make every later press wait on the failed load for good.
+      control.isLoading = false;
+      console.warn("[ABC Desk] Playback failed to load its sounds:", error);
+      reportMissingSounds(instance.audioElement);
+      return { status: "error" };
+    });
+  };
+
+  synthControl.play = guarded as unknown as abcjs.SynthObjectController["play"];
 }
 
 function createCursorControl(instance: RenderInstance): object {

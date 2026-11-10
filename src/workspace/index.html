@@ -20,9 +20,12 @@
         </div>
       </div>
 
-      <div class="workspace-update" id="updateNotice" role="status" aria-live="polite" hidden>
-        <span>New version ready</span>
-        <button class="secondary-button" id="updateButton" type="button">Reload</button>
+      <div class="workspace-status">
+        <span class="workspace-offline" id="offlineNotice" role="status" aria-live="polite" hidden>Offline</span>
+        <div class="workspace-update" id="updateNotice" role="status" aria-live="polite" hidden>
+          <span>New version ready</span>
+          <button class="secondary-button" id="updateButton" type="button">Reload</button>
+        </div>
       </div>
 
       <div class="workspace-actions" aria-label="Workspace actions">
