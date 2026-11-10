@@ -70,9 +70,21 @@
   --workspace-code-select: rgba(79, 103, 121, 0.18);
   --workspace-code-dim: #737e85; /* metadata and comments */
   --workspace-code-rule: rgba(45, 51, 56, 0.34); /* bar lines */
+  /* Margin: a reference, not content — lighter than any grey the sheet paints
+     the music in, so the eye never mistakes a line number for a note. Still
+     three steps of contrast against the paper: a number that cannot be found
+     at a glance is decoration, not a reference. */
+  --workspace-code-gutter: #858f94;
+  /* The caret line, in a neutral tint. Never blue: the target's wash and the
+     live note's wash are already blue, and a third one would make the sheet
+     say "selected" where it only means "you are here". */
+  --workspace-code-active-line: rgba(45, 51, 56, 0.06);
 
   /* Diagnostics — an annotation on the sheet, never a traffic light */
   --workspace-diagnostic: rgba(79, 103, 121, 0.55);
+  /* The same grey-blue at full weight, for the dot in the margin: at the wave's
+     own opacity it has no contrast against the line numbers beside it. */
+  --workspace-diagnostic-strong: rgba(79, 103, 121, 0.8);
 
   /* The shared target — the note the caret stands on or the note clicked in
      the score. A bright blue shared by all three panes: tinted and outlined
@@ -148,8 +160,11 @@
   --workspace-code-select: rgba(154, 176, 194, 0.24);
   --workspace-code-dim: #93a0a4;
   --workspace-code-rule: rgba(255, 255, 255, 0.28);
+  --workspace-code-gutter: #6f7a7e;
+  --workspace-code-active-line: rgba(255, 255, 255, 0.06);
 
   --workspace-diagnostic: rgba(154, 176, 194, 0.6);
+  --workspace-diagnostic-strong: rgba(154, 176, 194, 0.85);
 
   --workspace-target: #4fb3ff;
   --workspace-target-soft: rgba(79, 179, 255, 0.24);

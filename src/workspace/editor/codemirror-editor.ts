@@ -2,6 +2,7 @@ import {
   Annotation,
   Compartment,
   EditorState,
+  RangeSet,
   RangeSetBuilder,
   StateEffect,
   StateField,
@@ -11,8 +12,13 @@ import {
 import {
   Decoration,
   EditorView,
+  GutterMarker,
   drawSelection,
+  gutterLineClass,
+  highlightActiveLine,
+  highlightActiveLineGutter,
   keymap,
+  lineNumbers,
   type DecorationSet,
   type KeyBinding,
 } from "@codemirror/view";
@@ -54,6 +60,41 @@ const editorTheme = EditorView.theme({
   ".cm-cursor, .cm-dropCursor": { borderLeftColor: "var(--workspace-accent)" },
   ".cm-selectionBackground, &.cm-focused .cm-selectionBackground": {
     backgroundColor: "var(--workspace-code-select)",
+  },
+  // The margin is a reference, and the sheet is the only object on the page:
+  // no panel, no rule, just numbers set a step back from the ink.
+  ".cm-gutters": {
+    backgroundColor: "transparent",
+    border: "none",
+    color: "var(--workspace-code-gutter)",
+  },
+  ".cm-lineNumbers .cm-gutterElement": {
+    position: "relative",
+    minWidth: "2ch",
+    padding: "0 16px 0 0",
+    fontSize: "12px",
+    fontVariantNumeric: "tabular-nums",
+  },
+  ".cm-activeLineGutter": {
+    backgroundColor: "transparent",
+    color: "var(--workspace-code-text)",
+  },
+  ".cm-activeLine": {
+    backgroundColor: "var(--workspace-code-active-line)",
+  },
+  // A diagnostic names a line, so the margin points at it: the same grey-blue
+  // as the wave under the tokens, never a red light, and solid enough to be
+  // seen without looking for it.
+  ".cm-lineNumbers .cm-gutterElement.abc-diagnostic-gutter::after": {
+    content: '""',
+    position: "absolute",
+    right: "6px",
+    top: "50%",
+    width: "5px",
+    height: "5px",
+    marginTop: "-2.5px",
+    borderRadius: "50%",
+    backgroundColor: "var(--workspace-diagnostic-strong)",
   },
 });
 
@@ -150,6 +191,29 @@ const diagnosticDecorations = StateField.define<DecorationSet>({
   provide: (field) => EditorView.decorations.from(field),
 });
 
+/**
+ * A line with a diagnostic gets a dot in the margin. `lineNumbers` owns the
+ * gutter's text; a line class is the one thing a marker can add to it, so the
+ * dot is drawn by the theme rather than by a plugin element.
+ */
+class DiagnosticGutterMarker extends GutterMarker {
+  elementClass = "abc-diagnostic-gutter";
+}
+
+const diagnosticMarker = new DiagnosticGutterMarker();
+
+const diagnosticGutter = StateField.define<RangeSet<GutterMarker>>({
+  create: () => RangeSet.empty,
+  update: (markers, transaction) => {
+    for (const effect of transaction.effects) {
+      if (!effect.is(setDiagnosticSpans)) continue;
+      return buildDiagnosticMarkers(transaction.state.doc, effect.value);
+    }
+    return transaction.docChanged ? RangeSet.empty : markers;
+  },
+  provide: (field) => gutterLineClass.from(field),
+});
+
 export function createCodeMirrorEditor({
   host,
   value,
@@ -170,6 +234,9 @@ export function createCodeMirrorEditor({
       extensions: [
         history(),
         drawSelection(),
+        lineNumbers(),
+        highlightActiveLineGutter(),
+        highlightActiveLine(),
         keymap.of([
           ...playKeymap(onPlayFromCursor),
           ...defaultKeymap,
@@ -187,6 +254,7 @@ export function createCodeMirrorEditor({
         playbackLayer.field,
         targetLayer.field,
         diagnosticDecorations,
+        diagnosticGutter,
         wrapCompartment.of(
           initialWrap === "enabled" ? EditorView.lineWrapping : [],
         ),
@@ -318,6 +386,27 @@ function buildMarkDecorations(spans: readonly MarkSpan[]): DecorationSet {
     if (span.to <= span.from) continue;
     builder.add(span.from, span.to, span.decoration);
   }
+  return builder.finish();
+}
+
+/**
+ * One marker per line, in document order, because `gutterLineClass` is a range
+ * set and diagnostics arrive already sorted by offset.
+ */
+function buildDiagnosticMarkers(
+  doc: Text,
+  spans: readonly DiagnosticSpan[],
+): RangeSet<GutterMarker> {
+  const builder = new RangeSetBuilder<GutterMarker>();
+  let previousLine = 0;
+
+  for (const span of spans) {
+    const line = doc.lineAt(span.from);
+    if (line.number === previousLine) continue;
+    previousLine = line.number;
+    builder.add(line.from, line.from, diagnosticMarker);
+  }
+
   return builder.finish();
 }
 

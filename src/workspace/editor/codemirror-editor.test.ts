@@ -102,6 +102,53 @@ describe("CodeMirror editor", () => {
     expect(host.querySelectorAll(".abc-syn-bar").length).toBeGreaterThan(0);
   });
 
+  it("numbers the lines in the margin", () => {
+    const { host } = createEditor();
+
+    const margin = host.querySelector(".cm-lineNumbers");
+    expect(margin).not.toBeNull();
+    // The gutter opens with a measuring spacer (a lone `9`), so the numbers are
+    // the elements after it, and the first line is 1.
+    const numbers = [...(margin?.querySelectorAll(".cm-gutterElement") ?? [])].map(
+      (element) => element.textContent,
+    );
+    expect(numbers).toContain("1");
+  });
+
+  it("marks the line the caret is on, and only that line", () => {
+    const { host, view } = createEditor();
+
+    expect(host.querySelectorAll(".cm-activeLine")).toHaveLength(1);
+    expect(host.querySelectorAll(".cm-activeLineGutter")).toHaveLength(1);
+
+    view.dispatch({ selection: { anchor: SOURCE.length } });
+    expect(host.querySelectorAll(".cm-activeLine")).toHaveLength(1);
+    expect(host.querySelectorAll(".cm-activeLineGutter")).toHaveLength(1);
+  });
+
+  it("dots the margin of every line a diagnostic names", () => {
+    const { editor, host, view } = createEditor();
+    const diagnostic = {
+      severity: "warning" as const,
+      source: "abcjs" as const,
+      title: "abcjs parser warning",
+      message: "Music Line:1:1: unexpected symbol",
+      line: 1,
+      column: 1,
+    };
+
+    // Two diagnostics on one line are one line: the margin points, it does not
+    // count.
+    editor.setDiagnostics([
+      diagnostic,
+      { ...diagnostic, line: 1, column: 7 },
+    ]);
+    expect(host.querySelectorAll(".abc-diagnostic-gutter")).toHaveLength(1);
+
+    view.dispatch({ changes: { from: 0, insert: "%\n" } });
+    expect(host.querySelectorAll(".abc-diagnostic-gutter")).toHaveLength(0);
+  });
+
   it("underlines a diagnostic and selects its line on reveal", () => {
     const { editor, host, view } = createEditor();
     const diagnostic = {

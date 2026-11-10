@@ -22,6 +22,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Added
 
+- The source editor has a margin: line numbers that stay a reference rather than content (lighter than any grey the sheet paints the music in, with the caret's own number stepping up to the ink), a neutral tint across the caret line — never blue, since the target and the live note already own blue — and a dot beside the number of every line a diagnostic names, drawn in the diagnostics' grey-blue instead of a red light. The panel's "Line 7" now has something on the page to point at.
 - Added a shared target for the two panes: the note under the caret and the note you click are one state. The sheet draws it as a filled note inside a dashed box, the source as a dashed outline around the characters, and the box lives inside abcjs's own SVG in user-space coordinates, so it stays on its note when the pane is resized (a chord is one box; each note of an expanded tie gets its own).
 - Added browser fullscreen toggle as a complement to system fullscreen, expanding the player to fill the browser viewport without hiding browser chrome.
 - Added Escape key support to exit browser fullscreen mode.
