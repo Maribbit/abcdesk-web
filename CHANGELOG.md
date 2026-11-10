@@ -8,6 +8,7 @@ This project follows a lightweight [Keep a Changelog](https://keepachangelog.com
 
 ### Changed
 
+- A new build is offered rather than imposed. The service worker installs and then waits instead of taking the caches over under an open page, and a small `New version ready` chip in the header reloads on the reader's click; the old shell and the samples it already has stay in place until then. The first install is not an update — there is nothing to replace — so it takes the page without asking.
 - The URL hash now carries the tune deflated and base64url-encoded (`abc=z1.`), roughly a third of the percent-encoded text it used to hold, so a long piece still produces a link that fits in a message. Links written before this still open: the marker is what tells a deflated payload from plain text, and a browser without `CompressionStream` falls back to the old encoding rather than failing.
 - A diagnostic no longer vanishes the moment you type. Its underline and margin dot ride the text until the next check replaces them, and the report panel stays open instead of collapsing and reopening under the caret on every keystroke; the status line says `Editing...` for that gap, because the report is about the text as it was. An empty sheet takes the last report down with it — no check follows an empty page, so nothing else would.
 - The example tune now shows what a comment looks like in both places it can stand — on a line of its own and after the music — and names what a note's length number does.

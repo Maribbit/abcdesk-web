@@ -1,4 +1,5 @@
 import { registerWorkspaceServiceWorker } from "../pwa/register";
+import { watchWorkspaceUpdates } from "../pwa/updates";
 import {
   normalizeLayoutMode,
   type AbcAutoCheck,
@@ -72,6 +73,10 @@ const copySourceButton = document.getElementById(
   "copySourceButton",
 ) as HTMLButtonElement;
 const shareButton = document.getElementById("shareButton") as HTMLButtonElement;
+const updateNotice = document.getElementById("updateNotice") as HTMLElement;
+const updateButton = document.getElementById(
+  "updateButton",
+) as HTMLButtonElement;
 const importAbcButton = document.getElementById(
   "importAbcButton",
 ) as HTMLButtonElement;
@@ -273,7 +278,42 @@ async function initializeWorkspace(): Promise<void> {
 
   // Last, and not awaited: the offline copy is a second visit's concern, and
   // nothing the first paint needs should queue behind a worker install.
-  void registerWorkspaceServiceWorker();
+  void offerOfflineCopy();
+}
+
+/**
+ * The offline copy arrives after the first paint, and a new build arrives
+ * whenever the server says so. Neither should take the page from under the
+ * reader: the worker waits, and the tab offers the reload as a click.
+ */
+async function offerOfflineCopy(): Promise<void> {
+  const registration = await registerWorkspaceServiceWorker();
+  if (!registration) return;
+
+  watchWorkspaceUpdates(registration, (worker) => {
+    updateNotice.hidden = false;
+    updateButton.addEventListener("click", () => applyUpdate(worker), {
+      once: true,
+    });
+  });
+}
+
+function applyUpdate(worker: ServiceWorker): void {
+  updateButton.disabled = true;
+
+  // Activation swaps the caches, so the page has to come back on the new
+  // build's own files; the worker only takes over because it was asked to.
+  navigator.serviceWorker.addEventListener(
+    "controllerchange",
+    () => window.location.reload(),
+    { once: true },
+  );
+  worker.postMessage("skip-waiting");
+
+  // A worker that never answers would leave the button spent; the tune is
+  // saved on every edit, so reloading anyway costs nothing but keeps the page
+  // from lying about being up to date.
+  window.setTimeout(() => window.location.reload(), 3000);
 }
 
 async function updateAbcAutoCheckSetting(

@@ -48,8 +48,9 @@ self.addEventListener("install", (event) => {
           await soundfont.add(url);
         }),
       );
-
-      await self.skipWaiting();
+      // No skipWaiting here. A worker that installs while the reader is typing
+      // would take the caches over under a page still running the old code;
+      // the page asks for the swap when it is ready (see the message handler).
     })(),
   );
 });
@@ -68,10 +69,19 @@ self.addEventListener("activate", (event) => {
       );
 
       // The workspace is one page; there is no reason to make the reader
-      // reload before this version can serve them.
+      // reload before this version can serve them. On an update this only runs
+      // after the page has asked for the swap, which is also when it reloads.
       await self.clients.claim();
     })(),
   );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data !== "skip-waiting") return;
+
+  // The reader's word, not the build's: only now may this version replace the
+  // one the open page is still running.
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("fetch", (event) => {

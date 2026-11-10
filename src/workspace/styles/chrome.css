@@ -223,3 +223,38 @@
   background: var(--workspace-accent-soft);
   color: var(--workspace-accent);
 }
+
+/* ── A new build waiting at the door ── */
+
+/* The worker does not swap the caches under an open page, so the page is the
+   one that says a new version is ready, and the reader is the one who picks
+   the moment. It sits in the bar between the masthead and the controls — a
+   state of the app, not a banner over the music — and takes the same raised
+   chip as the selected control, so it reads as part of the toolbar instead of
+   as a notification that landed on top of it. */
+.workspace-update {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 3px 3px 12px;
+  border: 1px solid var(--workspace-border);
+  border-radius: 999px;
+  background: var(--workspace-chip);
+  box-shadow: 0 1px 2px rgba(34, 46, 54, 0.12);
+  color: var(--workspace-text-muted);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* The pill's own display would otherwise beat the attribute. */
+.workspace-update[hidden] {
+  display: none;
+}
+
+/* One size below the buttons it sits among: it is a footnote to the toolbar. */
+.workspace-update .secondary-button {
+  min-height: 22px;
+  padding: 0 10px;
+  font-size: 11.5px;
+}
