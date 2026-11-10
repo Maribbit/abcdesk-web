@@ -3,10 +3,12 @@ import {
   getAbcSourceDownloadFilename,
   importAbcFile,
 } from "../shared/abc-file";
+import { encodeWorkspaceAbcHash } from "../shared/workspace-url";
 
 interface SourceStatsTargets {
   copySourceButton: HTMLButtonElement;
   exportAbcButton: HTMLButtonElement;
+  shareButton: HTMLButtonElement;
   sourceStats: HTMLElement;
 }
 
@@ -46,6 +48,7 @@ export function updateWorkspaceSourceStats(
   targets.sourceStats.textContent = getSourceStatsText(sourceText);
   targets.copySourceButton.disabled = characterCount === 0;
   targets.exportAbcButton.disabled = characterCount === 0;
+  targets.shareButton.disabled = characterCount === 0;
 }
 
 export async function copyWorkspaceSourceToClipboard(
@@ -58,6 +61,31 @@ export async function copyWorkspaceSourceToClipboard(
     sourceStats.textContent = "Copied";
   } catch (error) {
     console.error("[ABC Desk Web] Copy failed:", error);
+    sourceStats.textContent = "Copy failed";
+  }
+
+  window.setTimeout(updateSourceStats, 1200);
+}
+
+/**
+ * The share link is the tune itself, compressed into the fragment, so it needs
+ * no server and no account: whoever opens it lands in the same workspace with
+ * the same music. Origin and path are taken from the page rather than written
+ * here, because the workspace is deployed under whatever path `SITE_BASE` says.
+ */
+export async function copyWorkspaceShareLink(
+  sourceText: string,
+  sourceStats: HTMLElement,
+  updateSourceStats: () => void,
+): Promise<void> {
+  const { origin, pathname } = window.location;
+
+  try {
+    const hash = await encodeWorkspaceAbcHash(sourceText);
+    await navigator.clipboard.writeText(`${origin}${pathname}#${hash}`);
+    sourceStats.textContent = "Link copied";
+  } catch (error) {
+    console.error("[ABC Desk Web] Share link failed:", error);
     sourceStats.textContent = "Copy failed";
   }
 

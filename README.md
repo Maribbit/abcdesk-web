@@ -13,7 +13,7 @@ The project started as a Chrome extension that rendered ABC found in AI chat pag
 - Playback-driven source highlighting, click-to-seek on any note, tempo override, duration display and an 88-key keyboard view.
 - abcjs parser warnings surfaced as a diagnostics panel instead of failing silently.
 - `.abc` import and export, plus SVG and MIDI export.
-- ABC source in the URL hash; theme, layout and editor preferences in `localStorage`.
+- ABC source in the URL hash — compressed, with `Copy Share Link` — while theme, layout and editor preferences stay in `localStorage`.
 
 ## Getting started
 

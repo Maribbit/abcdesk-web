@@ -17,6 +17,7 @@ import {
 } from "./settings-store";
 import { createWorkspaceSplitLayout } from "./split-layout";
 import {
+  copyWorkspaceShareLink,
   copyWorkspaceSourceToClipboard,
   exportWorkspaceAbcFile,
   importWorkspaceAbcFile,
@@ -69,6 +70,7 @@ const editorWrapInput = document.getElementById(
 const copySourceButton = document.getElementById(
   "copySourceButton",
 ) as HTMLButtonElement;
+const shareButton = document.getElementById("shareButton") as HTMLButtonElement;
 const importAbcButton = document.getElementById(
   "importAbcButton",
 ) as HTMLButtonElement;
@@ -145,7 +147,7 @@ async function initializeWorkspace(): Promise<void> {
   window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
 
   editor.setValue(
-    readAbcFromUrlHash() ??
+    (await readAbcFromUrlHash()) ??
       window.localStorage.getItem(WORKSPACE_SOURCE_STORAGE_KEY) ??
       EXAMPLE_ABC,
   );
@@ -179,6 +181,9 @@ async function initializeWorkspace(): Promise<void> {
   });
   copySourceButton.addEventListener("click", () => {
     void copySourceToClipboard();
+  });
+  shareButton.addEventListener("click", () => {
+    void copyShareLink();
   });
   importAbcButton.addEventListener("click", () => {
     abcFileInput.click();
@@ -285,10 +290,12 @@ function applyEditorWrap(editorWrap: EditorWrap): void {
   editorWrapInput.checked = currentEditorWrap === "enabled";
 }
 
-function readAbcFromUrlHash(): string | null {
-  const abcText = decodeWorkspaceAbcHash(window.location.hash);
+async function readAbcFromUrlHash(): Promise<string | null> {
+  const abcText = await decodeWorkspaceAbcHash(window.location.hash);
   if (abcText === null) return null;
 
+  // The link has done its work; leaving it in the address bar would overwrite
+  // whatever the reader does next with a fresh load of the same URL.
   window.history.replaceState(null, "", window.location.pathname);
   return abcText;
 }
@@ -315,7 +322,7 @@ function handleSourceChange(): void {
 
 function updateSourceStats(sourceText = editor.getValue()): void {
   updateWorkspaceSourceStats(
-    { copySourceButton, exportAbcButton, sourceStats },
+    { copySourceButton, exportAbcButton, shareButton, sourceStats },
     sourceText,
   );
 }
@@ -357,6 +364,14 @@ function isAutoCheckEnabled(): boolean {
 
 async function copySourceToClipboard(): Promise<void> {
   await copyWorkspaceSourceToClipboard(
+    editor.getValue(),
+    sourceStats,
+    updateSourceStats,
+  );
+}
+
+async function copyShareLink(): Promise<void> {
+  await copyWorkspaceShareLink(
     editor.getValue(),
     sourceStats,
     updateSourceStats,
