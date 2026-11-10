@@ -95,11 +95,56 @@ describe("CodeMirror editor", () => {
     expect(host.querySelectorAll(".abc-live-token")).toHaveLength(0);
   });
 
-  it("paints syntax greys for metadata, comments and bars", () => {
-    const { host } = createEditor();
+  it("keeps the syntax greys right while the text changes under them", () => {
+    const { host, view } = createEditor();
+    const count = (selector: string) => host.querySelectorAll(selector).length;
 
-    expect(host.querySelectorAll(".abc-syn-field").length).toBeGreaterThan(0);
-    expect(host.querySelectorAll(".abc-syn-bar").length).toBeGreaterThan(0);
+    expect(count(".abc-syn-field")).toBe(3);
+
+    // A comment is a different kind of line, and the cache has to rescan it.
+    view.dispatch({ changes: { from: 0, insert: "%" } });
+    expect(count(".abc-syn-comment")).toBe(1);
+    expect(count(".abc-syn-field")).toBe(2);
+
+    view.dispatch({ changes: { from: 0, to: 1 } });
+    expect(count(".abc-syn-comment")).toBe(0);
+    expect(count(".abc-syn-field")).toBe(3);
+
+    // A line inserted in the middle is scanned on its own, not inherited from
+    // the line it split.
+    const secondLine = view.state.doc.line(2).from;
+    view.dispatch({ changes: { from: secondLine, insert: "T: Inserted\n" } });
+    expect(view.state.doc.line(2).text).toBe("T: Inserted");
+    expect(count(".abc-syn-field")).toBe(4);
+
+    // Removing it again takes its span with it.
+    view.dispatch({
+      changes: {
+        from: secondLine,
+        to: view.state.doc.line(2).to + 1,
+      },
+    });
+    expect(count(".abc-syn-field")).toBe(3);
+  });
+
+  it("survives edits that add, join and delete lines", () => {
+    const { view } = createEditor();
+    const edits = [
+      { from: 0, insert: "T: Top\n" },
+      { from: 12, to: 14 },
+      { from: 4, insert: "\n\n" },
+      { from: 0, to: 6 },
+      { from: view.state.doc.length, insert: "\nC |" },
+    ];
+
+    for (const edit of edits) {
+      // Clamp against the document, since earlier edits move the offsets.
+      const from = Math.min(edit.from, view.state.doc.length);
+      const to = Math.min(edit.to ?? from, view.state.doc.length);
+      view.dispatch({ changes: { from, to, insert: edit.insert } });
+    }
+
+    expect(view.state.doc.toString()).toContain("C |");
   });
 
   it("numbers the lines in the margin", () => {

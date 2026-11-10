@@ -20,9 +20,15 @@ interface ImportWorkspaceAbcFileOptions {
 }
 
 export function getSourceStatsText(sourceText: string): string {
-  const characterCount = sourceText.length;
-  const lineCount = sourceText.length === 0 ? 0 : sourceText.split("\n").length;
-  return `${lineCount} lines, ${characterCount} chars`;
+  // Counted rather than split: this runs on every keystroke, and a thousand-line
+  // tune should not leave a thousand short strings behind each time.
+  let lineCount = sourceText.length === 0 ? 0 : 1;
+  let newline = sourceText.indexOf("\n");
+  while (newline !== -1) {
+    lineCount += 1;
+    newline = sourceText.indexOf("\n", newline + 1);
+  }
+  return `${lineCount} lines, ${sourceText.length} chars`;
 }
 
 export function updateWorkspaceSourceStats(

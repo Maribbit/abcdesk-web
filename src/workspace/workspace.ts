@@ -286,18 +286,21 @@ function setInputValue(value: string): void {
 }
 
 function handleSourceChange(): void {
-  updateSourceStats();
-  window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, editor.getValue());
+  // One read of the document for the three things that need it: on a long tune
+  // each read is a copy of the whole text.
+  const sourceText = editor.getValue();
+  updateSourceStats(sourceText);
+  window.localStorage.setItem(WORKSPACE_SOURCE_STORAGE_KEY, sourceText);
   hideQualityPanel(qualityPanel);
   editor.setDiagnostics([]);
   renderStatus.textContent = "Checking...";
   renderController.scheduleRender();
 }
 
-function updateSourceStats(): void {
+function updateSourceStats(sourceText = editor.getValue()): void {
   updateWorkspaceSourceStats(
     { copySourceButton, exportAbcButton, sourceStats },
-    editor.getValue(),
+    sourceText,
   );
 }
 

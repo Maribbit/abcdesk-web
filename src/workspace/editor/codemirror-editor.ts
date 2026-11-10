@@ -7,6 +7,7 @@ import {
   StateEffect,
   StateField,
   Transaction,
+  type Range,
   type Text,
 } from "@codemirror/state";
 import {
@@ -31,7 +32,7 @@ import { normalizeEditorWrap } from "../../shared/settings";
 import type { SourceHighlightRange } from "../../player/renderer";
 import { normalizeSourceHighlightRanges } from "../source-highlight";
 import type { AbcEditor, AbcEditorOptions } from "./abc-editor";
-import { classifyAbcSource, type AbcSyntaxKind } from "./abc-syntax";
+import { classifyAbcLine, type AbcSyntaxKind } from "./abc-syntax";
 
 /**
  * CodeMirror 6, without `basicSetup`.
@@ -124,11 +125,22 @@ interface DiagnosticSpan {
 
 const setDiagnosticSpans = StateEffect.define<DiagnosticSpan[]>();
 
+/**
+ * Syntax is the one layer that covers the whole document, so it is the one
+ * that used to be rescanned on every key: the text was stringified, split and
+ * walked with a regex, however much of it had changed. Instead the marks now
+ * follow the edit (a mark that sat on untouched text stays on it) and only the
+ * lines the edit reached are scanned again.
+ *
+ * Re-scanning a line the edit did not change is harmless — the marks for it
+ * are replaced with an identical set — which is why the affected range can be
+ * generous at its end without being wrong.
+ */
 const syntaxDecorations = StateField.define<DecorationSet>({
   create: (state) => buildSyntaxDecorations(state.doc),
   update: (decorations, transaction) =>
     transaction.docChanged
-      ? buildSyntaxDecorations(transaction.state.doc)
+      ? updateSyntaxDecorations(decorations, transaction)
       : decorations,
   provide: (field) => EditorView.decorations.from(field),
 });
@@ -371,13 +383,61 @@ function playKeymap(onPlayFromCursor?: () => void): KeyBinding[] {
 }
 
 function buildSyntaxDecorations(doc: Text): DecorationSet {
-  return buildMarkDecorations(
-    classifyAbcSource(doc.toString()).map((span) => ({
-      from: span.from,
-      to: span.to,
-      decoration: syntaxMarks[span.kind],
-    })),
-  );
+  const ranges: Range<Decoration>[] = [];
+  let lineStart = 0;
+
+  for (const text of doc.iterLines()) {
+    for (const span of classifyAbcLine(text)) {
+      if (span.to <= span.from) continue;
+      ranges.push(
+        syntaxMarks[span.kind].range(lineStart + span.from, lineStart + span.to),
+      );
+    }
+    lineStart += text.length + 1;
+  }
+
+  return Decoration.set(ranges, true);
+}
+
+function updateSyntaxDecorations(
+  decorations: DecorationSet,
+  transaction: Transaction,
+): DecorationSet {
+  const doc = transaction.state.doc;
+  let startNew = -1;
+  let endNew = -1;
+
+  transaction.changes.iterChangedRanges((fromA, toA, fromB, toB) => {
+    if (startNew < 0) startNew = fromB;
+    endNew = toB;
+  });
+
+  if (startNew < 0) return decorations;
+
+  // Every line whose content changed sits inside this span. It can be one line
+  // too long at its end (a change ending at a line start), and paying for one
+  // extra line is cheaper than proving which side of the boundary it is on.
+  const firstLine = doc.lineAt(startNew).number;
+  const lastLine = doc.lineAt(endNew).number;
+  const from = doc.line(firstLine).from;
+  const to = doc.line(lastLine).to;
+
+  const kept = decorations.map(transaction.changes).update({
+    filter: (rangeFrom, rangeTo) => rangeTo <= from || rangeFrom >= to,
+  });
+
+  const added: Range<Decoration>[] = [];
+  for (let number = firstLine; number <= lastLine; number++) {
+    const line = doc.line(number);
+    for (const span of classifyAbcLine(line.text)) {
+      if (span.to <= span.from) continue;
+      added.push(
+        syntaxMarks[span.kind].range(line.from + span.from, line.from + span.to),
+      );
+    }
+  }
+
+  return kept.update({ add: added, sort: true });
 }
 
 function buildMarkDecorations(spans: readonly MarkSpan[]): DecorationSet {
