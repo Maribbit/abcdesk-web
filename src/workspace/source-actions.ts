@@ -10,13 +10,20 @@ interface SourceStatsTargets {
   sourceStats: HTMLElement;
 }
 
-interface ImportWorkspaceAbcFileOptions {
-  abcFileInput: HTMLInputElement;
+interface OpenWorkspaceAbcFileOptions {
+  file: File;
   importAbcButton: HTMLButtonElement;
   qualityPanel: HTMLElement;
   renderCurrentInput: () => void;
   renderStatus: HTMLElement;
   setInputValue: (value: string) => void;
+}
+
+interface ImportWorkspaceAbcFileOptions extends Omit<
+  OpenWorkspaceAbcFileOptions,
+  "file"
+> {
+  abcFileInput: HTMLInputElement;
 }
 
 export function getSourceStatsText(sourceText: string): string {
@@ -57,17 +64,14 @@ export async function copyWorkspaceSourceToClipboard(
   window.setTimeout(updateSourceStats, 1200);
 }
 
-export async function importWorkspaceAbcFile({
-  abcFileInput,
+export async function openWorkspaceAbcFile({
+  file,
   importAbcButton,
   qualityPanel,
   renderCurrentInput,
   renderStatus,
   setInputValue,
-}: ImportWorkspaceAbcFileOptions): Promise<void> {
-  const file = abcFileInput.files?.[0];
-  if (!file) return;
-
+}: OpenWorkspaceAbcFileOptions): Promise<void> {
   renderStatus.textContent = "Opening ABC...";
   importAbcButton.disabled = true;
 
@@ -81,7 +85,20 @@ export async function importWorkspaceAbcFile({
     renderStatus.textContent = getAbcImportErrorMessage(error);
   } finally {
     importAbcButton.disabled = false;
-    abcFileInput.value = "";
+  }
+}
+
+export async function importWorkspaceAbcFile(
+  options: ImportWorkspaceAbcFileOptions,
+): Promise<void> {
+  const file = options.abcFileInput.files?.[0];
+  if (!file) return;
+
+  try {
+    await openWorkspaceAbcFile({ ...options, file });
+  } finally {
+    // The same file picked twice in a row still has to fire a change.
+    options.abcFileInput.value = "";
   }
 }
 

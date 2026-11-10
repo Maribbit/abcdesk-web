@@ -17,6 +17,20 @@
   background: var(--workspace-code-bg);
 }
 
+/* A file hovering over the sheet. The drop is a way to open one, so the frame
+   answers with a dashed edge and a wash of the same grey-blue the target box
+   uses: a place to put something, not an alarm. Drawn as an overlay so the
+   text underneath does not move. */
+.editor-pane[data-drop-active] .abc-editor-frame::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed var(--workspace-accent-line);
+  border-radius: 4px;
+  background: var(--workspace-accent-soft);
+  pointer-events: none;
+}
+
 /* The note that is sounding — the same blue as the score's live note, so
    "what you hear" has one colour across both panes. */
 .abc-live-token {

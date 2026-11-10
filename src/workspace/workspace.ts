@@ -20,8 +20,10 @@ import {
   copyWorkspaceSourceToClipboard,
   exportWorkspaceAbcFile,
   importWorkspaceAbcFile,
+  openWorkspaceAbcFile,
   updateWorkspaceSourceStats,
 } from "./source-actions";
+import { createSourceDropTarget } from "./source-drop";
 import {
   applyWorkspaceLayoutMode,
   applyWorkspaceTheme,
@@ -38,7 +40,9 @@ M: 4/4
 L: 1/4
 Q: 1/4=108
 K: C
-C D E F | G A B c | c B A G | F E D C |
+% A % sign comments out the rest of its line
+C D E F | G A B c | c B A G | F E D C |  % after the music, too
+% A number doubles the length: E2 is a half, C4 a whole
 E2 D2 | C4 |]`;
 
 const editorHost = document.getElementById("abcEditorFrame") as HTMLElement;
@@ -177,6 +181,12 @@ async function initializeWorkspace(): Promise<void> {
   });
   abcFileInput.addEventListener("change", () => {
     void importSelectedAbcFile();
+  });
+  createSourceDropTarget({
+    pane: editorPane,
+    openFile: (file) => {
+      void openAbcFile(file);
+    },
   });
   exportAbcButton.addEventListener("click", () => {
     exportCurrentAbcFile();
@@ -350,6 +360,17 @@ async function copySourceToClipboard(): Promise<void> {
 async function importSelectedAbcFile(): Promise<void> {
   await importWorkspaceAbcFile({
     abcFileInput,
+    importAbcButton,
+    qualityPanel,
+    renderCurrentInput: renderController.renderCurrentInput,
+    renderStatus,
+    setInputValue,
+  });
+}
+
+async function openAbcFile(file: File): Promise<void> {
+  await openWorkspaceAbcFile({
+    file,
     importAbcButton,
     qualityPanel,
     renderCurrentInput: renderController.renderCurrentInput,

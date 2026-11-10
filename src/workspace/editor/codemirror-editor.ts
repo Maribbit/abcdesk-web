@@ -7,6 +7,8 @@ import {
   StateEffect,
   StateField,
   Transaction,
+  type ChangeSpec,
+  type Line,
   type Range,
   type Text,
 } from "@codemirror/state";
@@ -20,6 +22,7 @@ import {
   highlightActiveLineGutter,
   keymap,
   lineNumbers,
+  placeholder,
   type DecorationSet,
   type KeyBinding,
 } from "@codemirror/view";
@@ -96,6 +99,7 @@ const editorTheme = EditorView.theme({
     fontSize: `${CODE_FONT_SIZE}px`,
     lineHeight: `${CODE_LINE_HEIGHT}`,
   },
+  ".cm-placeholder": { color: "var(--workspace-code-gutter)" },
   ".cm-activeLineGutter": {
     backgroundColor: "transparent",
     color: "var(--workspace-code-text)",
@@ -267,10 +271,14 @@ export function createCodeMirrorEditor({
         history(),
         drawSelection(),
         lineNumbers(),
+        // Shown only on an empty sheet — which is exactly the moment the drop
+        // target is worth knowing about.
+        placeholder("Drop an .abc file here, or start writing"),
         highlightActiveLineGutter(),
         highlightActiveLine(),
         keymap.of([
           ...playKeymap(onPlayFromCursor),
+          { key: "Mod-/", run: toggleLineComments },
           ...defaultKeymap,
           ...historyKeymap,
         ]),
@@ -400,6 +408,53 @@ function playKeymap(onPlayFromCursor?: () => void): KeyBinding[] {
       },
     },
   ];
+}
+
+const COMMENT_MARKER = "%";
+
+/**
+ * `Mod-/` comments every line the selection touches, and uncomments a block
+ * that is already all comment. An ABC comment runs from `%` to the end of its
+ * line: there is no closing partner to place and nothing to nest, so the
+ * command is one insertion per line and the same one removal to undo it.
+ *
+ * Blank lines are skipped. A run of bare `%` annotates nothing, and every one
+ * of them would have to be deleted by hand when the block opens again.
+ */
+function toggleLineComments(view: EditorView): boolean {
+  const { state } = view;
+  const selection = state.selection.main;
+  const first = state.doc.lineAt(selection.from);
+  // A selection that stops at a line start has not reached that line.
+  const end =
+    selection.to > selection.from &&
+    state.doc.lineAt(selection.to).from === selection.to
+      ? selection.to - 1
+      : selection.to;
+  const last = state.doc.lineAt(end);
+
+  const lines: Line[] = [];
+  for (let number = first.number; number <= last.number; number++) {
+    const line = state.doc.line(number);
+    if (line.text.trim().length > 0) lines.push(line);
+  }
+  if (lines.length === 0) return false;
+
+  const commented = lines.every((line) =>
+    line.text.startsWith(COMMENT_MARKER),
+  );
+  const changes: ChangeSpec[] = lines.map((line) => {
+    if (!commented) return { from: line.from, insert: `${COMMENT_MARKER} ` };
+    // Whatever this command wrote, it takes back: `% ` or a bare `%` typed by
+    // hand.
+    const marker = line.text.startsWith(`${COMMENT_MARKER} `)
+      ? `${COMMENT_MARKER} `
+      : COMMENT_MARKER;
+    return { from: line.from, to: line.from + marker.length };
+  });
+
+  view.dispatch({ changes });
+  return true;
 }
 
 function buildSyntaxDecorations(doc: Text): DecorationSet {

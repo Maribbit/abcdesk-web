@@ -315,4 +315,84 @@ describe("CodeMirror editor", () => {
     expect(onPlayFromCursor).toHaveBeenCalledTimes(1);
     expect(editor.getCursorOffset()).toBe(18);
   });
+
+  it("comments the line under the caret, and takes the mark back", () => {
+    const { editor, view } = createEditor();
+
+    view.dispatch({ selection: { anchor: 7 } });
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe("X: 1\n% T: Test\nK: C\nCDEF | GABc |");
+
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe(SOURCE);
+  });
+
+  it("comments every line a selection touches", () => {
+    const { editor, view } = createEditor();
+
+    // From the middle of line 2 to the middle of line 4.
+    view.dispatch({ selection: { anchor: 7, head: 20 } });
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe(
+      "X: 1\n% T: Test\n% K: C\n% CDEF | GABc |",
+    );
+
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe(SOURCE);
+  });
+
+  it("leaves a line the selection only reaches the start of", () => {
+    const { editor, view } = createEditor();
+
+    // Up to, but not into, line 4 — whose first offset is 18.
+    view.dispatch({ selection: { anchor: 7, head: 18 } });
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe("X: 1\n% T: Test\n% K: C\nCDEF | GABc |");
+  });
+
+  it("skips the blank lines inside a block", () => {
+    const { editor, view } = createEditor();
+
+    editor.setValue("one\n\ntwo\n");
+    view.dispatch({ selection: { anchor: 0, head: view.state.doc.length } });
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe("% one\n\n% two\n");
+  });
+
+  it("uncomments a block that is already all comment, spaces and all", () => {
+    const { editor, view } = createEditor();
+
+    editor.setValue("% one\n%two\n");
+    view.dispatch({ selection: { anchor: 0, head: view.state.doc.length } });
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe("one\ntwo\n");
+  });
+
+  it("comments a block rather than uncommenting one line of it", () => {
+    const { editor, view } = createEditor();
+
+    editor.setValue("% one\ntwo\n");
+    view.dispatch({ selection: { anchor: 0, head: view.state.doc.length } });
+    pressModSlash(view);
+
+    expect(editor.getValue()).toBe("% % one\n% two\n");
+  });
 });
+
+function pressModSlash(view: EditorView): void {
+  view.contentDOM.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      bubbles: true,
+      cancelable: true,
+      ctrlKey: true,
+      key: "/",
+    }),
+  );
+}
