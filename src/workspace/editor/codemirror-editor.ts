@@ -35,6 +35,16 @@ import type { AbcEditor, AbcEditorOptions } from "./abc-editor";
 import { classifyAbcLine, type AbcSyntaxKind } from "./abc-syntax";
 
 /**
+ * The code's own metrics. The margin sets its numbers smaller, and left to its
+ * own devices a smaller font stands on a shorter line box parked at the top of
+ * the row — which puts every number a pixel above the line it numbers. The
+ * numbers are therefore baseline-aligned against a zero-width strut wearing the
+ * code's font, so the two share one baseline whatever the font does.
+ */
+const CODE_FONT_SIZE = 13.5;
+const CODE_LINE_HEIGHT = 1.62;
+
+/**
  * CodeMirror 6, without `basicSetup`.
  *
  * basicSetup brings bracket closing and autocompletion, which in ABC are not
@@ -52,8 +62,8 @@ const editorTheme = EditorView.theme({
   ".cm-scroller": {
     fontFamily:
       'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
-    fontSize: "13.5px",
-    lineHeight: "1.62",
+    fontSize: `${CODE_FONT_SIZE}px`,
+    lineHeight: `${CODE_LINE_HEIGHT}`,
     padding: "18px 16px",
   },
   ".cm-content": { padding: "0", caretColor: "var(--workspace-accent)" },
@@ -70,11 +80,21 @@ const editorTheme = EditorView.theme({
     color: "var(--workspace-code-gutter)",
   },
   ".cm-lineNumbers .cm-gutterElement": {
+    display: "flex",
+    justifyContent: "flex-end",
+    alignItems: "baseline",
     position: "relative",
     minWidth: "2ch",
     padding: "0 16px 0 0",
     fontSize: "12px",
     fontVariantNumeric: "tabular-nums",
+  },
+  // The strut that gives the flex line the row's baseline; the zero-width space
+  // is what makes it a text box with a baseline at all.
+  ".cm-lineNumbers .cm-gutterElement::before": {
+    content: '"\\200b"',
+    fontSize: `${CODE_FONT_SIZE}px`,
+    lineHeight: `${CODE_LINE_HEIGHT}`,
   },
   ".cm-activeLineGutter": {
     backgroundColor: "transparent",
