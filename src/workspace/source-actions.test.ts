@@ -15,27 +15,19 @@ describe("Workspace source actions", () => {
     const sourceStats = document.createElement("span");
     const copySourceButton = document.createElement("button");
     const exportAbcButton = document.createElement("button");
-    const playFromCursorButton = document.createElement("button");
-    const targets = {
-      copySourceButton,
-      exportAbcButton,
-      playFromCursorButton,
-      sourceStats,
-    };
+    const targets = { copySourceButton, exportAbcButton, sourceStats };
 
     updateWorkspaceSourceStats(targets, "X:1");
 
     expect(sourceStats.textContent).toBe("1 lines, 3 chars");
     expect(copySourceButton.disabled).toBe(false);
     expect(exportAbcButton.disabled).toBe(false);
-    expect(playFromCursorButton.disabled).toBe(false);
 
     updateWorkspaceSourceStats(targets, "");
 
     expect(sourceStats.textContent).toBe("0 lines, 0 chars");
     expect(copySourceButton.disabled).toBe(true);
     expect(exportAbcButton.disabled).toBe(true);
-    expect(playFromCursorButton.disabled).toBe(true);
   });
 
   it("normalizes ABC import errors", () => {

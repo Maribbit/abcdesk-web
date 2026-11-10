@@ -9,11 +9,15 @@ import {
 import { setupProgressDrag } from "./progress";
 import { getLocalPianoSynthOptions } from "./soundfont";
 import { getTimingEvents } from "./timing";
+import { setupTransport } from "./transport";
 import { pointSourceOffset } from "../view/score-target";
 
 /**
  * Initialize the abcjs SynthController for playback.
- * This creates the full built-in audio UI (play/pause, progress, warp, restart).
+ * This builds the transport — play/pause, progress, clock and the hidden tempo
+ * input behind our own control — in the pane's own icon language. There is no
+ * restart button: the progress bar already goes back to the beginning, and a
+ * second way there would only invite a mis-click.
  */
 export async function initSynth(instance: RenderInstance): Promise<void> {
   if (!instance.visualObj || instance.visualObj.length === 0) return;
@@ -33,11 +37,12 @@ export async function initSynth(instance: RenderInstance): Promise<void> {
   try {
     const synthControl = new abcjs.synth.SynthController();
     synthControl.load(audioEl, createCursorControl(instance), {
-      displayRestart: true,
+      displayRestart: false,
       displayPlay: true,
       displayProgress: true,
       displayWarp: true,
     });
+    setupTransport(instance);
     bindPauseClear(instance, synthControl);
 
     await synthControl.setTune(

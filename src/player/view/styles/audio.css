@@ -1,6 +1,5 @@
 .abcdesk-audio {
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-bottom: 10px;
   color: inherit;
   font-family: inherit;
 }
@@ -26,21 +25,113 @@
   stroke: var(--abcdesk-audio-control);
 }
 
-.abcdesk-audio .abcjs-inline-audio .abcjs-btn:hover g {
-  fill: var(--abcdesk-audio-control-hover);
-  stroke: var(--abcdesk-audio-control-hover);
+.abcdesk-audio .abcjs-inline-audio .abcjs-btn:hover {
+  background: var(--abcdesk-accent-soft) !important;
+  color: var(--abcdesk-accent);
+}
+
+/* abcjs colours its glyphs through `fill` on a `g`, so it never had to give the
+   buttons a colour of their own; a stroke icon does, and without this the UA's
+   black would ignore the theme. */
+.abcdesk-audio .abcjs-inline-audio .abcjs-btn {
+  color: var(--abcdesk-audio-control);
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-selection.abcjs-pushed,
-.abcdesk-audio .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed,
-.abcdesk-audio .abcjs-inline-audio .abcjs-midi-reset.abcjs-pushed {
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-loop.abcjs-pushed {
   background-color: var(--abcdesk-audio-control-pushed-bg);
   border-color: var(--abcdesk-audio-control-pushed-border);
+}
+
+/* The transport is a row of stroke icons, the same drawing as the pane header:
+   a 15px box on a 2px round stroke, coloured by the button's own colour so
+   hover and disabled states need no glyph of their own. Both buttons centre
+   their glyph the same way — an inline svg rides the text baseline instead of
+   the button's middle, which is what made play-from-cursor sit high and read
+   as the larger of the two. */
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start,
+.abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start svg,
+.abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor svg {
+  display: block;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start .abcjs-pause-svg,
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start .abcjs-loading-svg {
+  display: none;
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcjs-midi-start.abcjs-pushed
+  .abcjs-play-svg {
+  display: none;
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcjs-midi-start.abcjs-pushed
+  .abcjs-pause-svg {
+  display: block;
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcjs-midi-start.abcjs-loading
+  .abcjs-play-svg {
+  display: none;
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcjs-midi-start.abcjs-loading
+  .abcjs-loading-svg {
+  display: block;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start.abcjs-loading .abcjs-loading-svg circle {
+  stroke: currentColor;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start:disabled {
+  cursor: default;
+}
+
+/* Play from the note the reader picked — the only transport action that is about
+   the target rather than about the tune, so it wears the target's blue. Grey
+   while nothing is selected: that is the one state it can be "off" in, and it
+   says so before the click rather than after it. The grey is the theme's muted
+   ink rather than the blue at low opacity — a wash of blue on the dark paper
+   fades into the bar, and this still has to read as a button. */
+.abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor {
+  color: var(--abcdesk-target-deep);
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor:disabled {
+  color: var(--abcdesk-muted-text);
+  cursor: default;
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcjs-btn.abcdesk-play-from-cursor:hover:not(:disabled) {
+  background: var(--abcdesk-target-soft) !important;
+  color: var(--abcdesk-target-deep);
 }
 
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-background {
   background-color: var(--abcdesk-audio-track-bg);
   border-color: var(--abcdesk-audio-track-border);
+  /* abcjs leaves 15px on the left for the restart button we no longer draw;
+     without that button the playhead would drift away from play. */
+  margin-left: 8px;
   cursor: pointer;
   touch-action: none;
 }
@@ -51,7 +142,15 @@
   cursor: grabbing;
 }
 
+/* A knob that sits on the rail instead of overhanging it: abcjs draws a 20×14
+   block on a 10px track, which reads as a widget bolted onto a rail. Twelve
+   round pixels, centred — one above the rail, one below. */
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-indicator {
+  width: 12px;
+  height: 12px;
+  top: -3px;
+  margin-left: -6px;
+  border-radius: 6px;
   background-color: var(--abcdesk-audio-thumb);
   pointer-events: none;
 }

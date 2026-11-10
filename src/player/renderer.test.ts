@@ -20,10 +20,12 @@ const mocks = vi.hoisted(() => {
     }) => void;
     onFinished?: () => void;
   }> = [];
+  const transportOptions: Array<Record<string, unknown>> = [];
 
   return {
     clickListeners,
     cursorControls,
+    transportOptions,
     play,
     pause,
     seek,
@@ -75,8 +77,10 @@ vi.mock("abcjs", () => ({
         load(
           parent: HTMLElement,
           cursorControl: (typeof mocks.cursorControls)[number],
+          options?: Record<string, unknown>,
         ): void {
           mocks.cursorControls.push(cursorControl);
+          if (options) mocks.transportOptions.push(options);
           parent.innerHTML = `
             <div class="abcjs-inline-audio">
               <button type="button" class="abcjs-midi-start"></button>
@@ -215,6 +219,40 @@ describe("render lifecycle", () => {
         }),
       }),
     );
+  });
+
+  it("puts the transport above the sheet and leaves no restart button", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+
+    const instance = renderAbc(pre, "X:1\nK:C\nC|D|E|F|");
+    await Promise.resolve();
+
+    // The playhead belongs above the sheet, where the reader is looking. Ordering
+    // is the whole point, so assert document order rather than styles.
+    expect(
+      instance.audioElement.compareDocumentPosition(instance.scoreElement) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      mocks.transportOptions[mocks.transportOptions.length - 1],
+    ).toMatchObject({ displayRestart: false });
+  });
+
+  it("draws the transport glyphs in the pane's own icon language", async () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+
+    const instance = renderAbc(pre, "X:1\nK:C\nC|D|E|F|");
+    await Promise.resolve();
+
+    const playButton = instance.audioElement.querySelector(".abcjs-midi-start");
+    const playIcon = playButton?.querySelector(".abcjs-play-svg");
+    expect(playIcon?.getAttribute("fill")).toBe("none");
+    expect(playIcon?.getAttribute("stroke")).toBe("currentColor");
+    expect(playIcon?.getAttribute("width")).toBe("15");
+    expect(playButton?.querySelector(".abcjs-pause-svg")).not.toBeNull();
+    expect(playButton?.querySelector(".abcjs-loading-svg")).not.toBeNull();
   });
 
   it("seeks continuously while dragging the playback progress bar", async () => {
@@ -409,6 +447,28 @@ describe("render lifecycle", () => {
 
     expect(mocks.pause).toHaveBeenCalledTimes(1);
     expect(onSourceHighlight).toHaveBeenLastCalledWith([]);
+  });
+
+  it("offers play-from-cursor in the transport once a note is targeted", () => {
+    const pre = document.createElement("pre");
+    document.body.append(pre);
+
+    const instance = renderAbc(pre, "X:1\nK:C\nC|");
+    const playFromCursor =
+      instance.audioElement.querySelector<HTMLButtonElement>(
+        ".abcdesk-play-from-cursor",
+      );
+    expect(playFromCursor?.disabled).toBe(true);
+
+    const clickListener = mocks.clickListeners[mocks.clickListeners.length - 1];
+    clickListener?.({ el_type: "note", endChar: 9, startChar: 7 });
+    instance.scoreElement.click();
+
+    // The button rides on the shared target: one note picked, one action offered.
+    expect(playFromCursor?.disabled).toBe(false);
+    expect(
+      playFromCursor?.nextElementSibling,
+    ).toBe(instance.audioElement.querySelector(".abcjs-midi-start"));
   });
 
   it("points both panes at the note that was clicked", () => {

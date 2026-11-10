@@ -137,9 +137,11 @@ function renderContainerTemplate(): TemplateResult {
       aria-live="polite"
       hidden
     ></abcdesk-quality>
+    <!-- Transport first: the playhead belongs above the sheet, where the reader
+         looks, not below a keyboard that may have scrolled. -->
+    <div class="abcdesk-audio"></div>
     <div class="abcdesk-score"></div>
     <abcdesk-keyboard class="abcdesk-keyboard"></abcdesk-keyboard>
-    <div class="abcdesk-audio"></div>
   `;
 }
 

@@ -43,6 +43,7 @@ function createInstance(
   return {
     abcText: TEXT,
     scoreElement: score,
+    audioElement: document.createElement("div"),
     visualObj: events === null ? [] : [{ noteTimings: events }],
     targetElements: [],
     targetOffset: null,

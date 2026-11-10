@@ -4,6 +4,7 @@ import {
   getTimingEventRanges,
 } from "../playback/cursor";
 import { getTimingEventElementGroups } from "../playback/highlight";
+import { syncPlayFromCursor } from "../playback/transport";
 import { getTimingEvents } from "../playback/timing";
 import type { RenderInstance, TimingEvent } from "../types";
 
@@ -62,6 +63,7 @@ export function clearTarget(instance: RenderInstance): void {
   clearTargetMarks(instance);
   instance.targetOffset = null;
   instance.onTargetRanges?.([]);
+  syncPlayFromCursor(instance);
 }
 
 function applyTarget(
@@ -82,6 +84,8 @@ function applyTarget(
   // The keyboard is the third pane: the same note, in the same colour family.
   instance.keyboard.setPointedPitches(event.midiPitches ?? []);
   instance.onTargetRanges?.(getTimingEventRanges(event, instance.abcText));
+  // There is a note to start from now, so the transport may offer it.
+  syncPlayFromCursor(instance);
 }
 
 function clearTargetMarks(instance: RenderInstance): void {

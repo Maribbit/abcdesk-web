@@ -7,7 +7,6 @@ import {
 interface SourceStatsTargets {
   copySourceButton: HTMLButtonElement;
   exportAbcButton: HTMLButtonElement;
-  playFromCursorButton: HTMLButtonElement;
   sourceStats: HTMLElement;
 }
 
@@ -34,7 +33,6 @@ export function updateWorkspaceSourceStats(
   targets.sourceStats.textContent = getSourceStatsText(sourceText);
   targets.copySourceButton.disabled = characterCount === 0;
   targets.exportAbcButton.disabled = characterCount === 0;
-  targets.playFromCursorButton.disabled = characterCount === 0;
 }
 
 export async function copyWorkspaceSourceToClipboard(

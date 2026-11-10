@@ -39,6 +39,13 @@
      and colder than the live note so the two are never mistaken for each other,
      rendered as a notehead fill plus a dashed box. */
   --abcdesk-target: #1c9bff;
+  /* The same blue as a wash, for chrome that belongs to the target — the
+     transport's play-from-cursor button. */
+  --abcdesk-target-soft: rgba(28, 155, 255, 0.16);
+  /* And the same blue deepened for chrome that sits on the transport's grey
+     rather than on paper: beside engraving #1c9bff is a wash, but on the bar
+     it only reaches 2.7:1, and a control has to clear 3:1 to read as one. */
+  --abcdesk-target-deep: #0a7fd4;
 
   /* Keyboard */
   --abcdesk-keyboard-bg: #f1f5f6;
@@ -122,6 +129,10 @@
   /* Paper again: the target keeps the light-theme step so both panes agree
      with what the sheet shows. */
   --abcdesk-target: #1c9bff;
+  --abcdesk-target-soft: rgba(28, 155, 255, 0.22);
+  /* The bar is dark in this theme, so the target blue already carries here;
+     there is nothing to deepen. */
+  --abcdesk-target-deep: #1c9bff;
 
   --abcdesk-keyboard-bg: #20262a;
   --abcdesk-key-white-bg: #dde3e3;

@@ -38,8 +38,11 @@
   padding: 10px 12px;
 }
 
+/* The transport rides directly under the pane header, inset by the sheet's own
+   side margins so the bar and the paper line up; the gap to the sheet is the
+   score's top margin. */
 :host([data-abcdesk-layout="workspace"]) .abcdesk-audio {
-  padding: 4px 12px 12px;
+  padding: 10px 12px 0;
   margin: 0;
 }
 

@@ -65,9 +65,6 @@ const editorWrapInput = document.getElementById(
 const copySourceButton = document.getElementById(
   "copySourceButton",
 ) as HTMLButtonElement;
-const playFromCursorButton = document.getElementById(
-  "playFromCursorButton",
-) as HTMLButtonElement;
 const importAbcButton = document.getElementById(
   "importAbcButton",
 ) as HTMLButtonElement;
@@ -84,9 +81,8 @@ const clearButton = document.getElementById("clearButton") as HTMLButtonElement;
 const colorSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 const stackedLayoutQuery = window.matchMedia("(max-width: 860px)");
 
-// The button and the key binding are one intent, so the tooltip spells out the
-// keys this platform actually answers to.
-playFromCursorButton.title = `Play from cursor (${getPlayShortcutLabel()})`;
+// The button and the key binding are one intent. The button now lives in the
+// transport, next to play; the shortcut stays here because the caret is here.
 
 let currentKeyboardVisibility: KeyboardVisibility = "visible";
 let currentAbcAutoCheck: AbcAutoCheck = "enabled";
@@ -175,9 +171,6 @@ async function initializeWorkspace(): Promise<void> {
   });
   copySourceButton.addEventListener("click", () => {
     void copySourceToClipboard();
-  });
-  playFromCursorButton.addEventListener("click", () => {
-    void playFromCursor();
   });
   importAbcButton.addEventListener("click", () => {
     abcFileInput.click();
@@ -303,7 +296,7 @@ function handleSourceChange(): void {
 
 function updateSourceStats(): void {
   updateWorkspaceSourceStats(
-    { copySourceButton, exportAbcButton, playFromCursorButton, sourceStats },
+    { copySourceButton, exportAbcButton, sourceStats },
     editor.getValue(),
   );
 }
@@ -321,12 +314,6 @@ async function playFromCursor(): Promise<void> {
   } finally {
     isStartingPlayback = false;
   }
-}
-
-function getPlayShortcutLabel(): string {
-  return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
-    ? "⌘↵"
-    : "Ctrl+Enter";
 }
 
 function checkCurrentAbcSource(): void {
