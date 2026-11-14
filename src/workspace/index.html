@@ -4,13 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#e8ebec">
+  <meta name="description" content="A browser workbench for ABC notation: write on the left, get an engraved score with piano playback, note highlighting and parser diagnostics on the right.">
   <title>ABC Desk Web</title>
   <link rel="icon" type="image/svg+xml" href="%BASE_URL%icons/icon.svg">
   <link rel="manifest" href="%BASE_URL%manifest.webmanifest">
   <link rel="apple-touch-icon" href="%BASE_URL%icons/icon192.png">
+  <!-- A link is recognised before it is opened. The tune itself rides in the
+       hash, where crawlers cannot read it, so the card promises the workbench
+       and shows it, and leaves the score to the reader. -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ABC Desk Web">
+  <meta property="og:title" content="ABC Desk Web">
+  <meta property="og:description" content="A browser workbench for ABC notation: write on the left, get an engraved score with piano playback, note highlighting and parser diagnostics on the right.">
+  <meta property="og:image" content="%BASE_URL%social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The ABC Desk Web workspace: ABC source on the left, an engraved score and its transport on the right.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ABC Desk Web">
+  <meta name="twitter:description" content="A browser workbench for ABC notation: write on the left, get an engraved score with piano playback, note highlighting and parser diagnostics on the right.">
+  <meta name="twitter:image" content="%BASE_URL%social-card.png">
   <link rel="stylesheet" href="./workspace.css">
 </head>
 <body>
+  <noscript>
+    <!-- The chrome would be an empty promise: put the sentence on the wall and
+         let it be the page. -->
+    <style>
+      .workspace-shell {
+        display: none;
+      }
+    </style>
+    <p class="workspace-noscript">ABC Desk Web runs in the page: the editor, the engraver and the piano all need JavaScript.</p>
+  </noscript>
   <main class="workspace-shell">
     <header class="workspace-header">
       <div class="workspace-brand" aria-label="ABC Desk Web">
@@ -169,7 +195,7 @@
           <h3>Author</h3>
         </div>
         <p>A personal project for writing ABC notation in the browser: live score, playback and diagnostics in one workspace.</p>
-        <p><a class="ghost-link" href="https://github.com/Maribbit/abcdesk-web" target="_blank" rel="noopener noreferrer">View on GitHub</a></p>
+        <p><a class="ghost-link" href="https://github.com/Maribbit/chatmusic" target="_blank" rel="noopener noreferrer">View on GitHub</a></p>
       </section>
       <section class="dialog-section">
         <div class="dialog-section-header">

@@ -219,6 +219,25 @@ textarea {
   font: inherit;
 }
 
+/* Without scripts the wall is all there is. The sentence sits on it like a
+   sheet, centred, and the chrome that cannot run is hidden. */
+.workspace-noscript {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  width: min(34rem, calc(100vw - 48px));
+  margin: 0;
+  padding: 20px 24px;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--workspace-border);
+  border-radius: 14px;
+  background: var(--workspace-surface);
+  box-shadow: var(--workspace-sheet-shadow);
+  color: var(--workspace-text);
+  line-height: 1.55;
+}
+
 button,
 select {
   min-height: 30px;

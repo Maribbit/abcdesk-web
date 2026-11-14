@@ -14,7 +14,7 @@ The project started as a Chrome extension that rendered ABC found in AI chat pag
 - Playback-driven source highlighting, click-to-seek on any note, tempo override, duration display and an 88-key keyboard view.
 - abcjs parser warnings surfaced as a diagnostics panel instead of failing silently.
 - `.abc` import and export, plus SVG and MIDI export.
-- ABC source in the URL hash — compressed, with `Copy Share Link` — while theme, layout and editor preferences stay in `localStorage`.
+- ABC source in the URL hash — compressed, with `Copy Share Link` — while theme, layout and editor preferences stay in `localStorage`. A shared link arrives with a card of the workspace, and the tab names the tune rather than the app.
 
 ## Getting started
 
@@ -29,6 +29,12 @@ Deploying under a subpath:
 
 ```sh
 SITE_BASE=/workspace/ npm run build
+```
+
+`SITE_URL` is what link previews need: an absolute address for the social card and the `canonical` / `og:url` tags. Without it the tags keep the page's own paths, which most chat clients resolve and the strictest ones do not.
+
+```sh
+SITE_URL=https://example.com/workspace/ SITE_BASE=/workspace/ npm run build
 ```
 
 The service worker is only registered by a production build, so `npm run dev` is never served from a cache; `npm run preview` is where to try the offline copy.

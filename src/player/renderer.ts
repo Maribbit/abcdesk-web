@@ -333,6 +333,14 @@ function playKeyboardPitch(instance: RenderInstance, pitch: number): void {
   });
 }
 
+/**
+ * The tune's own name, for the host to put on the tab. A sheet that does not
+ * parse has no name to offer, so the caller falls back to its own.
+ */
+export function getTuneTitle(instance: RenderInstance): string | null {
+  return instance.visualObj?.[0]?.metaText?.title ?? null;
+}
+
 function applyKeyboardVisibility(
   instance: RenderInstance,
   keyboardVisibility: KeyboardVisibility,

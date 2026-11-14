@@ -23,6 +23,24 @@ export function applyWorkspaceTheme(
 
   documentElement.dataset.theme = resolvedTheme;
   documentElement.dataset.themeMode = themeMode;
+  applyAddressBarColor(documentElement);
+}
+
+/**
+ * The address bar sits right above the wall, so it takes the wall's colour
+ * rather than a second opinion about it. Reading the token keeps the hex in
+ * the stylesheet, where the rest of the palette lives.
+ */
+function applyAddressBarColor(documentElement: HTMLElement): void {
+  const meta = documentElement.ownerDocument.querySelector<HTMLMetaElement>(
+    'meta[name="theme-color"]',
+  );
+  if (!meta) return;
+
+  const wall = getComputedStyle(documentElement)
+    .getPropertyValue("--workspace-bg")
+    .trim();
+  if (wall) meta.content = wall;
 }
 
 export function applyWorkspaceLayoutMode(

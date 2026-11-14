@@ -1,4 +1,5 @@
 import {
+  getTuneTitle,
   playFromSourceOffset,
   pointSourceOffset,
   renderAbc,
@@ -25,6 +26,8 @@ interface WorkspaceRenderControllerOptions {
   sourceElement: HTMLElement;
   updateSourceHighlight: (ranges: SourceHighlightRange[]) => void;
   updateTargetRanges: (ranges: SourceHighlightRange[]) => void;
+  /** The tune's `T:`, or null when the sheet has none or does not parse. */
+  updateTuneTitle: (title: string | null) => void;
 }
 
 export interface WorkspaceRenderController {
@@ -52,6 +55,7 @@ export function createWorkspaceRenderController({
   sourceElement,
   updateSourceHighlight,
   updateTargetRanges,
+  updateTuneTitle,
 }: WorkspaceRenderControllerOptions): WorkspaceRenderController {
   let renderTimer: number | undefined;
   let currentInstance: RenderInstance | null = null;
@@ -86,6 +90,7 @@ export function createWorkspaceRenderController({
       // text it was about: nothing else will come along to replace it.
       clearQualityReport();
       renderStatus.textContent = "Ready";
+      updateTuneTitle(null);
       return;
     }
 
@@ -113,6 +118,9 @@ export function createWorkspaceRenderController({
       currentInstance.container.dataset.abcdeskLayout = "workspace";
       renderMount.classList.add("has-render");
       renderStatus.textContent = "Rendered";
+      // The tab names the tune that actually reached the paper, not the text
+      // still being typed a debounce away from it.
+      updateTuneTitle(getTuneTitle(currentInstance));
       // A fresh score starts at its own top: point at the caret again so the
       // new layout marks the note being read or written.
       pointSourcePosition(getCursorOffset());
@@ -120,6 +128,8 @@ export function createWorkspaceRenderController({
     } catch (error) {
       console.error("[ABC Desk Web] Render failed:", error);
       renderStatus.textContent = "Render failed";
+      // Nothing on the paper to name: the app keeps its own title.
+      updateTuneTitle(null);
     }
   };
 

@@ -9,6 +9,7 @@ import {
   type LayoutMode,
 } from "../shared/settings";
 import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
+import { formatDocumentTitle } from "./document-title";
 import { createCodeMirrorEditor } from "./editor/codemirror-editor";
 import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
@@ -145,6 +146,9 @@ const renderController = createWorkspaceRenderController({
   sourceElement,
   updateSourceHighlight: (ranges) => editor.setPlaybackHighlight(ranges),
   updateTargetRanges: (ranges) => editor.setTargetRanges(ranges),
+  updateTuneTitle: (title) => {
+    document.title = formatDocumentTitle(title);
+  },
 });
 
 void initializeWorkspace();

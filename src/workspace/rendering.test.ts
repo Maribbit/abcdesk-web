@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const rendererMocks = vi.hoisted(() => ({
+  getTuneTitle: vi.fn((): string | null => null),
   playFromSourceOffset: vi.fn(() => true),
   pointSourceOffset: vi.fn(() => true),
   removeRender: vi.fn(),
@@ -8,6 +9,7 @@ const rendererMocks = vi.hoisted(() => ({
 }));
 
 vi.mock("../player/renderer", () => ({
+  getTuneTitle: rendererMocks.getTuneTitle,
   playFromSourceOffset: rendererMocks.playFromSourceOffset,
   pointSourceOffset: rendererMocks.pointSourceOffset,
   removeRender: rendererMocks.removeRender,
@@ -28,6 +30,7 @@ function createController() {
   const runAutoCheck = vi.fn();
   const updateSourceHighlight = vi.fn();
   const updateTargetRanges = vi.fn();
+  const updateTuneTitle = vi.fn();
 
   const controller = createWorkspaceRenderController({
     clearQualityReport,
@@ -44,6 +47,7 @@ function createController() {
     sourceElement,
     updateSourceHighlight,
     updateTargetRanges,
+    updateTuneTitle,
   });
 
   return {
@@ -63,12 +67,14 @@ function createController() {
     sourceElement,
     updateSourceHighlight,
     updateTargetRanges,
+    updateTuneTitle,
   };
 }
 
 describe("Workspace render controller", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    rendererMocks.getTuneTitle.mockReturnValue(null);
     rendererMocks.renderAbc.mockReturnValue({
       container: document.createElement("article"),
     });
@@ -83,6 +89,7 @@ describe("Workspace render controller", () => {
       renderStatus,
       runAutoCheck,
       sourceElement,
+      updateTuneTitle,
     } = createController();
     renderMount.classList.add("has-render");
 
@@ -97,6 +104,7 @@ describe("Workspace render controller", () => {
     // run, since an empty sheet has nothing to report.
     expect(clearQualityReport).toHaveBeenCalledTimes(1);
     expect(runAutoCheck).not.toHaveBeenCalled();
+    expect(updateTuneTitle).toHaveBeenCalledWith(null);
   });
 
   it("renders trimmed ABC and offsets playback highlight ranges", () => {
@@ -108,9 +116,11 @@ describe("Workspace render controller", () => {
       setSourceText,
       sourceElement,
       updateSourceHighlight,
+      updateTuneTitle,
     } = createController();
     setSourceText("\n  X:1\nK:C\nC|  ");
 
+    rendererMocks.getTuneTitle.mockReturnValue("Lanterns on the Tide");
     controller.renderCurrentInput();
 
     expect(rendererMocks.renderAbc).toHaveBeenCalledWith(
@@ -128,6 +138,7 @@ describe("Workspace render controller", () => {
     expect(renderMount.classList.contains("has-render")).toBe(true);
     expect(renderStatus.textContent).toBe("Rendered");
     expect(runAutoCheck).toHaveBeenCalledTimes(1);
+    expect(updateTuneTitle).toHaveBeenCalledWith("Lanterns on the Tide");
   });
 
   it("moves the caret to the characters a score click names", () => {

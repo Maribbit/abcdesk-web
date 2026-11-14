@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
+import { absolutizeSocialMeta } from "./src/build/social-meta.ts";
 import { buildServiceWorker } from "./src/pwa/build-service-worker.ts";
 
 /**
@@ -84,12 +85,31 @@ function serviceWorkerPlugin(): Plugin {
   };
 }
 
-// Workspace is the only build target. Set SITE_BASE when deploying under a subpath.
+/**
+ * A link preview wants an absolute card address, which only the deployment
+ * knows. `SITE_URL` is that address (the one readers open); without it the
+ * tags keep the paths the page itself uses.
+ */
+function socialMetaPlugin(): Plugin {
+  return {
+    name: "abcdesk:social-meta",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        const siteUrl = process.env.SITE_URL;
+        return siteUrl ? absolutizeSocialMeta(html, siteUrl) : html;
+      },
+    },
+  };
+}
+
+// Workspace is the only build target. Set SITE_BASE when deploying under a subpath,
+// and SITE_URL for the address link previews should print.
 export default defineConfig({
   root: "src/workspace",
   publicDir: "../../public",
   base: process.env.SITE_BASE ?? "/",
-  plugins: [serviceWorkerPlugin()],
+  plugins: [serviceWorkerPlugin(), socialMetaPlugin()],
   build: {
     outDir: "../../dist",
     emptyOutDir: true,
