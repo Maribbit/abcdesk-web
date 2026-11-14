@@ -86,9 +86,16 @@ function serviceWorkerPlugin(): Plugin {
 }
 
 /**
+ * Where the workbench lives. It is a fact about the project, not about the
+ * machine building it, so a build that forgets to pass `SITE_URL` still prints
+ * the right address in its link preview; the variable stays for staging, a
+ * rename, or a copy of the site under another name.
+ */
+const SITE_URL = process.env.SITE_URL ?? "https://abcdesk.maribbit.com/";
+
+/**
  * A link preview wants an absolute card address, which only the deployment
- * knows. `SITE_URL` is that address (the one readers open); without it the
- * tags keep the paths the page itself uses.
+ * knows. `SITE_URL` is that address (the one readers open).
  */
 function socialMetaPlugin(): Plugin {
   return {
@@ -96,15 +103,14 @@ function socialMetaPlugin(): Plugin {
     transformIndexHtml: {
       order: "post",
       handler(html) {
-        const siteUrl = process.env.SITE_URL;
-        return siteUrl ? absolutizeSocialMeta(html, siteUrl) : html;
+        return absolutizeSocialMeta(html, SITE_URL);
       },
     },
   };
 }
 
-// Workspace is the only build target. Set SITE_BASE when deploying under a subpath,
-// and SITE_URL for the address link previews should print.
+// Workspace is the only build target. `SITE_BASE` moves the bundle under a
+// subpath; the address link previews print comes from `SITE_URL` above.
 export default defineConfig({
   root: "src/workspace",
   publicDir: "../../public",

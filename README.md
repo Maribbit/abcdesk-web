@@ -4,6 +4,8 @@ A browser-based ABC notation editor. Write ABC on the left, get an engraved scor
 
 It is the web counterpart of **ABC Desk**, the VS Code workbench built on the same idea: one ABC workspace, so a score can be written in the editor and previewed on any device.
 
+Live at **[abcdesk.maribbit.com](https://abcdesk.maribbit.com/)**.
+
 The project started as a Chrome extension that rendered ABC found in AI chat pages. That target was dropped in favour of a single, self-contained web app; the last extension state is kept at tag `extension-v0.4.0`.
 
 ## Features
@@ -25,17 +27,13 @@ npm run build    # static site in dist/
 npm run preview
 ```
 
-Deploying under a subpath:
+A subpath deployment moves the bundle, not the address:
 
 ```sh
 SITE_BASE=/workspace/ npm run build
 ```
 
-`SITE_URL` is what link previews need: an absolute address for the social card and the `canonical` / `og:url` tags. Without it the tags keep the page's own paths, which most chat clients resolve and the strictest ones do not.
-
-```sh
-SITE_URL=https://example.com/workspace/ SITE_BASE=/workspace/ npm run build
-```
+`SITE_URL` is what link previews need: an absolute address for the social card and the `canonical` / `og:url` tags. It already defaults to `https://abcdesk.maribbit.com/`, so a plain `npm run build` prints the right address; set it when building a staging copy or a renamed site.
 
 The service worker is only registered by a production build, so `npm run dev` is never served from a cache; `npm run preview` is where to try the offline copy.
 
