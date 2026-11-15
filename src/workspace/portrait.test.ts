@@ -170,15 +170,41 @@ describe("About portrait", () => {
     expect(portrait).not.toContain("226.5 199.478");
   });
 
-  it("blinks about the blog's pivots, measured from the crop's corner", () => {
-    // The eyes' transform origins are the blog's own coordinates minus the
-    // viewBox's corner; the stylesheet reads that corner from two custom
-    // properties, and the crop is what they have to agree with.
-    const [left, top] = (portrait.match(/viewBox="([^"]+)"/)?.[1] ?? "")
-      .split(/\s+/)
-      .map(Number);
+  it("keeps the brows out of the blink, so nothing slides down the face", () => {
+    // The blog draws the brows inside each eye group, so its blink drags them
+    // 26 units down onto the lids. At 64px that reads as the eyes falling
+    // rather than closing, so here they are drawn in a group of their own and
+    // only the lids squash.
+    const brows = portrait.match(/<g id="Brows"[\s\S]*?<\/g>/)?.[0] ?? "";
+    expect(brows.match(/<path /g) ?? []).toHaveLength(4);
 
-    expect(Number(styles.match(/--portrait-left:\s*(-?[\d.]+)/)?.[1])).toBe(left);
-    expect(Number(styles.match(/--portrait-top:\s*(-?[\d.]+)/)?.[1])).toBe(top);
+    for (const id of ["Eye_R", "Eye_L"]) {
+      const eye = portrait.match(new RegExp(`<g id="${id}"[\\s\\S]*?</g>`))?.[0] ?? "";
+      // A pupil and a lash, and nothing else: no brows to be squashed.
+      expect(eye.match(/<path /g) ?? []).toHaveLength(2);
+      expect(eye).not.toContain("#948A88");
+      expect(eye).not.toContain("#EAE5E2");
+    }
+  });
+
+  it("blinks about the blog's pivots, in her own coordinates", () => {
+    // 184px 154px and 268px 154px are the blog's figures and have to be kept
+    // verbatim: these lengths are read in the coordinate system her paths are
+    // drawn in, so the crop's viewBox corner does not shift them. Subtracting
+    // that corner — 104px 230px — put the pivots below her chin, and every
+    // blink slid the lids 71 units down her face.
+    for (const [id, x] of [
+      ["Eye_R", 184],
+      ["Eye_L", 268],
+    ] as const) {
+      const origin =
+        styles.match(
+          new RegExp(`#${id} \\{\\s*transform-origin:\\s*([^;]+);`),
+        )?.[1] ?? "";
+      expect(origin.trim()).toBe(`${x}px 154px`);
+    }
+
+    // The crop is the only thing allowed to carry the corner.
+    expect(styles).not.toContain("--portrait-left");
   });
 });

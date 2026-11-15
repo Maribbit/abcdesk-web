@@ -72,12 +72,9 @@
    was cut to fit. No shadow under her: the edge she is behind would not cast
    one on the page in front of it.
 
-   Where that viewBox starts is stated once, because the blink pivots below are
-   the blog's own coordinates minus this corner; move the crop and the two must
-   move with it (a test holds the numbers against the markup). */
+   Moving the crop moves the drawing, not her: the blink pivots below keep the
+   blog's numbers as they are (a test holds them to each other). */
 .dialog-portrait {
-  --portrait-left: 80;
-  --portrait-top: -76;
   flex: 0 0 auto;
   width: 64px;
   line-height: 0;
@@ -97,21 +94,27 @@
 }
 
 /* Blink pivots: the blog squashes each eye about (184, 154) and (268, 154) in
-   the character's own coordinates, which are the viewBox's corner plus these. */
+   the character's own coordinates. 154 is the middle of the pupil and the lash,
+   so the lids close where the eye was; the brows are not in these groups (see
+   `#Brows` in the markup), so they stay where they were drawn.
+
+   These lengths land in the coordinate system her paths are drawn in, not the
+   crop's: a pivot written as 230px sits on y=230 of her drawing, not 230 units
+   below the viewBox's top edge (measured in Chrome — the crop moves the window
+   onto her, never her). Subtracting that corner here, 104px 230px, put the
+   pivots below her chin and dragged the lids 71 units down her face on every
+   blink; the blog's numbers, copied as they are, land on (184, 154) and
+   (268, 154). */
 .dialog-portrait-eye {
   transform-box: view-box;
 }
 
 .dialog-portrait #Eye_R {
-  transform-origin:
-    calc(184px - var(--portrait-left) * 1px)
-    calc(154px - var(--portrait-top) * 1px);
+  transform-origin: 184px 154px;
 }
 
 .dialog-portrait #Eye_L {
-  transform-origin:
-    calc(268px - var(--portrait-left) * 1px)
-    calc(154px - var(--portrait-top) * 1px);
+  transform-origin: 268px 154px;
 }
 
 .dialog-header h2 {
