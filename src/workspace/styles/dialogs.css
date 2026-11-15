@@ -33,21 +33,85 @@
   backdrop-filter: blur(3px);
 }
 
+/* The header's floor is the edge she looks over: no padding below the line, so
+   the portrait can end on it. */
 .dialog-header {
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  padding: 18px 20px 14px;
+  padding: 14px 20px 0;
   border-bottom: 1px solid var(--workspace-border);
   background: transparent;
 }
 
+/* The close button is a corner, not a floor: it stays at the top. */
+.dialog-header > .icon-button {
+  align-self: flex-start;
+}
+
 .dialog-heading {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+
+.dialog-heading-text {
   display: flex;
   flex-direction: column;
   gap: 4px;
   min-width: 0;
+  /* The words keep the distance from the edge that the character is standing on. */
+  padding-bottom: 14px;
+}
+
+/* Half a head over the header's edge. Her own viewBox does the cropping — it
+   ends just under the nose — so the cut lands on the line the header already
+   draws, and she reads as looking over the sheet rather than as a picture that
+   was cut to fit. No shadow under her: the edge she is behind would not cast
+   one on the page in front of it.
+
+   Where that viewBox starts is stated once, because the blink pivots below are
+   the blog's own coordinates minus this corner; move the crop and the two must
+   move with it (a test holds the numbers against the markup). */
+.dialog-portrait {
+  --portrait-left: 80;
+  --portrait-top: -76;
+  flex: 0 0 auto;
+  width: 64px;
+  line-height: 0;
+}
+
+.dialog-portrait-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The note she wears is the masthead's mark in the masthead's ink: it sits
+   above the hair, on the sheet, so it takes the same accent the bar does — and
+   the dark theme lifts it for the same reason it lifts the bar's. */
+.dialog-portrait-mark {
+  fill: var(--workspace-accent);
+}
+
+/* Blink pivots: the blog squashes each eye about (184, 154) and (268, 154) in
+   the character's own coordinates, which are the viewBox's corner plus these. */
+.dialog-portrait-eye {
+  transform-box: view-box;
+}
+
+.dialog-portrait #Eye_R {
+  transform-origin:
+    calc(184px - var(--portrait-left) * 1px)
+    calc(154px - var(--portrait-top) * 1px);
+}
+
+.dialog-portrait #Eye_L {
+  transform-origin:
+    calc(268px - var(--portrait-left) * 1px)
+    calc(154px - var(--portrait-top) * 1px);
 }
 
 .dialog-header h2 {

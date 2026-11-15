@@ -4,11 +4,13 @@ import mark from "../../public/icons/icon.svg?raw";
 import installIcon from "../../scripts/icon-app.svg?raw";
 
 /**
- * The note is drawn three times: in the masthead (an <img> cannot take the
- * accent, so it is inline there), in the tab's `icon.svg`, and on the install
- * icon's sheet of paper. One drawing, three copies — the points are read out of
- * all three here, because a masthead note that has quietly moved on from the
- * tab's is the kind of difference nobody sees until the two sit side by side.
+ * The note is drawn four times: in the masthead (an <img> cannot take the
+ * accent, so it is inline there), in the tab's `icon.svg`, on the install
+ * icon's sheet of paper, and once more on the About portrait's head, where the
+ * character from the blog wears it. One drawing, four copies — the points are
+ * read out of all four here, because a masthead note that has quietly moved on
+ * from the tab's is the kind of difference nobody sees until the two sit side
+ * by side.
  */
 function points(source: string): string[] {
   return [...source.matchAll(/points="([^"]+)"/g)].map(([, value]) =>
@@ -21,12 +23,21 @@ function mastheadMark(source: string): string {
   return source.match(/<svg class="workspace-brand-mark"[\s\S]*?<\/svg>/)?.[0] ?? "";
 }
 
+/** The About portrait wears the same mark, scaled to sit on her hair. */
+function portraitMark(source: string): string {
+  return source.match(/<g class="dialog-portrait-mark"[\s\S]*?<\/g>/)?.[0] ?? "";
+}
+
 describe("Brand mark", () => {
   it("draws the same three polygons in the masthead, the tab and the install icon", () => {
     const drawing = points(mark);
     expect(drawing).toHaveLength(3);
     expect(points(mastheadMark(html))).toEqual(drawing);
     expect(points(installIcon)).toEqual(drawing);
+  });
+
+  it("is worn on the About portrait's head, unchanged", () => {
+    expect(points(portraitMark(html))).toEqual(points(mark));
   });
 
   it("stands on nothing of its own", () => {

@@ -13,6 +13,7 @@ import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
 import { formatDocumentTitle } from "./document-title";
 import { createCodeMirrorEditor } from "./editor/codemirror-editor";
 import { installTransportShortcuts } from "./play-shortcut";
+import { watchPortraitBlink } from "./portrait";
 import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
   loadWorkspaceSettings,
@@ -260,12 +261,21 @@ async function initializeWorkspace(): Promise<void> {
   // The key table ships the word `Ctrl`; Apple's keyboards get their glyph.
   applyModifierLabels(document, isApplePlatform(navigator));
 
+  // She only blinks while someone is looking at her, and not a moment longer.
+  let stopPortraitBlink: (() => void) | null = null;
+
   infoButton.addEventListener("click", () => {
     infoDialog.showModal();
+    stopPortraitBlink ??= watchPortraitBlink(infoDialog);
   });
 
   closeInfoButton.addEventListener("click", () => {
     infoDialog.close();
+  });
+
+  infoDialog.addEventListener("close", () => {
+    stopPortraitBlink?.();
+    stopPortraitBlink = null;
   });
 
   infoDialog.addEventListener("click", (event) => {
