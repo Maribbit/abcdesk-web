@@ -45,14 +45,54 @@ const RENDER_DEBOUNCE_MS = 350;
 
 const EXAMPLE_ABC = `X: 1
 T: ABC Desk Web Example
+T: Blue Desk Stroll
+C: ABC Desk Web
+R: Jazz blues
+% A % sign comments out the rest of its line, anywhere in the tune.
+% The header is one field per line: a second T: is a subtitle, C: the
+% composer, R: the rhythm, and N: a note about the tune that stays in the
+% file without being printed.
+N: A twelve-bar blues in F for three players. Swing the eighths.
 M: 4/4
-L: 1/4
-Q: 1/4=108
-K: C
-% A % sign comments out the rest of its line
-C D E F | G A B c | c B A G | F E D C |  % after the music, too
-% A number doubles the length: E2 is a half, C4 a whole
-E2 D2 | C4 |]`;
+L: 1/8
+% Q: is the tempo; the words in quotes are printed beside it.
+Q: 1/4=132 "Medium swing"
+% Voices are declared here and written out below. clef, name and snm (the
+% short name used from the second system on) are settings of each voice.
+V: Lead clef=treble name="Lead" snm="Ld"
+V: Comp clef=treble name="Piano" snm="Pno"
+V: Bass clef=bass name="Bass" snm="Bs"
+% %%score lays out the system: the braces join Lead and Comp, Bass stands alone.
+%%score (Lead Comp) Bass
+K: F
+%
+% Lead. Chord symbols in quotes sit above the staff; one voice is enough to
+% carry them. !mf! is a dynamic, (3cde a triplet, c>d a dotted pair, z a rest,
+% and the brackets of ( ) are a slur.
+V: Lead
+|: !mf! "F7" z2 (3cde f2 (3f_ed | "Bb7" c>_A (F2 _A>F) D2 | "F7" (3cde f2 !accent!a2 f2 | "Cm7" c2 _e2 "F7" (3f_ed c=e |
+% {f} is a grace note. An accidental lasts to the end of its bar, so =B asks
+% for the natural the key would otherwise flatten, and c2- c2 is a tie.
+"Bb7" {f}_a2 f2 d>f _a2 | "Bdim7" =B2 d2 f2 _a2 | "F7" c2- c2 (3Acd e2 | "D7" ^f2 a2 c'>a ^f2 |
+% c' is an octave up and C, an octave down; G<d is the dotted pair the other
+% way round. [1 and [2 are the two endings of the repeat, and w: after a line
+% of music puts one syllable under each of its notes.
+"Gm7" d2 B2 G<d B2 | "C7" !trill!e4 (3ged c2 | "F7" (3fga f2 "D7" ^f>d A2 |[1 "Gm7" d2 B2 "C7" e2 g2 :|[2 "Gm7" d B "C7" e g "F6" !fermata!f4 |]
+w: Doo ba doo ba dah wee ba da bop ba shoo be doo wah dee bah doo ba da ba dah ba da ba dah doo
+%
+% Comp. Notes in square brackets sound together, and a - after the bracket
+% ties the whole chord to the next. B needs no flat here: the key does it.
+V: Comp
+|: z2 [A_ec]2 z [A_ec]2 z | z2 [_Adf]2 z [_Adf]2 z | [A_ec]3 [A_ec]- [A_ec]4 | [GB_e]4 [Ac_e]4 |
+z [_Adf]2 z [_Adf]2 z2 | [=B_Adf]4 z4 | z2 [A_ec]2 z [A_ec]2 z | [^FAc]3 [^FAc]- [^FAc]4 |
+[Bdf]2 z2 [Bdf]2 z2 | [Beg]2 z2 [Beg]2 z2 | [A_ec]4 [^FAc]4 |[1 [Bdf]4 [Beg]4 :|[2 [Bdf]2 [Beg]2 !fermata![Acdf]4 |]
+%
+% Bass. A walking line in quarters: with L: 1/8, the 2 after each note makes
+% one. The comma drops a note an octave, so F, is the F below middle C.
+V: Bass
+|: F,2 A,2 C2 _E2 | B,2 D2 F2 _A,2 | F,2 A,2 C2 D2 | C2 _E2 F,2 A,2 |
+B,2 F2 D2 B,2 | =B,2 D2 F2 =B,2 | C2 A,2 F,2 _E,2 | D,2 ^F,2 A,2 ^F,2 |
+G,2 B,2 D2 =B,2 | C2 G,2 E,2 C,2 | F,2 A,2 D,2 ^F,2 |[1 G,2 B,2 C2 E2 :|[2 G,2 C2 !fermata!F,4 |]`;
 
 const editorHost = document.getElementById("abcEditorFrame") as HTMLElement;
 const workspaceShell = document.querySelector(".workspace-shell") as HTMLElement;
