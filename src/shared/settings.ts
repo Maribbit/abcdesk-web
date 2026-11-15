@@ -8,7 +8,7 @@ export const DEFAULT_ABC_AUTO_CHECK = "enabled";
 export const ABC_AUTO_CHECK_STORAGE_KEY = "abcAutoCheck";
 export const DEFAULT_LAYOUT_MODE = "auto";
 export const LAYOUT_MODE_STORAGE_KEY = "layoutMode";
-export const DEFAULT_EDITOR_WRAP = "disabled";
+export const DEFAULT_EDITOR_WRAP = "enabled";
 export const EDITOR_WRAP_STORAGE_KEY = "editorWrap";
 
 export type ThemeMode = "auto" | "light" | "dark";

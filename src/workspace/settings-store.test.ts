@@ -70,7 +70,7 @@ describe("Workspace settings store", () => {
       layoutMode: "auto",
       keyboardVisibility: "visible",
       abcAutoCheck: "enabled",
-      editorWrap: "disabled",
+      editorWrap: "enabled",
     });
   });
 

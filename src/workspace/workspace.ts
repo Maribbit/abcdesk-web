@@ -2,6 +2,7 @@ import { registerWorkspaceServiceWorker } from "../pwa/register";
 import { watchWorkspaceUpdates } from "../pwa/updates";
 import { watchConnectionNotice } from "./connection-notice";
 import {
+  DEFAULT_EDITOR_WRAP,
   normalizeLayoutMode,
   type AbcAutoCheck,
   type EditorWrap,
@@ -103,7 +104,7 @@ const stackedLayoutQuery = window.matchMedia("(max-width: 860px)");
 
 let currentKeyboardVisibility: KeyboardVisibility = "visible";
 let currentAbcAutoCheck: AbcAutoCheck = "enabled";
-let currentEditorWrap: EditorWrap = "disabled";
+let currentEditorWrap: EditorWrap = DEFAULT_EDITOR_WRAP;
 let explicitLayoutMode: LayoutMode = "auto";
 let isStartingPlayback = false;
 
@@ -112,7 +113,9 @@ let isStartingPlayback = false;
 const editor = createCodeMirrorEditor({
   host: editorHost,
   value: "",
-  lineWrap: "disabled",
+  // The first paint already matches the default, so a new reader never sees
+  // the text reflow once the stored settings arrive.
+  lineWrap: DEFAULT_EDITOR_WRAP,
   label: "ABC source code",
   onChange: handleSourceChange,
   onCursorChange: (offset) => {
