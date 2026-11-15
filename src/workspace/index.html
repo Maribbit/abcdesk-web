@@ -180,36 +180,74 @@
     </div>
   </main>
 
-  <dialog id="infoDialog" class="workspace-dialog">
+  <dialog id="infoDialog" class="workspace-dialog" aria-labelledby="infoDialogTitle">
     <div class="dialog-header">
       <div class="dialog-heading">
         <span class="pane-label">About</span>
-        <h2>ABC Desk Web</h2>
+        <h2 id="infoDialogTitle">ABC Desk Web</h2>
       </div>
       <button class="icon-button" id="closeInfoButton" type="button" aria-label="Close" title="Close">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="dialog-content">
-      <section class="dialog-section">
+      <p class="dialog-lede">A browser workbench for ABC notation: the sheet, the transport and the parser in one page.</p>
+
+      <section class="dialog-section" aria-labelledby="dialogKeysHeading">
         <div class="dialog-section-header">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <h3>Author</h3>
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h8"/></svg>
+          <h3 id="dialogKeysHeading">Keys</h3>
         </div>
-        <p>A personal project for writing ABC notation in the browser: live score, playback and diagnostics in one workspace.</p>
-        <p><a class="ghost-link" href="https://github.com/Maribbit/chatmusic" target="_blank" rel="noopener noreferrer">View on GitHub</a></p>
+        <dl class="dialog-keys">
+          <dt><kbd data-mod-key>Ctrl</kbd><kbd>&crarr;</kbd></dt>
+          <dd>Play from the caret</dd>
+          <dt><kbd data-mod-key>Ctrl</kbd><kbd>/</kbd></dt>
+          <dd>Comment or uncomment the lines the selection touches</dd>
+          <dt><kbd data-mod-key>Ctrl</kbd><kbd>Z</kbd></dt>
+          <dd>Undo</dd>
+          <dt><kbd>&#8679;</kbd><kbd data-mod-key>Ctrl</kbd><kbd>Z</kbd></dt>
+          <dd>Redo</dd>
+        </dl>
       </section>
-      <section class="dialog-section">
-        <div class="dialog-section-header">
+
+      <details class="dialog-disclosure">
+        <summary>
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span class="dialog-disclosure-text">
+            <span class="dialog-disclosure-title">One tune at a time</span>
+            <span class="dialog-disclosure-hint">The page follows the first tune.</span>
+          </span>
+          <svg class="dialog-chevron" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </summary>
+        <div class="dialog-disclosure-body">
+          <p>A file can hold more than one tune, and the checker reads all of them, but the page is engraved one tune at a time: the sheet, the transport, the note highlighting and the keys all follow the first. Move another tune to the top of the file to work on it.</p>
+        </div>
+      </details>
+
+      <details class="dialog-disclosure">
+        <summary>
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          <h3>Converting MusicXML to ABC</h3>
+          <span class="dialog-disclosure-text">
+            <span class="dialog-disclosure-title">Converting MusicXML to ABC</span>
+            <span class="dialog-disclosure-hint">Two converters, by Wim Vree.</span>
+          </span>
+          <svg class="dialog-chevron" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
+        </summary>
+        <div class="dialog-disclosure-body">
+          <p>ABC Desk focuses heavily on ABC notation. For MusicXML compatibility, these external tools are the ones we recommend:</p>
+          <ul class="dialog-links">
+            <li><a class="ghost-link" href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank" rel="noopener noreferrer">MusicXML &rarr; ABC Converter</a></li>
+            <li><a class="ghost-link" href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank" rel="noopener noreferrer">ABC &rarr; MusicXML Converter</a></li>
+          </ul>
         </div>
-        <p>ABC Desk focuses heavily on ABC notation. For MusicXML compatibility, we recommend the excellent external tools originally created by Wim Vree:</p>
-        <ul class="dialog-links">
-          <li><a class="ghost-link" href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank" rel="noopener noreferrer">MusicXML &rarr; ABC Converter</a></li>
-          <li><a class="ghost-link" href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank" rel="noopener noreferrer">ABC &rarr; MusicXML Converter</a></li>
-        </ul>
-      </section>
+      </details>
+
+      <p class="dialog-footnote">Drop an .abc file on the source pane to open it, and Copy Share Link carries the tune in the address. Install the desk and it opens offline, samples and all.</p>
+
+      <div class="dialog-footer">
+        <span>A personal project by Maribbit</span>
+        <a class="ghost-link" href="https://github.com/Maribbit/abcdesk-web" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+      </div>
     </div>
   </dialog>
 

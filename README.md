@@ -18,6 +18,7 @@ The project started as a Chrome extension that rendered ABC found in AI chat pag
 - `.abc` import and export, plus SVG and MIDI export.
 - Printing gives you the sheet, not the app: `Cmd-P` keeps the tune, its title and the directions above it on white paper, and a tune longer than a page breaks between staff systems instead of through one.
 - A phone gets the first minute rather than a shrunken desk: below 600px both bars stay on one line, every control takes a 44px square, and the tools a phone reaches another way step aside.
+- About is a short page: one sentence about the desk, the four combinations the editor listens to — `⌘` on Apple hardware, `Ctrl` everywhere else — and the longer notes on multi-tune files and MusicXML folded away until asked.
 - ABC source in the URL hash — compressed, with `Copy Share Link` — while theme, layout and editor preferences stay in `localStorage`. A shared link arrives with a card of the workspace, and the tab names the tune rather than the app.
 
 ## Getting started

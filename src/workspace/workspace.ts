@@ -29,6 +29,7 @@ import {
   updateWorkspaceSourceStats,
 } from "./source-actions";
 import { createSourceDropTarget } from "./source-drop";
+import { applyModifierLabels, isApplePlatform } from "./shortcut-labels";
 import {
   applyWorkspaceLayoutMode,
   applyWorkspaceTheme,
@@ -251,6 +252,9 @@ async function initializeWorkspace(): Promise<void> {
   const closeInfoButton = document.getElementById(
     "closeInfoButton",
   ) as HTMLButtonElement;
+
+  // The key table ships the word `Ctrl`; Apple's keyboards get their glyph.
+  applyModifierLabels(document, isApplePlatform(navigator));
 
   infoButton.addEventListener("click", () => {
     infoDialog.showModal();
