@@ -1,0 +1,97 @@
+/* The printed score is the sheet and nothing else.
+
+   On screen the player is a column of pieces — tools, transport, paper,
+   keybed — and the paper scrolls inside the pane. Paper has no pane: the
+   page grows to fit the music, and the furniture is left behind. */
+
+@media print {
+  :host {
+    /* Containment is for a block inside someone else's page; a printed
+       sheet is itself the page, and nothing should be able to clip it. */
+    contain: none;
+    margin: 0;
+  }
+
+  .abcdesk-container,
+  :host([data-abcdesk-layout="workspace"]) .abcdesk-container,
+  :host(:fullscreen) .abcdesk-container,
+  :host([data-abcdesk-browser-fullscreen]) .abcdesk-container {
+    display: block;
+    height: auto;
+    padding: 0;
+    background: none;
+    color: #000;
+  }
+
+  .abcdesk-header,
+  .abcdesk-audio,
+  .abcdesk-keyboard,
+  .abcdesk-quality-panel {
+    display: none !important;
+  }
+
+  /* Undo the pane: no margin to line up with a neighbour, no cap on height,
+     no scroll window — just the sheet's own height. The screen keeps the SVG
+     out of flow and reserves its height with a padding trick; on paper the
+     SVG is simply in flow, so nothing can clip it. */
+  .abcdesk-score,
+  :host([data-abcdesk-layout="workspace"]) .abcdesk-score,
+  :host(:fullscreen) .abcdesk-score,
+  :host([data-abcdesk-browser-fullscreen]) .abcdesk-score {
+    display: block !important;
+    position: static !important;
+    flex: 0 0 auto !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .abcdesk-score svg {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+  }
+
+  /* While the pages stand in for it, the whole sheet is out of the way.
+     Each layout names its own `display` for the sheet's SVG, so each layout
+     has to be answered here — `!important` beats `!important` only by
+     specificity, and the screen's rules are the more specific ones. */
+  .abcdesk-score [data-abcdesk-print-hidden],
+  :host([data-abcdesk-layout="workspace"]) .abcdesk-score [data-abcdesk-print-hidden],
+  :host(:fullscreen) .abcdesk-score [data-abcdesk-print-hidden],
+  :host([data-abcdesk-browser-fullscreen]) .abcdesk-score [data-abcdesk-print-hidden] {
+    display: none !important;
+  }
+
+  /* One staff system per block: the page breaks between blocks, never through
+     one, so a tune that runs long is cut along its own seams. */
+  .abcdesk-score [data-abcdesk-print-page] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* The target and the playhead are states of the reader's session, not
+     properties of the tune. `revert` hands each note back the ink abcjs
+     gave it, so hollow noteheads stay hollow. */
+  .abcdesk-score .abcdesk-target,
+  .abcdesk-score .abcdesk-target *,
+  .abcdesk-score .abcdesk-note-playing,
+  .abcdesk-score .abcdesk-note-playing * {
+    fill: revert !important;
+    stroke: revert !important;
+  }
+
+  .abcdesk-target-box {
+    display: none;
+  }
+}

@@ -16,6 +16,7 @@ The project started as a Chrome extension that rendered ABC found in AI chat pag
 - Playback-driven source highlighting, click-to-seek on any note, tempo override, duration display and an 88-key keyboard view.
 - abcjs parser warnings surfaced as a diagnostics panel instead of failing silently.
 - `.abc` import and export, plus SVG and MIDI export.
+- Printing gives you the sheet, not the app: `Cmd-P` keeps the tune, its title and the directions above it on white paper, and a tune longer than a page breaks between staff systems instead of through one.
 - ABC source in the URL hash — compressed, with `Copy Share Link` — while theme, layout and editor preferences stay in `localStorage`. A shared link arrives with a card of the workspace, and the tab names the tune rather than the app.
 
 ## Getting started

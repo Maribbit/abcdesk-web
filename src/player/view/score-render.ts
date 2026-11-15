@@ -1,5 +1,6 @@
 import abcjs from "abcjs";
 import type { AbcElementRef, RenderInstance } from "../types";
+import { isScorePaginated } from "./print-pages";
 
 const DEFAULT_STAFF_WIDTH = 740;
 const MIN_STAFF_WIDTH = 320;
@@ -59,6 +60,9 @@ export function shouldRerenderScoreForLayout(
   instance: RenderInstance,
 ): boolean {
   if (!instance.container.isConnected) return false;
+  // Print layout hands the sheet the page's width. The cut-up sheet is the one
+  // being printed: re-rendering now would throw the pages away mid-job.
+  if (isScorePaginated(instance.scoreElement)) return false;
 
   const nextStaffWidth = getScoreStaffWidth(instance.scoreElement);
   return (

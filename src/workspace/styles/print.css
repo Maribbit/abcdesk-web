@@ -1,0 +1,61 @@
+/* Printing is the score leaving the desk.
+
+   Paper keeps only what a reader would pin to a wall: the tune, its title,
+   and the instructions engravers put above it. The bar, the source, the
+   transport and the keybed are furniture, and furniture stays on screen.
+   `Cmd-P` then produces a sheet of music rather than a screenshot of an app. */
+
+@page {
+  margin: 14mm 12mm;
+}
+
+@media print {
+  html,
+  body {
+    height: auto;
+    overflow: visible;
+    background: none;
+  }
+
+  /* The grain is a screen texture; on paper it would only be toner. */
+  body::before,
+  .empty-preview {
+    display: none;
+  }
+
+  .workspace-shell {
+    display: block;
+    height: auto;
+    padding: 0;
+  }
+
+  .workspace-header,
+  .workspace-resizer,
+  .editor-pane,
+  dialog {
+    display: none !important;
+  }
+
+  /* The preview keeps its place in the grid on screen; on paper it is the
+     page itself, with no sheet edge to sit on. */
+  .preview-pane {
+    display: block;
+    margin: 0;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .render-mount {
+    height: auto;
+    overflow: visible;
+    background: none;
+  }
+
+  /* The pane is a window the sheet scrolls inside; a page grows instead. */
+  .render-mount .abcdesk-host {
+    height: auto;
+  }
+}

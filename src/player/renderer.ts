@@ -8,6 +8,7 @@ import abcdeskHeaderStyles from "./view/styles/header.css?inline";
 import abcdeskHostStyles from "./view/styles/host.css?inline";
 import abcdeskKeyboardStyles from "./view/styles/keyboard.css?inline";
 import abcdeskLayoutStyles from "./view/styles/layout.css?inline";
+import abcdeskPrintStyles from "./view/styles/print.css?inline";
 import abcdeskQualityStyles from "./view/styles/quality.css?inline";
 import abcdeskScoreStyles from "./view/styles/score.css?inline";
 import type { ABCDeskCodeToggleElement } from "./components/code-toggle";
@@ -50,6 +51,7 @@ export type {
   SourceHighlightRange,
 } from "./types";
 import { applyRenderViewTheme, createRenderView } from "./view/view";
+import { setupPrintPagination } from "./view/print-pages";
 import { clearTarget, pointSourceOffset } from "./view/score-target";
 export { clearTarget, pointSourceOffset };
 import type {
@@ -75,6 +77,9 @@ const shadowStyles = [
   abcdeskKeyboardStyles,
   abcdeskAudioStyles,
   abcdeskLayoutStyles,
+  // Last, so the medium's rules win over the screen's layout regardless of
+  // which layout attribute the host is wearing.
+  abcdeskPrintStyles,
 ].join("\n");
 
 /**
@@ -253,6 +258,10 @@ export function renderAbc(
   elements.scoreElement.addEventListener("pointerdown", resetScoreClickClaim, true);
   elements.scoreElement.addEventListener("click", handleScoreBackgroundClick);
 
+  // Paper is laid out by someone else's rules; the sheet gets cut into pages
+  // for the length of that job and put back the way the screen knows it.
+  const stopPrintPagination = setupPrintPagination(elements.scoreElement);
+
   instance = {
     container: elements.container,
     scoreElement: elements.scoreElement,
@@ -299,6 +308,7 @@ export function renderAbc(
         handleScoreBackgroundClick,
       );
       keyboard.dispose();
+      stopPrintPagination();
       elements.cleanup();
     },
   };

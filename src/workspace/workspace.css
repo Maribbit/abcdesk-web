@@ -6,3 +6,6 @@
 @import "./styles/preview.css";
 @import "./styles/dialogs.css";
 @import "./styles/responsive.css";
+/* Last: print is not a smaller screen, it is another medium, and the rules
+   that undo the screen's furniture have to win over all of them. */
+@import "./styles/print.css";

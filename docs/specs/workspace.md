@@ -66,6 +66,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 
 - **源码锚点**
   - `src/workspace/`: 工作台入口、分栏、源码动作、展示状态、诊断面板与渲染控制。
+  - `src/workspace/styles/print.css`: 打印时的页面层（纸取代分栏，顶栏与源码收起）。
   - `src/workspace/editor/`: 编辑器门面 `AbcEditor`、CodeMirror 6 实现（装饰层、换行与跳转）与纯净的语法扫描器。
   - `src/shared/workspace-url.ts`: hash 编解码，压缩载荷与老链接兼容。
   - `src/pwa/`: service worker 模板（不经打包）、构建期填充与生产环境注册。

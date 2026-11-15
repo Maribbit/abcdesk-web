@@ -62,6 +62,20 @@ abcjs 产出的 SVG 在内联属性里硬编码填充色。
 - 滚动只发生在音符真的出了视野时（`block: "nearest"`），并用 `scroll-padding` 留出呼吸位，避免谱表贴着边缘被切。
 - 编辑时不在每次击键上跟随，而是等重渲染落地后再指一次，不去追一张已经过时的谱。
 
+### 2.6 打印
+
+`Cmd-P` 得到的应该是一张谱，而不是应用的截图。
+
+- 纸只留读的人会钉到墙上的东西：曲名、曲名上方的记谱提示、谱表本身。顶栏、源码、拖拽条、对话框在页面层收起（`src/workspace/styles/print.css`），走带、键盘、质量面板在播放器层收起（`src/player/view/styles/print.css`）。
+- 屏幕用 `absolute` 定位的 SVG 加 `padding-bottom` 百分比撑高谱面；纸上没有窗口，只需让 SVG 回到常规流、高度随宽，页就自己长。
+- 打印宽度由纸决定，与视口无关：SVG 缩放填满纸宽，所以 700 与 1600 宽的窗口打出来是同一张谱。
+- `renderAbc` 交给一个元素时只画第一首曲（它把单个元素当成只有一首），所以一张 SVG 就是一首曲；分页与多曲是两件事。
+- 浏览器不认 SVG 内部的分页，长谱会在页边界被横向切开谱表。打印前把每个 `g.abcjs-staff-wrapper`（一行谱表）拷进自己的 SVG，`viewBox` 裁到本行所在的那一带，并 `break-inside: avoid`，页就只能在行与行之间断开。
+- 断点落在相邻两行的中点：上下各留半格空白，断页不会啃掉上一行；两行重叠（第二个声部、拥挤的段落）时中点会退到上一道缝之前，必须夹紧向前，否则会出现高度为零的页。
+- 不属于任何一行的装饰（`<style>`、`<title>`）要拷到每一页：前者是字形的画法，后者是这张图的姓名。
+- 分页是临时状态：`beforeprint` 与 `matchMedia("print")` 两种信号都会触发，`afterprint` 还原成屏幕认得的那张 SVG（分页本身是幂等的，重复触发无害）。打印期间的布局宽度来自纸而不是窗格，重排必须让路，否则会把正在打印的分页结果重新渲染掉。
+- 目标与播放高亮属于读者的会话，不是曲子属性：打印时用 `revert` 交还原墨，空心符头仍然空心。
+
 ## 3. 边界条件
 
 - **XSS**：`T:`、`w:` 等字段来自用户手写或 AI 生成，进入 DOM 前必须清洗。
@@ -72,6 +86,8 @@ abcjs 产出的 SVG 在内联属性里硬编码填充色。
 
 - **源码锚点**
   - `src/player/view/score-render.ts`: SVG 呈现、宽度测量与重排触发。
+  - `src/player/view/print-pages.ts`: 打印时的分页（按谱行切分、视口裁剪、分页信号与还原）。
+  - `src/player/view/styles/print.css`: 打印时的播放器层（去走带与键盘、谱面回常规流、分页块不断行）。
   - `src/player/view/score-target.ts`: 共享目标的映射、标记与虚线框（用户坐标、一簇一框、文件头回顶）。
   - `src/player/renderer.ts`: 渲染生命周期、谱面点击到源码与播放位置的桥接、空白点击的放手、abcjs 告警反馈。
   - `src/player/playback/cursor.ts`: 源码偏移到 timing event 的映射与区间裁剪。
@@ -83,6 +99,7 @@ abcjs 产出的 SVG 在内联属性里硬编码填充色。
   - `src/player/renderer.test.ts`: 告警展示、宽度换行渲染、点谱到共享目标、空白点击放手与生命周期集成。
   - `src/player/playback/source-highlight.test.ts`: 音符区间两端空白的裁剪与越界收敛。
   - `src/player/view/score-target.test.ts`: 最近覆盖、文件头回顶、整行入视、框的几何与缩放映射、一簇一框。
+  - `src/player/view/print-pages.test.ts`: 断点取中点与夹紧、分页区块的裁剪与归属、装饰复制到每页、幂等与还原。
   - `src/player/exports/svg-export.test.ts`: 文件名清洗、缺省标题与 SVG 序列化。
   - `src/shared/abc-quality/validate.test.ts`: 空输入、干净 ABC、告警到诊断、HTML 清洗。
   - `src/shared/abc-midi-export.test.ts`: MIDI 文件名、二进制数据与 Blob 包装。
