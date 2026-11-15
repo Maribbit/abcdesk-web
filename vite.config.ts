@@ -11,7 +11,10 @@ import { buildServiceWorker } from "./src/pwa/build-service-worker.ts";
  */
 const PUBLIC_SHELL_FILES = [
   "index.html",
-  "manifest.webmanifest",
+  // `.json`, not the spec's `.webmanifest`: a static host that does not know
+  // the extension serves it as `application/octet-stream`, and the manifest
+  // is then a blob rather than a description of the app.
+  "manifest.json",
   "icons/icon.svg",
   "icons/icon16.png",
   "icons/icon48.png",

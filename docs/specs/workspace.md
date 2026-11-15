@@ -26,7 +26,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 
 ### 2.3 离线（PWA）
 
-- 清单 `manifest.webmanifest` 与 `sw.js` 都随构建产出。清单里的 URL 全部相对自身，子路径部署不需要另一份清单；192/512 两个安装图标和其他尺寸一样由 `scripts/generate-icons.mjs` 从 `icon.svg` 生成。
+- 清单 `manifest.json` 与 `sw.js` 都随构建产出。清单用 `.json` 而不是规范推荐的 `.webmanifest`：静态托管（EdgeOne）按扩展名给 MIME，不认识的扩展名一律 `application/octet-stream`，清单就成了一个“二进制块”而不是应用说明。清单里的 URL 全部相对自身，子路径部署不需要另一份清单；192/512 两个安装图标和其他尺寸一样由 `scripts/generate-icons.mjs` 从 `icon.svg` 生成。
 - `sw.js` 不是源码里的静态文件：构建插件读 `src/pwa/service-worker.js` 模板，把本次产出（带内容哈希）的文件名与 88 个 samples 填进去。版本号是这份名单的哈希——只改动不被缓存的代码时，读者不必重新下载一遍应用壳。
 - 安装时应用壳是“要么全有要么全无”：`cache.addAll` 失败就让安装失败，半套缓存离线打开只会得到一个脚本永远不来的页面。样本则尽力而为，单个失败不阻塞安装，首次用到时再取。
 - 样本缓存不带版本号：88 个永不变化的 mp3 不该在每次发布后重下，所以它跨构建存活，只补缺的。
