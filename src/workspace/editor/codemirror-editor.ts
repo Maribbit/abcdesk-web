@@ -399,7 +399,10 @@ export function createCodeMirrorEditor({
 
 /**
  * `Mod-Enter` belongs to the workspace, not to CodeMirror: the editor only
- * reports the intent, because "play from here" is not an editing command.
+ * reports the intent, because "play from here" is not an editing command. The
+ * page listens for the same key too (`play-shortcut.ts`), and this binding is
+ * what claims it first inside the text — both to stop the modifier-Enter from
+ * inserting a line and to keep one press from playing twice.
  */
 function playKeymap(onPlayFromCursor?: () => void): KeyBinding[] {
   if (!onPlayFromCursor) return [];

@@ -198,16 +198,26 @@
           <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h8"/></svg>
           <h3 id="dialogKeysHeading">Keys</h3>
         </div>
-        <dl class="dialog-keys">
-          <dt><kbd data-mod-key>Ctrl</kbd><kbd>&crarr;</kbd></dt>
-          <dd>Play from the caret</dd>
-          <dt><kbd data-mod-key>Ctrl</kbd><kbd>/</kbd></dt>
-          <dd>Comment or uncomment the lines the selection touches</dd>
-          <dt><kbd data-mod-key>Ctrl</kbd><kbd>Z</kbd></dt>
-          <dd>Undo</dd>
-          <dt><kbd>&#8679;</kbd><kbd data-mod-key>Ctrl</kbd><kbd>Z</kbd></dt>
-          <dd>Redo</dd>
-        </dl>
+        <div class="dialog-keys">
+          <div class="dialog-keys-group" role="group" aria-labelledby="dialogKeysAnywhere">
+            <p class="pane-label" id="dialogKeysAnywhere">Anywhere</p>
+            <dl class="dialog-keys-list">
+              <dt><kbd data-mod-key>Ctrl</kbd><kbd>&crarr;</kbd></dt>
+              <dd>Play from the caret</dd>
+            </dl>
+          </div>
+          <div class="dialog-keys-group" role="group" aria-labelledby="dialogKeysSource">
+            <p class="pane-label" id="dialogKeysSource">In the source</p>
+            <dl class="dialog-keys-list">
+              <dt><kbd data-mod-key>Ctrl</kbd><kbd>/</kbd></dt>
+              <dd>Comment or uncomment the lines the selection touches</dd>
+              <dt><kbd data-mod-key>Ctrl</kbd><kbd>Z</kbd></dt>
+              <dd>Undo</dd>
+              <dt><kbd>&#8679;</kbd><kbd data-mod-key>Ctrl</kbd><kbd>Z</kbd></dt>
+              <dd>Redo</dd>
+            </dl>
+          </div>
+        </div>
       </section>
 
       <details class="dialog-disclosure">

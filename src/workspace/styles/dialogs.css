@@ -77,8 +77,22 @@
 
 /* A key is a chip, not a word: the raised grey of the header's chosen control,
    one size smaller. Terms and answers share one grid, so every combination
-   starts at the same x whatever its length. */
+   starts at the same x whatever its length. Two scopes, because only one of the
+   four combinations answers away from the text. */
 .dialog-keys {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.dialog-keys-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dialog-keys-list {
   display: grid;
   grid-template-columns: max-content 1fr;
   align-items: center;

@@ -11,6 +11,7 @@ import {
 import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
 import { formatDocumentTitle } from "./document-title";
 import { createCodeMirrorEditor } from "./editor/codemirror-editor";
+import { installPlayShortcut } from "./play-shortcut";
 import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
   loadWorkspaceSettings,
@@ -281,6 +282,10 @@ async function initializeWorkspace(): Promise<void> {
       splitLayout.updateOrientation();
       window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
     }
+  });
+  // The shortcut is the page's, not the editor's: the caret is ours either way.
+  installPlayShortcut(document, () => {
+    void playFromCursor();
   });
   workspaceResizer.addEventListener("pointerdown", splitLayout.startResize);
   workspaceResizer.addEventListener("keydown", splitLayout.handleKeydown);
