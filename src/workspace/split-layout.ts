@@ -1,7 +1,9 @@
 import type { LayoutMode } from "../shared/settings";
+import {
+  WORKSPACE_DESKTOP_SPLIT_STORAGE_KEY,
+  WORKSPACE_MOBILE_SPLIT_STORAGE_KEY,
+} from "./local-data";
 
-const WORKSPACE_DESKTOP_SPLIT_STORAGE_KEY = "abcdeskWorkspaceDesktopSplit";
-const WORKSPACE_MOBILE_SPLIT_STORAGE_KEY = "abcdeskWorkspaceMobileSplit";
 const MIN_DESKTOP_EDITOR_WIDTH = 280;
 const MIN_DESKTOP_PREVIEW_WIDTH = 320;
 const MIN_MOBILE_EDITOR_HEIGHT = 160;

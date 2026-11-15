@@ -338,21 +338,24 @@
         </div>
       </details>
 
+      <!-- The only control on the sheet that takes something away, and the only
+           place the reader can see what the desk keeps: the draft, the panes'
+           split and the settings are the browser's copy, not a server's. It
+           asks twice before it acts, and the answer is a reload — the same page
+           it would be on a first visit. -->
       <details class="dialog-disclosure">
         <summary>
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
           <span class="dialog-disclosure-text">
-            <span class="dialog-disclosure-title">Converting MusicXML to ABC</span>
-            <span class="dialog-disclosure-hint">Two converters, by Wim Vree.</span>
+            <span class="dialog-disclosure-title">What this browser remembers</span>
+            <span class="dialog-disclosure-hint">The draft, the pane sizes, every setting.</span>
           </span>
           <svg class="dialog-chevron" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>
         </summary>
         <div class="dialog-disclosure-body">
-          <p>ABC Desk focuses heavily on ABC notation. For MusicXML compatibility, these external tools are the ones we recommend:</p>
-          <ul class="dialog-links">
-            <li><a class="ghost-link" href="https://wim.vree.org/js/xml2abc-js_index.html" target="_blank" rel="noopener noreferrer">MusicXML &rarr; ABC Converter</a></li>
-            <li><a class="ghost-link" href="https://wim.vree.org/svgParse/abc2xml.html" target="_blank" rel="noopener noreferrer">ABC &rarr; MusicXML Converter</a></li>
-          </ul>
+          <p>Your draft, the split of the panes and every setting are kept in this browser's localStorage; none of them leaves the machine. Clearing them makes the desk a first visit again — the example tune, the default theme, the panes where they start — and there is no way back.</p>
+          <button class="secondary-button compact-button dialog-clear-button" id="clearDataButton" type="button">Clear local data</button>
+          <p class="dialog-clear-status" id="clearDataStatus" role="status"></p>
         </div>
       </details>
 

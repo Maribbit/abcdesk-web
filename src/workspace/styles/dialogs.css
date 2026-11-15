@@ -250,6 +250,12 @@
 /* The closed row still answers: the hint beside the title is the one-line
    version, and it steps aside when the body says it properly. */
 .dialog-disclosure {
+  /* The sheet puts 16px between its blocks; the two answers are a list, not two
+     blocks. Taking half of that gap off each side leaves the hairline 8px below
+     what came before and the row's own 7px below its text, so a row never ends
+     23px above the line that appears to close it — which read as a padding the
+     row did not have. */
+  margin-block: -8px;
   border-top: 1px solid var(--workspace-border);
 }
 
@@ -257,28 +263,23 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 0 10px;
+  /* Symmetric, so the two lines sit on the row's own centre rather than a
+     half-pixel above it, and short of the old 11/10: the row is a lid, not a
+     paragraph. */
+  padding: 7px 0;
   border-radius: var(--workspace-radius-sm);
   color: var(--workspace-accent);
   cursor: pointer;
   list-style: none;
 }
 
-/* On a narrow sheet the hint folds under its title. The row's icon belongs to
-   the title, not to the middle of the paragraph that follows it, and the
-   chevron stays on the row's own centre. */
-@media (max-width: 600px) {
-  .dialog-disclosure > summary {
-    align-items: flex-start;
-  }
-
-  .dialog-disclosure > summary > svg:first-child {
-    margin-top: 3px;
-  }
-
-  .dialog-chevron {
-    align-self: center;
-  }
+/* The chevron stays on the row's own centre whatever the hint does. */
+.dialog-chevron {
+  flex: 0 0 auto;
+  margin-left: auto;
+  align-self: center;
+  color: var(--workspace-muted);
+  transition: transform 0.18s var(--workspace-ease);
 }
 
 .dialog-disclosure > summary::-webkit-details-marker {
@@ -293,7 +294,7 @@
 .dialog-disclosure-text {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 
@@ -307,7 +308,7 @@
 .dialog-disclosure-hint {
   color: var(--workspace-text-muted);
   font-size: 0.8rem;
-  line-height: 1.45;
+  line-height: 1.3;
 }
 
 .dialog-disclosure[open] .dialog-disclosure-hint {
@@ -336,8 +337,33 @@
   line-height: 1.7;
 }
 
-.dialog-disclosure-body .dialog-links {
-  margin-top: 6px;
+/* The one control on the sheet that takes something away. Its first press
+   only changes the words: nothing is deleted until the same button says
+   otherwise, and the question expires if it is left alone. */
+.dialog-clear-button {
+  margin-top: 12px;
+}
+
+.dialog-clear-button[data-armed="true"] {
+  border-color: var(--workspace-accent-line);
+  background: var(--workspace-accent-soft);
+  color: var(--workspace-accent);
+}
+
+/* It gets the row's ring rather than the browser's 1px blue: it is the only
+   button on the sheet, and the two rows above it already wear this one. */
+.dialog-clear-button:focus-visible {
+  outline: 2px solid var(--workspace-focus-ring);
+  outline-offset: 2px;
+}
+
+/* The answer to the press. While there is none, the line takes no room. */
+.dialog-disclosure-body .dialog-clear-status {
+  margin-top: 10px;
+}
+
+.dialog-disclosure-body .dialog-clear-status:empty {
+  display: none;
 }
 
 .dialog-footnote {
@@ -379,14 +405,6 @@
   letter-spacing: 0.01em;
 }
 
-.dialog-links {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--workspace-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.9;
-}
-
 .dialog-content .ghost-link {
   padding: 0;
   color: var(--workspace-accent);
@@ -401,15 +419,19 @@
   text-decoration-color: currentColor;
 }
 
-/* A word in mid-sentence is still a target. On a phone the two converter links
-   and the GitHub line take a finger's height of their own, with the padding
-   bought back out of the margin so the sheet reads exactly as it did. */
+/* A word in mid-sentence is still a target. On a phone the GitHub line takes a
+   finger's height of its own, with the padding bought back out of the margin so
+   the sheet reads exactly as it did, and the one button on the sheet grows to
+   the same height for the same reason. */
 @media (max-width: 600px) {
-  .dialog-content .ghost-link,
-  .dialog-links a {
+  .dialog-content .ghost-link {
     display: inline-block;
     padding-block: 9px;
     margin-block: -9px;
+  }
+
+  .dialog-clear-button {
+    min-height: 36px;
   }
 
   /* Where the footer no longer fits on one line it wraps as a whole rather than

@@ -39,8 +39,11 @@ import {
   getSelectedWorkspaceThemeMode,
 } from "./presentation";
 import { createWorkspaceRenderController } from "./rendering";
+import {
+  WORKSPACE_SOURCE_STORAGE_KEY,
+  wireClearDataButton,
+} from "./local-data";
 
-const WORKSPACE_SOURCE_STORAGE_KEY = "abcdeskWorkspaceAbcText";
 const RENDER_DEBOUNCE_MS = 350;
 
 const EXAMPLE_ABC = `X: 1
@@ -297,6 +300,22 @@ async function initializeWorkspace(): Promise<void> {
   const closeInfoButton = document.getElementById(
     "closeInfoButton",
   ) as HTMLButtonElement;
+
+  wireClearDataButton({
+    button: document.getElementById("clearDataButton") as HTMLButtonElement,
+    status: document.getElementById("clearDataStatus") as HTMLElement,
+    storage: window.localStorage,
+    restart: () => {
+      // The clear has to take the address with it: a tune carried in the hash
+      // would otherwise come straight back, and the button would look broken.
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${window.location.search}`,
+      );
+      window.location.reload();
+    },
+  });
 
   // The key table ships the word `Ctrl`; Apple's keyboards get their glyph.
   applyModifierLabels(document, isApplePlatform(navigator));
