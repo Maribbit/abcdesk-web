@@ -46,12 +46,15 @@ export class ABCDeskBrowserFullscreenToggleElement extends LitElement {
     const label = this.isBrowserFullscreen
       ? "Exit browser fullscreen"
       : "Enter browser fullscreen";
+    // Escape leaves the fullscreen as surely as the button does, so the tooltip
+    // names both; the accessible name stays the action's own, without the key.
+    const title = this.isBrowserFullscreen ? `${label} (Esc)` : label;
 
     return html`
       <button
         class="abcdesk-browser-fullscreen-button"
         type="button"
-        title=${label}
+        title=${title}
         aria-label=${label}
         aria-pressed=${String(this.isBrowserFullscreen)}
         @click=${this.toggleBrowserFullscreen}

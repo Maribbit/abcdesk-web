@@ -49,10 +49,14 @@
 播放条在乐谱上方，不在键盘下方：读者点音符、跟谱行时视线在纸上，播放指针不该藏在一块可能已经横向滚动的键盘后面。
 
 - 回到开头只有一种办法：把进度条拖到最左端。abcjs 自带的 `|◀` 重播键关掉（`displayRestart: false`），两个入口只会换来一次误点。
-- 图标语言跟面板标题栏同一套：24 单位画在 15px 上、2px 圆头描边、`currentColor` 着色；播放三角与「从光标播放」里的三角是同一笔，暂停是两根圆头条，加载是一段圆弧（旋转由 abcjs 的 `abcjs-loading` 类负责）。
+- 图标语言跟面板标题栏同一套：24 单位画在 15px 上、2px 圆头描边、`currentColor` 着色；播放三角与「从光标播放」里的三角是同一笔，暂停是两根圆头条，加载是一段圆弧——只描边、不填充，填满后就是一块哪个角度都一样的圆点，转与不转看不出区别。
+- 转的是圆弧，不是按钮：abcjs 把动画挂在按钮上，按钮一转，按压盒与后文那枚亮着的底片跟着转，看上去像控件歪了。动画停掉，改落到 `.abcjs-loading-svg` 上（`abcjs-spin` 的 keyframes 就在同一张样式表里），按钮留在手指放下的位置。
 - abcjs 用类名决定显示哪个图标（`abcjs-play-svg` / `abcjs-pause-svg` / `abcjs-loading-svg`，状态挂在按钮上），所以只换图形、保留类名。`load()` 是唯一会重写这段标记的地方，换图标就在 `load()` 之后立刻做一次。
 - 两个按钮用同一套居中规则（`display: flex` + `align-items: center`，图标 `display: block`）：abcjs 的按钮是块级容器，行内 svg 会贴着文字基线落下去，图标就会比隔壁的播放键高一截、看起来也更大。三角本身也按播放键的高度画（13.5 单位），两个键并排，谁也不该比谁重。
+- 两个键都不画自己的按压盒：可点的范围是盒子本身（28×34，手机上 44×44），看得见的只有图标那么大的一枚圆形底片，悬停或键盘聚焦时出现。贴着盒子画的圆角矩形像一块钉在画里的砖，而且在手机上点过之后底片会一直亮着，按完眼睛落到的就是它。底片用 `::before` 画，`z-index: -1` 配 `isolation: isolate` 落在图标之下、条身之上。
+- 聚焦环长在底片上而不是盒子上（`box-shadow` 加 `outline: none`）：浏览器默认的那圈就是刚去掉的圆角矩形，只是颜色更响；画成影子还能躲开 abcjs 在加载态写的 `outline: none`——正在加载的按钮仍然是键盘所在的按钮。
 - 播放键左边是「从光标播放」：图形是左三角右光标（两半并排，表达“从这个位置开始”而不是“加一个光标角标”）。颜色用共享目标的蓝，但浅色主题下压深一档（`--abcdesk-target-deep: #0a7fd4`）：同一支蓝在纸上是染色，在播放条的灰底上做控件只有 2.7:1，压深后 3.8:1，才够得上控件所需的 3:1；深色主题的条底本身就暗，保持 `#1c9bff` 不变。它是播放条上唯一一个关于目标而不是关于曲子的动作，没有目标时变成灰的禁用态。它排在主播放键之前：具体动作在前，普通播放在后。
+- 提示里写明它不必用鼠标：`Play from cursor (⌘↵)`，其他机器上是 `Play from cursor (Ctrl+Enter)`（`src/shared/shortcut-labels.ts`，与 About 键表同源）。`aria-label` 只留动作名：读屏会把那两个符号念成别的字。
 
 ### 2.6 音源缺失
 
@@ -78,7 +82,7 @@
   - `src/player/playback/cursor.ts`: 源码偏移到 timing event 的桥接（从光标起播）。
   - `src/player/components/tempo-control.ts`: 速度 UI 与 abcjs tempo 输入的桥接。
   - `src/player/playback/transport-icons.ts`: 播放条图标的替换（保留 abcjs 的类名与状态切换）。
-  - `src/player/playback/transport.ts`: 播放条的收尾——图标、从光标播放键、与共享目标同步的可用态。
+  - `src/player/playback/transport.ts`: 播放条的收尾——图标、从光标播放键（连提示里的组合键）、与共享目标同步的可用态。
   - `src/player/playback/play-from-cursor.ts`: 源码偏移到起播的入口（播放条的键与快捷键共用）。
   - `src/player/playback/audio-notice.ts`: 音源没到时的说明（在线/离线两种措辞，一行，不叠加）。
   - `src/player/playback/synth.ts`: 合成器初始化与播放失败的接管（清掉 abcjs 的加载标志）。
@@ -89,7 +93,7 @@
   - `src/player/playback/cursor.test.ts`: 光标命中音符、音符间隙归属与越界回落。
   - `src/player/playback/timing.test.ts`: 读取 timing 前先展平曲子（音高从第一屏起可得）、展平失败不阻断时序。
   - `src/player/playback/transport-icons.test.ts`: 播放条图标换成面板同一套描边图形，保留 abcjs 控制显隐的类名。
-  - `src/player/playback/transport.test.ts`: 从光标播放键的位置、禁用态、点击起点与不重复插入。
+  - `src/player/playback/transport.test.ts`: 从光标播放键的位置、提示里的组合键、禁用态、点击起点与不重复插入。
   - `src/player/playback/soundfont.test.ts`: 内置钢琴音源路径与音符重写策略。
   - `src/player/playback/audio-notice.test.ts`: 缺音源的措辞、只留一行、不改动播放条。
   - `src/player/components/tempo-control.test.ts`: 速度组件与 abcjs tempo 输入同步。

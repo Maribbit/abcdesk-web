@@ -1,3 +1,4 @@
+import { isApplePlatform, playShortcutLabel } from "../../shared/shortcut-labels";
 import type { RenderInstance } from "../types";
 import { playFromSourceOffset } from "./play-from-cursor";
 import { applyTransportIcons } from "./transport-icons";
@@ -60,7 +61,9 @@ function insertPlayFromCursorButton(instance: RenderInstance): void {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `abcjs-btn ${PLAY_FROM_CURSOR_CLASS}`;
-  button.title = "Play from cursor";
+  // The page answers this action from anywhere, so the tooltip says which keys
+  // do it: a button that can be reached without the mouse should say how.
+  button.title = `Play from cursor (${playShortcutLabel(isApplePlatform(navigator))})`;
   button.setAttribute("aria-label", "Play from cursor");
   button.disabled = true;
   button.innerHTML = PLAY_FROM_CURSOR_ICON;

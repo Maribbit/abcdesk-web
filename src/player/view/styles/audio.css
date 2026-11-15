@@ -19,14 +19,20 @@
   color: var(--abcdesk-audio-control);
 }
 
-.abcdesk-audio .abcjs-btn g,
-.abcdesk-audio .abcjs-loading-svg circle {
+/* abcjs paints its glyphs by filling a `g`; the ring is a stroke and has to
+   stay hollow. Filled, the one icon that is meant to turn is a disc that looks
+   the same at every angle — the same disc it was before, spinning. */
+.abcdesk-audio .abcjs-btn g {
   fill: var(--abcdesk-audio-control);
   stroke: var(--abcdesk-audio-control);
 }
 
+.abcdesk-audio .abcjs-loading-svg circle {
+  fill: none;
+  stroke: var(--abcdesk-audio-control);
+}
+
 .abcdesk-audio .abcjs-inline-audio .abcjs-btn:hover {
-  background: var(--abcdesk-accent-soft) !important;
   color: var(--abcdesk-accent);
 }
 
@@ -35,7 +41,6 @@
    black would ignore the theme. */
 .abcdesk-audio .abcjs-inline-audio .abcjs-btn {
   color: var(--abcdesk-audio-control);
-  border-radius: 6px;
   cursor: pointer;
 }
 
@@ -50,12 +55,58 @@
    hover and disabled states need no glyph of their own. Both buttons centre
    their glyph the same way — an inline svg rides the text baseline instead of
    the button's middle, which is what made play-from-cursor sit high and read
-   as the larger of the two. */
+   as the larger of the two.
+
+   Neither button paints its press. The box is 28×34 — 44×44 on a phone — and
+   that is the glass a finger gets, but the only ink is a circle the size of
+   the glyph's own box, shown under the pointer. A rounded rectangle the shape
+   of the press read as a tile bolted onto a row of drawings, and on a phone a
+   tap leaves it lit, so it was also what the eye landed on after every press.
+   `isolation` keeps the plate's negative index inside the button: above the
+   bar, below the glyph. */
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-start,
 .abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor {
+  position: relative;
+  isolation: isolate;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start::before,
+.abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.15s ease;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start:hover:not(:disabled)::before,
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start:focus-visible::before {
+  background: var(--abcdesk-accent-soft);
+}
+
+/* The focus ring is the plate's outline, not the press's: the browser's own is
+   the rounded rectangle we just stopped drawing, in a louder colour. Drawn as
+   a shadow so abcjs's `outline: none` on the loading state cannot take it
+   away — a button that is loading is still the button the keys are on. */
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start:focus-visible,
+.abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor:focus-visible {
+  outline: none;
+}
+
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start:focus-visible::before,
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcdesk-play-from-cursor:focus-visible::before {
+  box-shadow: 0 0 0 2px var(--abcdesk-audio-thumb);
 }
 
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-start svg,
@@ -100,6 +151,20 @@
   stroke: currentColor;
 }
 
+/* abcjs turns the button so its ring turns, which drags the press — and the
+   plate a tap leaves lit behind the finger — around with it. Only the ring
+   turns; the button stays where it was put. */
+.abcdesk-audio .abcjs-inline-audio .abcjs-midi-start.abcjs-loading {
+  animation: none;
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcjs-midi-start.abcjs-loading
+  .abcjs-loading-svg {
+  animation: abcjs-spin 1s linear infinite;
+}
+
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-start:disabled {
   cursor: default;
 }
@@ -122,8 +187,16 @@
 .abcdesk-audio
   .abcjs-inline-audio
   .abcjs-btn.abcdesk-play-from-cursor:hover:not(:disabled) {
-  background: var(--abcdesk-target-soft) !important;
   color: var(--abcdesk-target-deep);
+}
+
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcdesk-play-from-cursor:hover:not(:disabled)::before,
+.abcdesk-audio
+  .abcjs-inline-audio
+  .abcdesk-play-from-cursor:focus-visible::before {
+  background: var(--abcdesk-target-soft);
 }
 
 .abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-background {
@@ -187,12 +260,20 @@
 /* A finger on the transport: the two buttons take a 44px square, and the rail
    keeps its 10px look while its hit area reaches across the bar's height —
    a pseudo-element is the element's own box as far as a touch is concerned,
-   so the rail can be grabbable without being drawn thicker. */
+   so the rail can be grabbable without being drawn thicker. The plate grows a
+   little with the press, but stays a circle behind the glyph rather than a
+   square around it. */
 @media (max-width: 600px) {
   .abcdesk-audio .abcjs-inline-audio .abcjs-midi-start,
   .abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor {
     width: 44px;
     height: 44px;
+  }
+
+  .abcdesk-audio .abcjs-inline-audio .abcjs-midi-start::before,
+  .abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor::before {
+    width: 32px;
+    height: 32px;
   }
 
   .abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-background {

@@ -30,7 +30,7 @@ import {
   updateWorkspaceSourceStats,
 } from "./source-actions";
 import { createSourceDropTarget } from "./source-drop";
-import { applyModifierLabels, isApplePlatform } from "./shortcut-labels";
+import { applyModifierLabels, isApplePlatform } from "../shared/shortcut-labels";
 import {
   applyWorkspaceLayoutMode,
   applyWorkspaceTheme,

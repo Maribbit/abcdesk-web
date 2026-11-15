@@ -55,7 +55,8 @@ describe("transport", () => {
     const button = getButton(instance);
     const playButton = instance.audioElement.querySelector(".abcjs-midi-start");
     expect(button.nextElementSibling).toBe(playButton);
-    expect(button.title).toBe("Play from cursor");
+    // jsdom reports no platform, so the hint falls back to the words.
+    expect(button.title).toBe("Play from cursor (Ctrl+Enter)");
     expect(button.getAttribute("aria-label")).toBe("Play from cursor");
   });
 

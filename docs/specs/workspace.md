@@ -77,7 +77,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
   - `src/pwa/`: service worker 模板（不经打包）、构建期填充与生产环境注册。
   - `src/workspace/connection-notice.ts`: 标题栏的 `Offline` 小签（随机能状态变化，提示语只在有 worker 接管时承诺保存的副本）。
   - `src/workspace/document-title.ts`: 标签页标题（`T:` 在前、应用名在后）。
-  - `src/workspace/shortcut-labels.ts`: About 快捷键表里的修饰键按平台改名（Apple `⌘`，其他 `Ctrl`）。
+  - `src/shared/shortcut-labels.ts`: 快捷键的平台写法——About 键表里的修饰键（Apple `⌘`，其他 `Ctrl`）与播放条提示里的 `Mod-Enter` 都出自这一处。
   - `src/workspace/play-shortcut.ts`: 页面级的 `Mod-Enter`（对话框、输入法、输入框与 Shift/Alt 变体都不接管）。
   - `src/build/social-meta.ts`: 构建期把链接卡片补成绝对地址（`SITE_URL`）。
   - `src/shared/abc-file.ts` 与 `src/shared/filename.ts`: 文件导入导出与安全文件名。
@@ -88,7 +88,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
   - `src/workspace/quality-report.test.ts`: 诊断面板呈现、清空隐藏与状态文案映射。
   - `src/workspace/presentation.test.ts`: 主题解析、布局类名与地址栏颜色。
   - `src/workspace/document-title.test.ts`: 曲名优先、空白折行与无题时的回退。
-  - `src/workspace/shortcut-labels.test.ts`: 平台判定的优先级与回退、标签改写、没有键表时不抛错。
+  - `src/shared/shortcut-labels.test.ts`: 平台判定的优先级与回退、标签改写、没有键表时不抛错、提示里的组合键写法。
   - `src/workspace/play-shortcut.test.ts`: 页面级快捷键的认领与拒让（编辑器已处理、输入法、对话框、输入框与 shadow host）、装与拆。
   - `src/workspace/shell-meta.test.ts`: 首屏的描述与卡片标签、卡片文件存在、无脚本说明。
   - `src/build/social-meta.test.ts`: 绝对地址、子路径与尾斜杠归一化。

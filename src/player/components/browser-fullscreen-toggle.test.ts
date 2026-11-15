@@ -28,6 +28,12 @@ describe("browser fullscreen toggle", () => {
         .querySelector(".abcdesk-browser-fullscreen-button")
         ?.getAttribute("aria-label"),
     ).toBe("Enter browser fullscreen");
+    // Nothing has been entered, so there is no way out to spell yet.
+    expect(
+      element
+        .querySelector(".abcdesk-browser-fullscreen-button")
+        ?.getAttribute("title"),
+    ).toBe("Enter browser fullscreen");
   });
 
   it("enters browser fullscreen on click and sets data attribute", async () => {
@@ -51,6 +57,12 @@ describe("browser fullscreen toggle", () => {
         .querySelector(".abcdesk-browser-fullscreen-button")
         ?.getAttribute("aria-label"),
     ).toBe("Exit browser fullscreen");
+    // Escape leaves the fullscreen too, so the tooltip names it.
+    expect(
+      element
+        .querySelector(".abcdesk-browser-fullscreen-button")
+        ?.getAttribute("title"),
+    ).toBe("Exit browser fullscreen (Esc)");
   });
 
   it("exits browser fullscreen on second click and removes data attribute", async () => {

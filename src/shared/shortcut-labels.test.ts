@@ -3,6 +3,7 @@ import {
   applyModifierLabels,
   isApplePlatform,
   MODIFIER_LABELS,
+  playShortcutLabel,
 } from "./shortcut-labels";
 
 describe("isApplePlatform", () => {
@@ -65,5 +66,15 @@ describe("applyModifierLabels", () => {
     const document = window.document.implementation.createHTMLDocument("about");
     document.body.innerHTML = "<p>No keys here</p>";
     expect(() => applyModifierLabels(document, true)).not.toThrow();
+  });
+});
+
+describe("playShortcutLabel", () => {
+  it("pairs the modifier with the enter glyph on Apple", () => {
+    expect(playShortcutLabel(true)).toBe("⌘↵");
+  });
+
+  it("names the enter key on every other machine", () => {
+    expect(playShortcutLabel(false)).toBe("Ctrl+Enter");
   });
 });
