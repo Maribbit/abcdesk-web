@@ -82,6 +82,117 @@
   }
 }
 
+/* Phones: fingers instead of a cursor.
+
+   A thumb needs 44px, and 44px is more than these bars held at 360px wide, so
+   the bar keeps its states and its controls on one line by giving up the
+   wordmark — the tab and the card already name the app — and each pane keeps
+   its label by giving up the tools a phone has another way to reach. */
+@media (max-width: 600px) {
+  .workspace-header {
+    flex-wrap: nowrap;
+    gap: 6px;
+    padding: 6px 6px 6px 10px;
+  }
+
+  /* The mark is the signature; the name lives where it is read from, and a
+     bar with room to spare is a bar that never wraps when a chip appears. */
+  .workspace-brand h1 {
+    display: none;
+  }
+
+  .segmented-control label,
+  .icon-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* Three 44px squares do not belong inside one 48px pill: the enclosure would
+     be as tall as the bar. The squares become the row, and the chosen one is
+     drawn as a small raised chip inside its square — the touch is 44px, the
+     thing that looks pressed is the size it has always been. */
+  .segmented-control {
+    padding: 0;
+    gap: 0;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .segmented-control label:has(input[type="radio"]:checked) {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .segmented-control label:has(input[type="radio"]:checked)::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 999px;
+    background: var(--workspace-chip);
+    box-shadow: 0 1px 2px rgba(34, 46, 54, 0.12);
+  }
+
+  /* A positioned pseudo-element paints after in-flow content: without this the
+     chip would sit on top of its own glyph. Both are positioned, so the tree
+     order decides, and the glyph comes second. */
+  .segmented-control label > svg {
+    position: relative;
+  }
+
+  .header-divider {
+    margin: 0 2px;
+  }
+
+  /* The bar is one row on a phone, so the rows inside it are one row too: a
+     state chip borrows room from the gaps, never from a second line that
+     would drop the About button under the masthead. */
+  .workspace-actions,
+  .workspace-status {
+    flex-wrap: nowrap;
+  }
+
+  /* "New version ready" is a sentence the bar cannot hold at 360px. The prompt
+     keeps its button and the sentence stays in the live region for anyone
+     listening, but as a pill only the action is drawn. */
+  .workspace-update > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Two chips, one row: the prompt asks something of the reader, the Offline
+     sign reports something. When both are true the action keeps the seat —
+     the sign returns by itself if the reload lands without a network. */
+  .workspace-status:has(#updateNotice:not([hidden])) #offlineNotice {
+    display: none;
+  }
+
+  .pane-header {
+    min-height: 56px;
+    gap: 4px;
+    padding: 0 4px 0 10px;
+  }
+
+  .pane-tools {
+    gap: 0;
+  }
+
+  /* The share link already carries the source out, and Clear has no undo on a
+     phone: a mis-tap would cost the draft with no key to take it back. */
+  #copySourceButton,
+  #clearButton {
+    display: none;
+  }
+
+  .pane-footer {
+    min-height: 44px;
+    padding: 0 4px 0 12px;
+  }
+}
+
 .workspace-shell.layout-stacked {
   grid-template-columns: 1fr;
   grid-template-rows:

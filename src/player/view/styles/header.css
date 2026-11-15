@@ -199,3 +199,69 @@ abcdesk-keyboard-toggle {
   border-radius: 6px;
   font: inherit;
 }
+
+/* A phone header is a thumb's row: the same 44px square as the workspace's
+   own bars, and one expand button instead of two — system fullscreen already
+   fills the screen, and the browser's is the one a phone has least to gain
+   from. The bar's height belongs to layout.css, where the workspace layout
+   sets it and the sheet gives up the room. */
+@media (max-width: 600px) {
+  :host([data-abcdesk-layout="workspace"]) .abcdesk-header {
+    gap: 8px;
+    padding: 0 4px 0 10px;
+  }
+
+  .abcdesk-header-actions {
+    gap: 0;
+  }
+
+  .abcdesk-tempo-button,
+  .abcdesk-keyboard-toggle-button,
+  .abcdesk-export-button,
+  .abcdesk-midi-export-button,
+  .abcdesk-workspace-button,
+  .abcdesk-code-toggle-button,
+  .abcdesk-fullscreen-button,
+  .abcdesk-browser-fullscreen-button {
+    width: 44px;
+    height: 44px;
+  }
+
+  /* A pressed toggle is a 28px chip on the desk. Drawn at 44px it would be a
+     slab across the bar, so the press is painted inside the square instead:
+     the thumb gets its 44, the eye sees the chip it knows. */
+  .abcdesk-keyboard-toggle-button,
+  .abcdesk-code-toggle-button,
+  .abcdesk-fullscreen-button {
+    position: relative;
+  }
+
+  .abcdesk-keyboard-toggle-button[aria-pressed="true"],
+  .abcdesk-code-toggle-button[aria-pressed="true"],
+  .abcdesk-fullscreen-button[aria-pressed="true"] {
+    background: transparent;
+    color: var(--abcdesk-accent);
+  }
+
+  .abcdesk-keyboard-toggle-button[aria-pressed="true"]::before,
+  .abcdesk-code-toggle-button[aria-pressed="true"]::before,
+  .abcdesk-fullscreen-button[aria-pressed="true"]::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: 8px;
+    background: var(--abcdesk-accent-soft);
+  }
+
+  /* Both the chip and the glyph are positioned, so the tree order decides:
+     the glyph comes second and rides above its own press. */
+  .abcdesk-keyboard-toggle-button svg,
+  .abcdesk-code-toggle-button svg,
+  .abcdesk-fullscreen-button svg {
+    position: relative;
+  }
+
+  abcdesk-browser-fullscreen-toggle {
+    display: none;
+  }
+}

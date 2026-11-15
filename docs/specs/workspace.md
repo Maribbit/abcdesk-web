@@ -61,12 +61,14 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 - 空源码不进入渲染流程，直接回到就绪态。
 - 渲染失败必须显式反馈，不能只留空白预览。
 - 移动端不保留横向双栏，避免拖拽与滚动冲突。
+- **手机（`@media (max-width: 600px)`）只保证第一分钟**：`360` / `390` 两个视口下页面不得横向溢出，顶栏与面板头部都是单行。顶栏收起 wordmark（图标本身就是签名），触区 44px；`Offline` 签与更新提示同时为真时只留后者——提示要人动手，`Offline` 只是报告；更新提示在手机上只画 `Reload` 按钮，句子留在 `role="status"` 里给读屏。面板头部 56px 高（与播放器 shadow 头部同高，由 `layout.css` 定），源码头收起复制与清空（分享链接已携带源码，清空在手机上无撤销），预览头收起浏览器全屏（系统全屏足够）；其余工具保留，编辑仍然是次要场景。键盘横向滚动用 `overscroll-behavior-x: contain` 约束在本组件内，拖到尽头不带动整页（不用 `touch-action: pan-x`：那会把从琴键上开始的竖向拖拽也一并禁掉）。
 
 ## 代码与测试映射
 
 - **源码锚点**
   - `src/workspace/`: 工作台入口、分栏、源码动作、展示状态、诊断面板与渲染控制。
   - `src/workspace/styles/print.css`: 打印时的页面层（纸取代分栏，顶栏与源码收起）。
+  - `src/workspace/styles/responsive.css`: 窄屏堆叠与手机单行顶栏、44px 触区、面板头部收起的工具。
   - `src/workspace/editor/`: 编辑器门面 `AbcEditor`、CodeMirror 6 实现（装饰层、换行与跳转）与纯净的语法扫描器。
   - `src/shared/workspace-url.ts`: hash 编解码，压缩载荷与老链接兼容。
   - `src/pwa/`: service worker 模板（不经打包）、构建期填充与生产环境注册。

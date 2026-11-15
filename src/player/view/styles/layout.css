@@ -104,6 +104,18 @@
   display: none;
 }
 
+/* The phone header keeps the 44px buttons and gives them air above and below,
+   the way the desk's 28px buttons sit in 40px. The sheet gives up the room. */
+@media (max-width: 600px) {
+  :host([data-abcdesk-layout="workspace"]) .abcdesk-header {
+    min-height: 56px;
+  }
+
+  :host([data-abcdesk-layout="workspace"]) .abcdesk-score {
+    margin-top: 8px;
+  }
+}
+
 /* Hiding only the inner button left a zero-width flex item, whose 4px gap
    pushed the tool row 4px off the pane header's inset. */
 :host([data-abcdesk-layout="workspace"]) abcdesk-code-toggle {

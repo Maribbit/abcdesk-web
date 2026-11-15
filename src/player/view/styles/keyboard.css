@@ -11,6 +11,12 @@
   margin-top: 10px;
   padding: 6px 8px;
   overflow-x: auto;
+  /* A sideways drag belongs to the keys. Without this the gesture reaches the
+     page at the end of the scroll, and the whole workspace starts to slide
+     when the reader only wanted the far end of the piano. Only the horizontal
+     chain is cut: `touch-action: pan-x` would also stop a vertical drag that
+     begins on a key from scrolling the sheet behind it. */
+  overscroll-behavior-x: contain;
   /* A native 15px bar is louder than the keys themselves. */
   background: var(--abcdesk-keyboard-bg);
   border-radius: 10px;

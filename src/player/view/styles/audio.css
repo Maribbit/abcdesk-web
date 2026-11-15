@@ -184,6 +184,28 @@
   border: 1px solid var(--abcdesk-audio-input-border);
 }
 
+/* A finger on the transport: the two buttons take a 44px square, and the rail
+   keeps its 10px look while its hit area reaches across the bar's height —
+   a pseudo-element is the element's own box as far as a touch is concerned,
+   so the rail can be grabbable without being drawn thicker. */
+@media (max-width: 600px) {
+  .abcdesk-audio .abcjs-inline-audio .abcjs-midi-start,
+  .abcdesk-audio .abcjs-inline-audio .abcdesk-play-from-cursor {
+    width: 44px;
+    height: 44px;
+  }
+
+  .abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-background {
+    position: relative;
+  }
+
+  .abcdesk-audio .abcjs-inline-audio .abcjs-midi-progress-background::after {
+    content: "";
+    position: absolute;
+    inset: -17px 0;
+  }
+}
+
 .abcdesk-no-audio {
   display: block;
   font-size: 12px;
