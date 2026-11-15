@@ -43,6 +43,8 @@ import {
 } from "./playback/timing";
 import { playFromSourceOffset } from "./playback/play-from-cursor";
 export { playFromSourceOffset };
+import { toggleTransportPlayback } from "./playback/transport";
+export { toggleTransportPlayback };
 import { copyQualityFeedback, updateQualityPanel } from "./quality";
 export { getSourceHighlightRangesForTest } from "./playback/source-highlight";
 export type {

@@ -4,6 +4,7 @@ import {
   pointSourceOffset,
   renderAbc,
   removeRender,
+  toggleTransportPlayback,
   type RenderInstance,
   type SourceHighlightRange,
 } from "../player/renderer";
@@ -38,6 +39,8 @@ export interface WorkspaceRenderController {
   pointSourcePosition: (offset: number) => boolean;
   renderCurrentInput: () => void;
   scheduleRender: () => void;
+  /** Press the transport's own play/pause; false when there is no sheet. */
+  togglePlayback: () => boolean;
 }
 
 export function createWorkspaceRenderController({
@@ -133,6 +136,15 @@ export function createWorkspaceRenderController({
     }
   };
 
+  /**
+   * An edit is still waiting for the debounce: playing the score the user typed
+   * is the point, so land it now rather than acting on a text that no longer
+   * exists — or on the sheet of the previous one.
+   */
+  const flushRender = (): void => {
+    if (renderTimer !== undefined) renderCurrentInput();
+  };
+
   const scheduleRender = () => {
     if (renderTimer !== undefined) window.clearTimeout(renderTimer);
     renderStatus.textContent = "Editing...";
@@ -142,10 +154,7 @@ export function createWorkspaceRenderController({
   return {
     getCurrentInstance: () => currentInstance,
     playFromSourcePosition: async (offset) => {
-      // An edit is still waiting for the debounce: playing the score the user
-      // typed is the point, so land it now rather than mapping the caret onto
-      // a text that no longer exists.
-      if (renderTimer !== undefined) renderCurrentInput();
+      flushRender();
       if (!currentInstance) return false;
       return playFromSourceOffset(
         currentInstance,
@@ -155,5 +164,10 @@ export function createWorkspaceRenderController({
     pointSourcePosition,
     renderCurrentInput,
     scheduleRender,
+    togglePlayback: () => {
+      flushRender();
+      if (!currentInstance) return false;
+      return toggleTransportPlayback(currentInstance);
+    },
   };
 }

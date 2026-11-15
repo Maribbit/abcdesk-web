@@ -57,6 +57,7 @@
 - 聚焦环长在底片上而不是盒子上（`box-shadow` 加 `outline: none`）：浏览器默认的那圈就是刚去掉的圆角矩形，只是颜色更响；画成影子还能躲开 abcjs 在加载态写的 `outline: none`——正在加载的按钮仍然是键盘所在的按钮。
 - 播放键左边是「从光标播放」：图形是左三角右光标（两半并排，表达“从这个位置开始”而不是“加一个光标角标”）。颜色用共享目标的蓝，但浅色主题下压深一档（`--abcdesk-target-deep: #0a7fd4`）：同一支蓝在纸上是染色，在播放条的灰底上做控件只有 2.7:1，压深后 3.8:1，才够得上控件所需的 3:1；深色主题的条底本身就暗，保持 `#1c9bff` 不变。它是播放条上唯一一个关于目标而不是关于曲子的动作，没有目标时变成灰的禁用态。它排在主播放键之前：具体动作在前，普通播放在后。
 - 提示里写明它不必用鼠标：`Play from cursor (⌘↵)`，其他机器上是 `Play from cursor (Ctrl+Enter)`（`src/shared/shortcut-labels.ts`，与 About 键表同源）。`aria-label` 只留动作名：读屏会把那两个符号念成别的字。
+- 主播放键也报上自己的键：`Play or pause (Space)`，`aria-label` 是干净的 `Play or pause`。空格没有平台差异，所以它不经过 `shortcut-labels.ts`。页面按空格时只是替读者点一下这个按钮（`toggleTransportPlayback`）：加载转圈、放到末尾后从头再来、暂停时收起高亮，都归 abcjs 的开关管，另写一套只会慢慢走偏；没有按钮（空谱、不能播放）时就当没这个键。
 
 ### 2.6 音源缺失
 
@@ -82,7 +83,7 @@
   - `src/player/playback/cursor.ts`: 源码偏移到 timing event 的桥接（从光标起播）。
   - `src/player/components/tempo-control.ts`: 速度 UI 与 abcjs tempo 输入的桥接。
   - `src/player/playback/transport-icons.ts`: 播放条图标的替换（保留 abcjs 的类名与状态切换）。
-  - `src/player/playback/transport.ts`: 播放条的收尾——图标、从光标播放键（连提示里的组合键）、与共享目标同步的可用态。
+  - `src/player/playback/transport.ts`: 播放条的收尾——图标、从光标播放键（连提示里的组合键）、主播放键的提示与它的空格入口（`toggleTransportPlayback`），以及跟共享目标同步的可用态。
   - `src/player/playback/play-from-cursor.ts`: 源码偏移到起播的入口（播放条的键与快捷键共用）。
   - `src/player/playback/audio-notice.ts`: 音源没到时的说明（在线/离线两种措辞，一行，不叠加）。
   - `src/player/playback/synth.ts`: 合成器初始化与播放失败的接管（清掉 abcjs 的加载标志）。
@@ -93,7 +94,7 @@
   - `src/player/playback/cursor.test.ts`: 光标命中音符、音符间隙归属与越界回落。
   - `src/player/playback/timing.test.ts`: 读取 timing 前先展平曲子（音高从第一屏起可得）、展平失败不阻断时序。
   - `src/player/playback/transport-icons.test.ts`: 播放条图标换成面板同一套描边图形，保留 abcjs 控制显隐的类名。
-  - `src/player/playback/transport.test.ts`: 从光标播放键的位置、提示里的组合键、禁用态、点击起点与不重复插入。
+  - `src/player/playback/transport.test.ts`: 从光标播放键的位置、提示里的组合键、禁用态、点击起点与不重复插入；主播放键的提示与空格入口。
   - `src/player/playback/soundfont.test.ts`: 内置钢琴音源路径与音符重写策略。
   - `src/player/playback/audio-notice.test.ts`: 缺音源的措辞、只留一行、不改动播放条。
   - `src/player/components/tempo-control.test.ts`: 速度组件与 abcjs tempo 输入同步。

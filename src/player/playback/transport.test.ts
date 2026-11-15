@@ -9,7 +9,7 @@ vi.mock("./play-from-cursor", () => ({
   playFromSourceOffset: mocks.playFromSourceOffset,
 }));
 
-import { setupTransport, syncPlayFromCursor } from "./transport";
+import { setupTransport, syncPlayFromCursor, toggleTransportPlayback } from "./transport";
 
 function buildAudio(): HTMLElement {
   const audio = document.createElement("div");
@@ -107,5 +107,30 @@ describe("transport", () => {
     expect(
       instance.audioElement.querySelectorAll(".abcdesk-play-from-cursor"),
     ).toHaveLength(1);
+  });
+
+  it("names the space bar on the play button, and keeps its name plain", () => {
+    const instance = createInstance(null);
+
+    setupTransport(instance);
+
+    const playButton = instance.audioElement.querySelector(".abcjs-midi-start");
+    expect(playButton?.getAttribute("title")).toBe("Play or pause (Space)");
+    expect(playButton?.getAttribute("aria-label")).toBe("Play or pause");
+  });
+
+  it("lets the page press the transport's own play button", () => {
+    const instance = createInstance(null);
+    setupTransport(instance);
+    const playButton = instance.audioElement.querySelector(".abcjs-midi-start")!;
+    const click = vi.fn();
+    playButton.addEventListener("click", click);
+
+    expect(toggleTransportPlayback(instance)).toBe(true);
+    expect(click).toHaveBeenCalledTimes(1);
+
+    // No button is the same answer as no tune: nothing to press, nothing to say.
+    playButton.remove();
+    expect(toggleTransportPlayback(instance)).toBe(false);
   });
 });

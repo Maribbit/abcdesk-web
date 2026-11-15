@@ -11,7 +11,7 @@ import {
 import { decodeWorkspaceAbcHash } from "../shared/workspace-url";
 import { formatDocumentTitle } from "./document-title";
 import { createCodeMirrorEditor } from "./editor/codemirror-editor";
-import { installPlayShortcut } from "./play-shortcut";
+import { installTransportShortcuts } from "./play-shortcut";
 import { checkWorkspaceAbcSource, hideQualityPanel } from "./quality-report";
 import {
   loadWorkspaceSettings,
@@ -283,9 +283,12 @@ async function initializeWorkspace(): Promise<void> {
       window.requestAnimationFrame(() => splitLayout.clampRestoredSize());
     }
   });
-  // The shortcut is the page's, not the editor's: the caret is ours either way.
-  installPlayShortcut(document, () => {
-    void playFromCursor();
+  // The shortcuts are the page's, not the editor's: the caret is ours either way.
+  installTransportShortcuts(document, {
+    playFromCaret: () => {
+      void playFromCursor();
+    },
+    togglePlayback,
   });
   workspaceResizer.addEventListener("pointerdown", splitLayout.startResize);
   workspaceResizer.addEventListener("keydown", splitLayout.handleKeydown);
@@ -404,6 +407,16 @@ async function playFromCursor(): Promise<void> {
   } finally {
     isStartingPlayback = false;
   }
+}
+
+/**
+ * The space bar, spent on the transport's own button: no caret is read, so a
+ * tune stopped mid-phrase carries on where it stopped rather than starting
+ * again from the note the reader last touched.
+ */
+function togglePlayback(): void {
+  if (renderController.togglePlayback()) return;
+  renderStatus.textContent = "Nothing to play here";
 }
 
 function checkCurrentAbcSource(): void {

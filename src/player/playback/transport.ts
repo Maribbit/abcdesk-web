@@ -28,8 +28,42 @@ const PLAY_FROM_CURSOR_ICON = `
  */
 export function setupTransport(instance: RenderInstance): void {
   applyTransportIcons(instance.audioElement);
+  labelPlayButton(instance);
   insertPlayFromCursorButton(instance);
   syncPlayFromCursor(instance);
+}
+
+/**
+ * The page answers the space bar for the same toggle, so the button says which
+ * key it is — the habit its neighbour on the left already has. The name stays
+ * the plain action, because a screen reader has no use for a key it cannot
+ * press.
+ */
+function labelPlayButton(instance: RenderInstance): void {
+  const button = getPlayButton(instance);
+  if (!button) return;
+  button.title = "Play or pause (Space)";
+  button.setAttribute("aria-label", "Play or pause");
+}
+
+function getPlayButton(instance: RenderInstance): HTMLButtonElement | null {
+  return instance.audioElement.querySelector<HTMLButtonElement>(
+    PLAY_BUTTON_SELECTOR,
+  );
+}
+
+/**
+ * The page's space bar presses the button rather than re-implementing it: the
+ * toggle abcjs owns is the one that knows about the spinner while the soundfont
+ * loads, about starting over at the end of the tune, and about the pause that
+ * takes the highlight down with it. A second copy of that state machine would
+ * only drift. False when there is no transport to press — no tune, or no audio.
+ */
+export function toggleTransportPlayback(instance: RenderInstance): boolean {
+  const button = getPlayButton(instance);
+  if (!button) return false;
+  button.click();
+  return true;
 }
 
 /**
@@ -50,10 +84,7 @@ function getPlayFromCursorButton(
 }
 
 function insertPlayFromCursorButton(instance: RenderInstance): void {
-  const playButton =
-    instance.audioElement.querySelector<HTMLButtonElement>(
-      PLAY_BUTTON_SELECTOR,
-    );
+  const playButton = getPlayButton(instance);
   if (!playButton) return;
 
   getPlayFromCursorButton(instance)?.remove();

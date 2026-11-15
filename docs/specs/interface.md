@@ -19,7 +19,7 @@
 
 - 单向数据流：UI 是状态的倒影，按钮只负责派发事件，真实状态来自播放引擎。
 - 组件群：头部（标题与元数据）、音频栏（时间与进度）、键盘（黑白键映射）、诊断面板（告警浮层）。
-- **提示**：图标的 `title` 是动作的名字；动作另有键盘入口时，把组合键接在名字后面（`Play from cursor (⌘↵)`、`Exit browser fullscreen (Esc)`）。`aria-label` 仍是干净的动作名——读屏念不出 `⌘` 与 `↵`。组合键的写法按平台取自 `src/shared/shortcut-labels.ts`，与 About 的键表同源。
+- **提示**：图标的 `title` 是动作的名字；动作另有键盘入口时，把组合键接在名字后面（`Play from cursor (⌘↵)`、`Play or pause (Space)`、`Exit browser fullscreen (Esc)`）。`aria-label` 仍 是干净的动作名——读屏念不出 `⌘` 与 `↵`。组合键的写法按平台取自 `src/shared/shortcut-labels.ts`，与 About 的键表同源；没有平台差异的键（空格、`Esc`）直接写进提示。
 
 ## 3. 纪律
 

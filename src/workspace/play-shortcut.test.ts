@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { installPlayShortcut, isPlayShortcut } from "./play-shortcut";
+import {
+  installTransportShortcuts,
+  isPlayShortcut,
+  isToggleShortcut,
+} from "./play-shortcut";
 
 function buildDocument(markup = "<p>Sheet</p>"): Document {
   const document = window.document.implementation.createHTMLDocument("desk");
@@ -20,6 +24,10 @@ function press(
   });
   (target ?? document.body).dispatchEvent(event);
   return event;
+}
+
+function stubShortcuts() {
+  return { playFromCaret: vi.fn(), togglePlayback: vi.fn() };
 }
 
 describe("isPlayShortcut", () => {
@@ -75,36 +83,83 @@ describe("isPlayShortcut", () => {
     const host = document.getElementById("transport")!;
     const root = host.attachShadow({ mode: "open" });
     root.innerHTML = '<input class="tempo" />';
-    const play = vi.fn();
-    installPlayShortcut(document, play);
+    const shortcuts = stubShortcuts();
+    installTransportShortcuts(document, shortcuts);
 
     // The document listener sees the host as the target; the path still starts
     // at the field, so the key belongs to the tempo box and not to the page.
     press(document, { metaKey: true }, root.querySelector("input")!);
-    expect(play).not.toHaveBeenCalled();
+    press(document, { key: " " }, root.querySelector("input")!);
+    expect(shortcuts.playFromCaret).not.toHaveBeenCalled();
+    expect(shortcuts.togglePlayback).not.toHaveBeenCalled();
   });
 });
 
-describe("installPlayShortcut", () => {
-  it("plays once per press and stops when disposed", () => {
+describe("isToggleShortcut", () => {
+  it("claims the bare space bar", () => {
     const document = buildDocument();
-    const play = vi.fn();
-    const dispose = installPlayShortcut(document, play);
+    expect(isToggleShortcut(press(document, { key: " " }), document)).toBe(true);
+  });
 
-    const claimed = press(document, { metaKey: true });
-    expect(play).toHaveBeenCalledTimes(1);
-    expect(claimed.defaultPrevented).toBe(true);
+  it("leaves every modified space to the browser and the system", () => {
+    const document = buildDocument();
+    for (const modifier of ["metaKey", "ctrlKey", "altKey", "shiftKey"] as const) {
+      expect(isToggleShortcut(press(document, { key: " ", [modifier]: true }), document)).toBe(
+        false,
+      );
+    }
+  });
+
+  it("keeps the space that types a note, and the space that presses a button", () => {
+    const document = buildDocument(
+      '<textarea></textarea><div contenteditable="true"></div><button>Play</button>',
+    );
+    for (const selector of ["textarea", '[contenteditable="true"]', "button"]) {
+      const target = document.querySelector(selector)!;
+      expect(isToggleShortcut(press(document, { key: " " }, target), document)).toBe(false);
+    }
+  });
+
+  it("stays out of a key something else has claimed, and out of an open sheet", () => {
+    const document = buildDocument();
+    const claimed = press(document, { key: " " });
+    claimed.preventDefault();
+    expect(isToggleShortcut(claimed, document)).toBe(false);
+    expect(isToggleShortcut(press(document, { key: " ", isComposing: true }), document)).toBe(
+      false,
+    );
+
+    const covered = buildDocument("<dialog open><p>About</p></dialog>");
+    expect(isToggleShortcut(press(covered, { key: " " }), covered)).toBe(false);
+  });
+});
+
+describe("installTransportShortcuts", () => {
+  it("sends each verb to its own action, once per press, until disposed", () => {
+    const document = buildDocument();
+    const shortcuts = stubShortcuts();
+    const dispose = installTransportShortcuts(document, shortcuts);
+
+    const fromCaret = press(document, { metaKey: true });
+    expect(fromCaret.defaultPrevented).toBe(true);
+    const toggle = press(document, { key: " " });
+    expect(toggle.defaultPrevented).toBe(true);
+    expect(shortcuts.playFromCaret).toHaveBeenCalledTimes(1);
+    expect(shortcuts.togglePlayback).toHaveBeenCalledTimes(1);
 
     dispose();
     press(document, { metaKey: true });
-    expect(play).toHaveBeenCalledTimes(1);
+    press(document, { key: " " });
+    expect(shortcuts.playFromCaret).toHaveBeenCalledTimes(1);
+    expect(shortcuts.togglePlayback).toHaveBeenCalledTimes(1);
   });
 
   it("says nothing on a bare Enter", () => {
     const document = buildDocument();
-    const play = vi.fn();
-    installPlayShortcut(document, play);
+    const shortcuts = stubShortcuts();
+    installTransportShortcuts(document, shortcuts);
     press(document);
-    expect(play).not.toHaveBeenCalled();
+    expect(shortcuts.playFromCaret).not.toHaveBeenCalled();
+    expect(shortcuts.togglePlayback).not.toHaveBeenCalled();
   });
 });
