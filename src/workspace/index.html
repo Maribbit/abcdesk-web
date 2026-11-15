@@ -201,16 +201,30 @@
              sheet. Her head and her hair ornament are the blog's own drawing,
              path for path (`Head` and `Hair_Accessory` in Character_Standing.svg);
              only what the crop would hide is left out — the neck, the mouth and
-             the shadow under the chin — and the viewBox ends just under the nose,
-             so she comes up as far as her nose and no farther. She blinks the
-             blog's blink (`portrait.ts`), and the note on her head is the
-             masthead's mark, worn. -->
-        <div class="dialog-portrait" aria-hidden="true">
-          <svg class="dialog-portrait-art" viewBox="80 -76 294 268" fill="none" aria-hidden="true" focusable="false">
+             the shadow under the chin — and the window she stands in ends just
+             under the nose, so she comes up as far as her nose and no farther.
+             The viewBox runs a little past that line: a head that lifts on hover
+             has to bring more of her chin up with it than a still one shows.
+             She blinks the blog's blink (`portrait.ts`), and the note on her head
+             is the masthead's mark, worn. She is also the door back to where
+             she comes from: the head is an anchor to the author's homepage.
+             The drawing says nothing, so the anchor carries the name; it opens
+             in a new tab, because the draft behind this sheet is not worth
+             losing on the way. -->
+        <a class="dialog-portrait" href="https://maribbit.com/" target="_blank" rel="noopener noreferrer" aria-label="Maribbit's homepage" title="maribbit.com">
+          <svg class="dialog-portrait-art" viewBox="80 -76 294 292" fill="none" aria-hidden="true" focusable="false">
             <path d="M330.5 241.978L337.5 247.978L330.5 255.978H317L313.5 259.478V265.978L226 278.978L142 265.978V259.478L137.5 255.978H126L116 247.978L123.5 241.978L120.5 233.978L96 206.978V184.978L112 158.978L107.5 144.978V136.978L126 94.9777L132.5 60.9777L170.5 27.4777L226 20.4777L283 27.4777L322.5 63.9777L326 94.9777L346 136.978V144.978L343 158.978L358.5 184.978V206.978L333.5 233.978L330.5 241.978Z" fill="#807F7D" />
             <path d="M343.942 154.478C350.687 140.131 345.029 131.553 331.5 106.978C296.77 42.2449 273.354 24.6542 227 23.4777C177.526 24.0381 155.421 45.7095 122 106.978C110.253 125.385 103.73 132.414 110.503 154.478C90.7831 189.787 85.3917 203.684 108.003 223.978C114.543 228.777 118.582 235.086 122 240.478L227 52.9777L331.5 240.478C332.206 233.638 337.154 227.831 343.942 223.978C369.266 204.886 361.761 188.474 343.942 154.478Z" fill="#BEB5B8" />
             <path d="M122.5 134.478V105.478C127.124 89.7813 128.632 78.6092 131 57.9777L163.5 33.4777L226.5 27.4777L291 33.4777L324 57.9777C325.499 79.4445 326.632 90.787 331 105.478V134.478L314 105.478C306.004 73.4024 300.784 58.3762 291 33.4777L226.5 27.4777L163.5 33.4777C152.602 59.8526 147.533 75.6949 140 105.478L122.5 134.478Z" fill="#F7F9F3" />
             <path d="M306 128.978C294.113 195.237 275.494 215.36 227 229.478C176.429 213.833 158.417 192.806 148.5 128.978C154.837 72.2973 162.539 43.7268 227 31.9777C279.781 44.2941 298.947 63.3446 306 128.978Z" fill="#F9F9F1" />
+            <!-- The mouth stays, though the line hides it while she is still:
+                 it is what comes up with her. The crop falls between the nose
+                 and this path, and the rise (--portrait-rise, in her units) is
+                 longer than the 11 units from the line down to its lowest
+                 point, so it clears the header's edge when she lifts and goes
+                 back under when she settles. Drawn where the blog draws it: on
+                 the face, below the nose, before the fringe. -->
+            <path d="M226.5 199.478L217 202.978H236.5L226.5 199.478Z" fill="#9A9A92" />
             <path d="M223.5 181.978L226.5 177.978L229.5 181.978H223.5Z" fill="#8B877E" />
             <path d="M319.5 122.978C295.076 58.1081 274.239 36.7094 225.5 28.4777C177.474 35.4021 163.003 54.4495 138.5 118.478C115.243 206.959 123.404 197.8 150 235.478L138.5 256.978L144.5 274.478C183.674 248.334 191.12 247.219 162.5 196.978C169.951 197.377 174.177 197.085 182 193.478C177.509 193.614 173.318 187.346 166 171.978V150.978C175.313 142.975 188.036 133.53 196 118.478L202 145.478L211 140.478V150.978C224.206 149.492 230.161 146.737 237.5 137.478L234.5 147.978C250.857 137.463 256.156 129.811 258.5 112.978C264.995 126.142 269.96 133.651 288.5 147.978V171.978C285.743 180.733 281.83 185.398 272.5 193.478C280.62 197.679 284.831 198.955 291 196.978C266.566 240.997 267.331 243.783 306.5 274.478L316 256.978L303.5 235.478C340.932 191.623 335.601 201.111 319.5 122.978Z" fill="#ADA5A2" />
             <path d="M325.5 207.478L276 228.978L291 196.978C300.301 188.865 303.597 183.471 307.5 172.978C292.578 188.341 285.01 192.91 273 193.478C284.861 182.801 290.155 174.847 295 153.978V120.478L286 105.978V141.478C272.664 124.63 266.053 112.727 255.5 87.9777C253.517 120.678 250.453 134.389 238.5 143.478V121.978C234.018 138.617 228.485 143.515 214 145.478V121.978C210.887 133.656 208.103 138.553 202 145.478V90.9777C193.164 116.571 185.645 127.691 168 143.478V99.9777C159.472 111.648 157.08 123.528 157 153.978C163.631 172.997 168.018 182.716 180.5 193.478C166.337 193.364 158.599 187.966 145 172.978C149.125 183.705 152.664 189.058 162 196.978L178.5 228.978L127.5 207.478C115.061 192.927 124.34 162.883 133.5 114.978C153.631 67.1228 171.652 31.0134 226.5 27.9777C277.234 32.1114 294.293 58.6544 320.5 114.978C333.618 170.383 337.351 194.98 325.5 207.478Z" fill="#F8F9F3" />
@@ -249,13 +263,16 @@
               <polygon points="14.3,2.6 20.6,6.3 20.6,10.9 18.4,9.7 14.3,7.5" />
             </g>
           </svg>
-        </div>
+        </a>
         <div class="dialog-heading-text">
           <span class="pane-label">About</span>
           <h2 id="infoDialogTitle">ABC Desk Web</h2>
         </div>
       </div>
-      <button class="icon-button" id="closeInfoButton" type="button" aria-label="Close" title="Close">
+      <!-- The sheet opens with the close button focused. She comes first in the
+           markup, but a link that leaves the page is not where a reader should be
+           dropped when the sheet arrives. -->
+      <button class="icon-button" id="closeInfoButton" type="button" autofocus aria-label="Close" title="Close">
         <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
       </button>
     </div>

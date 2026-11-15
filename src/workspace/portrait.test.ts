@@ -147,27 +147,53 @@ describe("Portrait blink", () => {
 });
 
 describe("About portrait", () => {
+  const anchor = html.match(/<a class="dialog-portrait"[\s\S]*?>/)?.[0] ?? "";
   const portrait =
-    html.match(/<div class="dialog-portrait"[\s\S]*?<\/svg>/)?.[0] ?? "";
+    html.match(/<a class="dialog-portrait"[\s\S]*?<\/svg>/)?.[0] ?? "";
+
+  it("is the door to the author's homepage, opened in a new tab", () => {
+    expect(anchor).toContain('href="https://maribbit.com/"');
+    // A new tab: the draft behind the sheet is still there on the way back.
+    expect(anchor).toContain('target="_blank"');
+    expect(anchor).toContain('rel="noopener noreferrer"');
+    // She is a drawing and says nothing, so the name is written for the reader;
+    // and it goes on the anchor, never on the drawing it wraps.
+    expect(anchor).toContain('aria-label="Maribbit\'s homepage"');
+    expect(portrait).toContain('aria-hidden="true"');
+  });
 
   it("shows the blog's head and hair ornament, and only those", () => {
     expect(portrait).toContain('id="Hair_Accessory"');
     expect(portrait).toContain('id="Eye_R"');
     expect(portrait).toContain('id="Eye_L"');
-    // The neck, the mouth and the shadow under the chin are all below the crop.
+    // The neck and the shadow under the chin are what the crop hides for good.
+    // Her mouth is under the crop too, but it is kept: the rise brings it up.
     expect(portrait).not.toContain('id="Neck_And_Shoulder"');
-    expect(portrait).not.toContain('id="Mouse"');
     expect(portrait).not.toContain('id="Head_ShadowOnNeck"');
   });
 
-  it("crops just under the nose, so she has no mouth to show", () => {
-    const viewBox = portrait.match(/viewBox="([^"]+)"/)?.[1] ?? "";
-    const [, top, , height] = viewBox.split(/\s+/).map(Number);
-    // The mouth sits at y=199.478 in the character's own coordinates; the nose
-    // ends at 181.978.
-    expect(top + height).toBeGreaterThan(181.978);
-    expect(top + height).toBeLessThan(199.478);
-    expect(portrait).not.toContain("226.5 199.478");
+  it("crops between the nose and the mouth, so a still face has no mouth to show", () => {
+    // The window is her crop; the viewBox is what she is drawn on, and it runs
+    // past the crop by the room her hover rise needs.
+    const [, top, , height] = (portrait.match(/viewBox="([^"]+)"/)?.[1] ?? "")
+      .split(/\s+/)
+      .map(Number);
+    const crop = Number(styles.match(/--portrait-crop:\s*([\d.]+)/)?.[1]);
+    const run = Number(styles.match(/--portrait-run:\s*([\d.]+)/)?.[1]);
+    const rise = Number(styles.match(/--portrait-rise:\s*([\d.]+)/)?.[1]);
+
+    // The nose ends at 181.978 in the character's own coordinates; the mouth
+    // runs from 199.478 down to 202.978.
+    expect(top + crop).toBeGreaterThan(181.978);
+    expect(top + crop).toBeLessThan(199.478);
+    // The mouth is in the markup and inside the drawing — under the line while
+    // she is still, over it once the rise has carried her up.
+    expect(portrait).toContain("226.5 199.478");
+    expect(top + height).toBeGreaterThan(202.978);
+    expect(top + crop + rise).toBeGreaterThan(202.978);
+    // And the rise stays inside the run, or the window's top would cut her note.
+    expect(rise).toBeLessThan(run);
+    expect(height).toBeGreaterThanOrEqual(crop + run);
   });
 
   it("keeps the brows out of the blink, so nothing slides down the face", () => {

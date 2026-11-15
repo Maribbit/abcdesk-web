@@ -66,24 +66,74 @@
   padding-bottom: 14px;
 }
 
-/* Half a head over the header's edge. Her own viewBox does the cropping — it
-   ends just under the nose — so the cut lands on the line the header already
-   draws, and she reads as looking over the sheet rather than as a picture that
-   was cut to fit. No shadow under her: the edge she is behind would not cast
-   one on the page in front of it.
+/* Half a head over the header's edge. Her drawing is cropped by a window that
+   ends just under the nose, on the line the header already draws, so the cut
+   reads as the paper's edge rather than as a picture trimmed to fit. No shadow
+   under her: the edge she is behind would not cast one on the page in front of
+   it.
 
    Moving the crop moves the drawing, not her: the blink pivots below keep the
-   blog's numbers as they are (a test holds them to each other). */
+   blog's numbers as they are (a test holds them to each other).
+
+   She is a link to the author's homepage, and the one thing she does about it
+   is come up over the edge: on hover her drawing rises behind the line. That is
+   why the window outgrows her crop and why the drawing runs past it — a head
+   that lifts has to bring more of herself up with it, or her flat chin-edge
+   leaves a strip of paper between it and the rule. What she brings up with it
+   is her mouth: it is drawn below the crop, and a still sheet never shows it.
+   The window hangs from the same foot by a negative margin, so the header
+   keeps the height her crop gives it, and the extra runs up into the header's
+   own padding, where nothing else is drawn. */
 .dialog-portrait {
+  --portrait-width: 64px;
+  /* In her own units: her viewBox is 294 wide, the crop is the 268 of it that
+     end under her nose, the run is what the drawing keeps below the crop for
+     her to rise into, and the rise is how much of that run she uses — more
+     than the 11 units down to her mouth's lowest point, so her mouth comes up
+     over the line with her, and less than the run, so there is still drawing
+     above her note. */
+  --portrait-unit: calc(var(--portrait-width) / 294);
+  --portrait-crop: 268;
+  --portrait-run: 24;
+  --portrait-rise: 18;
+  display: block;
   flex: 0 0 auto;
-  width: 64px;
+  width: var(--portrait-width);
+  height: calc(var(--portrait-unit) * (var(--portrait-crop) + var(--portrait-run)));
+  margin-top: calc(var(--portrait-unit) * -1 * var(--portrait-run));
+  overflow: hidden;
   line-height: 0;
+  /* A link, not a link's usual furniture: nothing under her but the header's
+     own line. */
+  text-decoration: none;
 }
 
+/* The window's top is the run; her crop starts under it and ends on the box's
+   bottom edge. */
 .dialog-portrait-art {
   display: block;
   width: 100%;
   height: auto;
+  margin-top: calc(var(--portrait-unit) * var(--portrait-run));
+  transition: transform 140ms var(--workspace-ease);
+}
+
+@media (hover: hover) {
+  .dialog-portrait:hover .dialog-portrait-art {
+    /* A shorter move than the run, so she always has drawing above her note;
+       and longer than the mouth's 11 units below the crop, so the mouth is
+       what the rise brings up over the line. */
+    transform: translateY(calc(var(--portrait-unit) * -1 * var(--portrait-rise)));
+  }
+}
+
+.dialog-portrait:focus-visible {
+  /* An arch rather than a frame: the ring follows the shape she comes up
+     through, so a reader who tabs in sees a halo over her head and not a
+     picture that has been selected. Its foot is the header's own line. */
+  border-radius: 50% 50% 0 0 / 62% 62% 0 0;
+  outline: 2px solid var(--workspace-focus-ring);
+  outline-offset: 1px;
 }
 
 /* The note she wears is the masthead's mark in the masthead's ink: it sits
