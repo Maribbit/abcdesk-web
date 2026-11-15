@@ -42,7 +42,15 @@
   <main class="workspace-shell">
     <header class="workspace-header">
       <div class="workspace-brand" aria-label="ABC Desk Web">
-        <img class="workspace-brand-mark" src="%BASE_URL%icons/icon48.png" alt="" aria-hidden="true">
+        <!-- The mark rides `currentColor`, so it is drawn here rather than linked:
+             an <img> cannot inherit the accent, and the header is the one place the
+             note sits in the page's own grey. Same polygons as public/icons/icon.svg
+             (a test keeps the two in step), minus the tile the tab strip cannot have. -->
+        <svg class="workspace-brand-mark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <polygon points="3.4,17.4 8.9,14 14.3,17.4 8.8,20.8" />
+          <polygon points="11.9,2.6 14.3,2.6 14.3,17.4 11.9,15.86" />
+          <polygon points="14.3,2.6 20.6,6.3 20.6,10.9 18.4,9.7 14.3,7.5" />
+        </svg>
         <div>
           <h1>ABC Desk Web</h1>
         </div>

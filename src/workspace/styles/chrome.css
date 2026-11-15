@@ -34,12 +34,16 @@
   gap: 10px;
 }
 
+/* No tile behind it and no rounded corners of its own: the mark is a flat note
+   on the bar, drawn with the page's accent, the way the blog's furniture is
+   drawn — solid, faceted, nothing under it. */
 .workspace-brand-mark {
   flex: 0 0 auto;
+  display: block;
   width: 24px;
   height: 24px;
-  border-radius: 7px;
   color: var(--workspace-accent);
+  fill: currentColor;
 }
 
 /* The masthead is the same voice as the pane labels — caps, tracking, grey —

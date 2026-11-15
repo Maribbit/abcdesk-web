@@ -1,6 +1,12 @@
 /**
- * Generate PNG icons from the SVG source.
+ * Generate PNG icons from the SVG sources.
  * Run: node scripts/generate-icons.mjs
+ *
+ * The mark stands on its own: 16 is the tab, 48 the masthead's copy, 128 the
+ * size a bookmark or a bot picks. 192 and 512 are what a manifest wants before
+ * a browser offers to install the workspace, and a home screen gives an icon no
+ * paper to sit on — those two come from `scripts/icon-app.svg`, the same note on
+ * a flat sheet.
  */
 import sharp from "sharp";
 import { readFile, writeFile } from "node:fs/promises";
@@ -9,26 +15,30 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");
-const svgPath = resolve(root, "public/icons/icon.svg");
+const markPath = resolve(root, "public/icons/icon.svg");
+const appPath = resolve(__dirname, "icon-app.svg");
 const outDir = resolve(root, "public/icons");
 
-// 192 and 512 are what a manifest wants before a browser will offer to install
-// the workspace; the smaller two are the tab and header marks.
-const sizes = [16, 48, 128, 192, 512];
+const bare = [16, 48, 128];
+const onPaper = [192, 512];
+
+async function write(svgBuffer, size) {
+  const png = await sharp(svgBuffer)
+    .resize(size, size, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png()
+    .toBuffer();
+
+  const outPath = resolve(outDir, `icon${size}.png`);
+  await writeFile(outPath, png);
+  console.log(`Generated ${outPath} (${size}x${size})`);
+}
 
 async function main() {
-  const svgBuffer = await readFile(svgPath);
+  const mark = await readFile(markPath);
+  const app = await readFile(appPath);
 
-  for (const size of sizes) {
-    const png = await sharp(svgBuffer)
-      .resize(size, size, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png()
-      .toBuffer();
-
-    const outPath = resolve(outDir, `icon${size}.png`);
-    await writeFile(outPath, png);
-    console.log(`Generated ${outPath} (${size}x${size})`);
-  }
+  for (const size of bare) await write(mark, size);
+  for (const size of onPaper) await write(app, size);
 
   console.log("Done.");
 }

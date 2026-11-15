@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <!-- The install icon is the one place the mark is given a ground. A home screen
+       puts icons on wallpaper, not on the desk, and a transparent glyph there
+       reads as a smudge — so the same note lies on a flat sheet of paper, sharp
+       corners and all. `scripts/generate-icons.mjs` uses this file only for the
+       192 and 512 the manifest asks for; the tab and the masthead keep the bare
+       mark from `public/icons/icon.svg`. -->
+  <rect width="24" height="24" fill="#eef2f3"/>
+  <g fill="#4f6779" transform="translate(3.36 3.58) scale(0.72)">
+    <polygon points="3.4,17.4 8.9,14 14.3,17.4 8.8,20.8"/>
+    <polygon points="11.9,2.6 14.3,2.6 14.3,17.4 11.9,15.86"/>
+    <polygon points="14.3,2.6 20.6,6.3 20.6,10.9 18.4,9.7 14.3,7.5"/>
+  </g>
+</svg>

@@ -26,7 +26,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 
 ### 2.3 离线（PWA）
 
-- 清单 `manifest.json` 与 `sw.js` 都随构建产出。清单用 `.json` 而不是规范推荐的 `.webmanifest`：静态托管（EdgeOne）按扩展名给 MIME，不认识的扩展名一律 `application/octet-stream`，清单就成了一个“二进制块”而不是应用说明。清单里的 URL 全部相对自身，子路径部署不需要另一份清单；192/512 两个安装图标和其他尺寸一样由 `scripts/generate-icons.mjs` 从 `icon.svg` 生成。
+- 清单 `manifest.json` 与 `sw.js` 都随构建产出。清单用 `.json` 而不是规范推荐的 `.webmanifest`：静态托管（EdgeOne）按扩展名给 MIME，不认识的扩展名一律 `application/octet-stream`，清单就成了一个“二进制块”而不是应用说明。清单里的 URL 全部相对自身，子路径部署不需要另一份清单；图标由 `scripts/generate-icons.mjs` 从两份 SVG 出：16/48/128 用 `public/icons/icon.svg`（透明的标记本身），192/512 两个安装图标用 `scripts/icon-app.svg`（同一枚音符垫一张平纸）。",
 - `sw.js` 不是源码里的静态文件：构建插件读 `src/pwa/service-worker.js` 模板，把本次产出（带内容哈希）的文件名与 88 个 samples 填进去。版本号是这份名单的哈希——只改动不被缓存的代码时，读者不必重新下载一遍应用壳。
 - 安装时应用壳是“要么全有要么全无”：`cache.addAll` 失败就让安装失败，半套缓存离线打开只会得到一个脚本永远不来的页面。样本则尽力而为，单个失败不阻塞安装，首次用到时再取。
 - 样本缓存不带版本号：88 个永不变化的 mp3 不该在每次发布后重下，所以它跨构建存活，只补缺的。
@@ -44,6 +44,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
 - 严格客户端要绝对地址：`SITE_URL` 默认就是 `https://abcdesk.maribbit.com/`——站点地址是项目的事实，不是构建机器的事实；构建时把卡片与 `canonical` / `og:url` 补成完整 URL，预发或换域名时用环境变量覆盖。
 - `theme-color` 跟随解析后的主题（手动或系统），值直接读 `--workspace-bg`——CSS 仍是颜色的唯一出处。地址栏与墙同色，而不是另给一个意见。
 - 无脚本时隐藏跑不起来的界面，墙上留一句说明：它比一套空壳控件诚实。
+- **标记是一枚棱面音符**：顶栏那枚不是带渐变与圆角的徽章，而是一枚用多边形画出来的八分音符——菱形音符头、方条符干（末端斜切进音符头的右尖）、带缺口的平行四边形符尾，单一颜色、全是硬角、下面什么都不垫。画风与作者博客的家具同一套（六边形钟面、平涂色块）：这一枚是全站唯一的主体图形，因此不比 UI 里的描边图标圆、不比它亮，也不给自己加第二层。它写在 `index.html` 里（`<img>` 继承不到主题色）、用 `currentColor` 取 `--workspace-accent`；标签页的 `public/icons/icon.svg`、安装图标的 `scripts/icon-app.svg` 与它是同一份多边形，`brand-mark.test.ts` 逐点比对三处，改一处不改另一处会红。标签页那枚跟着系统主题换墨色（浅色 `#4f6779`、深色 `#9ab0c2`）——标签栏是唯一会问 `prefers-color-scheme` 的地方，单一的中间灰在两边各丢一半。安装图标是唯一给它垫纸的场合：主屏上没有桌面可读，透明字形会糊成一团，所以 192/512 是同一枚音符平铺在 `#eef2f3` 上，仍是硬角，圆角交给系统去切。
 
 ## 3. 交互链路
 
@@ -91,6 +92,7 @@ Workspace 是产品本体：一个无后端、纯客户端的 ABC 草稿本与�
   - `src/shared/shortcut-labels.test.ts`: 平台判定的优先级与回退、标签改写、没有键表时不抛错、提示里的组合键写法。
   - `src/workspace/play-shortcut.test.ts`: 页面级快捷键的认领与拒让（编辑器已处理、输入法、对话框、输入框与 shadow host）、装与拆。
   - `src/workspace/shell-meta.test.ts`: 首屏的描述与卡片标签、卡片文件存在、无脚本说明。
+  - `src/workspace/brand-mark.test.ts`: 顶栏、标签页与安装图标是同一份多边形（逐点比对），标记本身没有底、没有渐变、没有圆角。
   - `src/build/social-meta.test.ts`: 绝对地址、子路径与尾斜杠归一化。
   - `src/workspace/editor/codemirror-editor.test.ts`: 编辑器挂载、编辑回调、光标移动回调、播放高亮、目标轮廓、语法着色、注释切换、诊断下划线、行号圆点跨编辑跟随与跳转、换行偏好。
   - `src/workspace/editor/abc-syntax.test.ts`: 字段、注释与谱线标记的扫描边界。
