@@ -27,3 +27,7 @@ Keep changes small and reviewable.
 ## Changelog
 
 Update [CHANGELOG.md](CHANGELOG.md) for user-visible changes and keep unreleased work under `Unreleased`.
+
+## License
+
+The desk is released under [AGPL-3.0-or-later](LICENSE), and a pull request is taken as offered under the same terms — there is no separate agreement to sign. Two things in the repository are not the program and keep their own licences: the character on the About sheet ([CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), non-commercial) and the bundled piano samples (CC BY 3.0, see [public/THIRD_PARTY_NOTICES.txt](public/THIRD_PARTY_NOTICES.txt)).

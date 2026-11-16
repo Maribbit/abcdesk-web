@@ -1,25 +1,17 @@
 # ABC Desk Web
 
-A browser-based ABC notation editor. Write ABC on the left, get an engraved score with playback, note highlighting and parser diagnostics on the right.
+**ABC notation, anywhere.** One desk for a tune — source on one side, engraved score with playback and diagnostics on the other — in any browser, on any device, installed or offline, with no account, no server and nothing uploaded.
 
-It is the web counterpart of **ABC Desk**, the VS Code workbench built on the same idea: one ABC workspace, so a score can be written in the editor and previewed on any device.
+Live at **[abcdesk.maribbit.com](https://abcdesk.maribbit.com/)**. The web counterpart of the [ABC Desk](https://github.com/Maribbit/abcdesk) VS Code workbench, built on the same idea.
 
-Live at **[abcdesk.maribbit.com](https://abcdesk.maribbit.com/)**.
+## What it does
 
-The project started as a Chrome extension that rendered ABC found in AI chat pages. That target was dropped in favour of a single, self-contained web app; the last extension state is kept at tag `extension-v0.4.0`.
-
-## Features
-
-- Live rendering with a 350 ms debounce, horizontal or stacked layout, draggable split and keyboard-resizable panes.
-- Playback with a bundled FluidR3 piano soundfont, so it works offline and never requests remote samples.
-- Installable and offline: a service worker keeps the app shell and every piano sample, so the workspace still opens, edits and plays with no network; the header says `Offline` while it has none, and a missing sample explains itself under the transport.
-- Playback-driven source highlighting, click-to-seek on any note, tempo override, duration display and an 88-key keyboard view.
-- abcjs parser warnings surfaced as a diagnostics panel instead of failing silently.
-- `.abc` import and export, plus SVG and MIDI export.
-- Printing gives you the sheet, not the app: `Cmd-P` keeps the tune, its title and the directions above it on white paper, and a tune longer than a page breaks between staff systems instead of through one.
-- A phone gets the first minute rather than a shrunken desk: below 600px both bars stay on one line, every control takes a 44px square, and the tools a phone reaches another way step aside.
-- About is a short page: one sentence about the desk, the four combinations the desk listens to — `⌘↵` anywhere, comment and undo in the source — and the longer notes on multi-tune files and on what this browser keeps, with a button that clears it, folded away until asked. The modifier is written `⌘` on Apple hardware and `Ctrl` everywhere else.
-- ABC source in the URL hash — compressed, with `Copy Share Link` — while theme, layout and editor preferences stay in `localStorage`. A shared link arrives with a card of the workspace, and the tab names the tune rather than the app.
+- **Write and read in one place.** A CodeMirror editor with dimmed ABC syntax, line numbers and diagnostics under the text; a live engraved score beside it. The note under the caret and the note on the sheet are one selection, drawn in one blue.
+- **Hear it while you read.** A bundled piano soundfont, so nothing is fetched and nothing waits on a network; the playhead follows the score, clicking a note starts there, and tempo, an 88-key view and play-from-caret are one keystroke away.
+- **Keeps the tune.** The draft comes back on the next visit, `Copy Share Link` puts the whole tune in the URL hash without a server, and `.abc`, SVG and MIDI all export.
+- **Works offline, and installs.** A service worker keeps the app shell and all 88 piano samples: the desk opens, edits and plays with no network at all, and says `Offline` while it has none.
+- **Prints the paper, not the app.** `⌘P` / `Ctrl+P` gives the tune, its title and the directions above it on white; a tune longer than a page breaks between staff systems instead of through one.
+- **Fits the device it is on.** Two panes, side by side or stacked, on a desk; below 600px a phone gets one-row bars, 44px targets and only the tools it can reach.
 
 ## Getting started
 
@@ -68,10 +60,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Start new work from [docs/specs/README.m
 
 ## Privacy
 
-Everything runs in the browser. ABC source, rendered scores and preferences never leave the machine; there is no backend, no analytics and no remote font or soundfont request. The only stored data is the local preferences and the last edited source in `localStorage`, which you can clear from the browser.
-
-Bundled soundfont attribution: [public/THIRD_PARTY_NOTICES.txt](public/THIRD_PARTY_NOTICES.txt).
+Everything runs in the browser. ABC source, rendered scores and preferences never leave the machine; there is no backend, no analytics and no remote font or soundfont request. The only stored data is the local preferences and the last edited source in `localStorage`, which About can take back with one button that asks twice.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+**GNU AGPL-3.0-or-later.** See [LICENSE](LICENSE). Run a modified copy of the desk for other people over a network and section 13 asks you to offer them its source — that is the reason for this licence rather than an accident.
+
+Two things travel with the project under their own terms:
+
+- The character in the About sheet is the author's blog artwork, [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/): share and adapt it with credit, no commercial use.
+- The bundled FluidR3_GM piano samples are [CC BY 3.0 US](https://creativecommons.org/licenses/by/3.0/us/); see [public/THIRD_PARTY_NOTICES.txt](public/THIRD_PARTY_NOTICES.txt).
+
+Copyright (c) 2026 Maribbit.
