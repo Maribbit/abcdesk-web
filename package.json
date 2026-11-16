@@ -1,6 +1,6 @@
 {
   "name": "abcdesk-web",
-  "version": "0.4.0",
+  "version": "1.0.0",
   "description": "ABC Desk Web: a browser workbench for ABC notation with live rendering, playback and diagnostics",
   "type": "module",
   "scripts": {
@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.6",
     "eslint": "^10.3.0",
     "globals": "^17.6.0",
     "jsdom": "^29.1.1",

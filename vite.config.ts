@@ -3,6 +3,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { defineConfig, type Plugin, type ResolvedConfig } from "vite";
 import { absolutizeSocialMeta } from "./src/build/social-meta.ts";
+import { buildStampDefines, readBuildStamp } from "./src/build/stamp.ts";
 import { buildServiceWorker } from "./src/pwa/build-service-worker.ts";
 
 /**
@@ -114,14 +115,26 @@ function socialMetaPlugin(): Plugin {
 
 // Workspace is the only build target. `SITE_BASE` moves the bundle under a
 // subpath; the address link previews print comes from `SITE_URL` above.
-export default defineConfig({
-  root: "src/workspace",
-  publicDir: "../../public",
-  base: process.env.SITE_BASE ?? "/",
-  plugins: [serviceWorkerPlugin(), socialMetaPlugin()],
-  build: {
-    outDir: "../../dist",
-    emptyOutDir: true,
-    sourcemap: process.env.NODE_ENV === "development",
-  },
+export default defineConfig(({ command }) => {
+  // A dev server serves the tree being edited rather than a commit, so it has
+  // no build to name and says `dev` — the same word a copy without a
+  // repository gets.
+  const stamp = readBuildStamp(new URL(".", import.meta.url));
+
+  return {
+    root: "src/workspace",
+    publicDir: "../../public",
+    base: process.env.SITE_BASE ?? "/",
+    // The About sheet names the build it is part of; the values are read here
+    // rather than written in the markup, so neither can drift from what it names.
+    define: buildStampDefines(
+      command === "serve" ? { ...stamp, commit: "dev" } : stamp,
+    ),
+    plugins: [serviceWorkerPlugin(), socialMetaPlugin()],
+    build: {
+      outDir: "../../dist",
+      emptyOutDir: true,
+      sourcemap: process.env.NODE_ENV === "development",
+    },
+  };
 });

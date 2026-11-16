@@ -12,7 +12,10 @@
     "noEmit": true,
     // The Vite config is loaded without a bundler pass that guesses extensions.
     "allowImportingTsExtensions": true,
-    "lib": ["ES2020", "DOM", "DOM.Iterable"]
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    // `src/build/` reads the manifest and git at build time, so the node types
+    // are in the program; the app's own code still runs in a browser.
+    "types": ["node"]
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

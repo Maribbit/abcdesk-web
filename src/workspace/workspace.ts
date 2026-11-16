@@ -43,6 +43,7 @@ import {
   WORKSPACE_SOURCE_STORAGE_KEY,
   wireClearDataButton,
 } from "./local-data";
+import { BUILD_STAMP, renderBuildStamp } from "./version";
 
 const RENDER_DEBOUNCE_MS = 350;
 
@@ -319,6 +320,12 @@ async function initializeWorkspace(): Promise<void> {
 
   // The key table ships the word `Ctrl`; Apple's keyboards get their glyph.
   applyModifierLabels(document, isApplePlatform(navigator));
+
+  // The footer names the build the page came from; the markup cannot know it.
+  renderBuildStamp(
+    document.getElementById("dialogVersion") as HTMLElement,
+    BUILD_STAMP,
+  );
 
   // She only blinks while someone is looking at her, and not a moment longer.
   let stopPortraitBlink: (() => void) | null = null;

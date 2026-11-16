@@ -384,6 +384,40 @@
   font-size: 0.8rem;
 }
 
+/* The build's name and the way to its source share the right half, so the left
+   half can stay one sentence. */
+.dialog-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* The quietest thing on the sheet: a reader looks for the build's name when
+   something went wrong, not while reading about the desk — so it keeps the
+   footer's ink and only lends the commit its underline under the pointer. */
+.dialog-version {
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Empty until the build fills it, and a slot that has not been filled yet
+   should not take up the gap beside the link. */
+.dialog-version:empty {
+  display: none;
+}
+
+.dialog-version a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+}
+
+.dialog-version a:hover {
+  color: var(--workspace-accent);
+  text-decoration-color: currentColor;
+}
+
 .dialog-section {
   display: flex;
   flex-direction: column;
@@ -419,17 +453,11 @@
   text-decoration-color: currentColor;
 }
 
-/* A word in mid-sentence is still a target. On a phone the GitHub line takes a
-   finger's height of its own, with the padding bought back out of the margin so
-   the sheet reads exactly as it did, and the one button on the sheet grows to
-   the same height for the same reason. */
+/* A word in mid-sentence is still a target. On a phone every link on the sheet
+   takes a finger's height of its own, with the padding bought back out of the
+   margin so the sheet reads exactly as it did, and the one button on the sheet
+   grows to the same height for the same reason. */
 @media (max-width: 600px) {
-  .dialog-content .ghost-link {
-    display: inline-block;
-    padding-block: 9px;
-    margin-block: -9px;
-  }
-
   .dialog-clear-button {
     min-height: 36px;
   }
@@ -440,7 +468,17 @@
     flex-wrap: wrap;
   }
 
-  .dialog-footer .ghost-link {
+  .dialog-footer-links {
+    flex-wrap: wrap;
+  }
+
+  /* Both words in the footer are targets on a phone, and both take the same
+     finger's height so neither line grows taller than the other. */
+  .dialog-footer .ghost-link,
+  .dialog-version a {
     white-space: nowrap;
+    display: inline-block;
+    padding-block: 9px;
+    margin-block: -9px;
   }
 }

@@ -363,7 +363,13 @@
 
       <div class="dialog-footer">
         <span>A personal project by Maribbit</span>
-        <a class="ghost-link" href="https://github.com/Maribbit/abcdesk-web" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        <span class="dialog-footer-links">
+          <!-- The build names itself here. The slot ships empty: a page has no
+               business claiming a release until the build that carries it says
+               which one it is (`version.ts`). -->
+          <span class="dialog-version" id="dialogVersion"></span>
+          <a class="ghost-link" href="https://github.com/Maribbit/abcdesk-web" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+        </span>
       </div>
     </div>
   </dialog>

@@ -1,6 +1,10 @@
 import { defineConfig } from "vitest/config";
+import { buildStampDefines, readBuildStamp } from "./src/build/stamp.ts";
 
 export default defineConfig({
+  // The tests run against the same stamp the bundle carries, so a suite that
+  // reads it sees this repository rather than a placeholder.
+  define: buildStampDefines(readBuildStamp(new URL(".", import.meta.url))),
   test: {
     clearMocks: true,
     environment: "jsdom",
